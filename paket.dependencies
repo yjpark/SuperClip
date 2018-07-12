@@ -3,7 +3,7 @@ version 5.172.4
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
 storage: none
-framework: netstandard2.0
+framework: auto-detect
 
 nuget FSharp.Core
 
@@ -15,61 +15,9 @@ nuget Dap.WebSocket
 nuget Dap.Remote
 nuget Dap.Archive
 
-group Server
-    source https://nuget.yjpark.org/nuget/dap
-    source https://www.nuget.org/api/v2
-    storage: none
-    framework: netstandard2.0
-
-    nuget Microsoft.AspNetCore
-    nuget Microsoft.AspNetCore.StaticFiles
-    nuget Microsoft.AspNetCore.WebSockets
-    nuget System.Net.NetworkInformation
-
-    nuget Saturn
-    nuget Giraffe
-    nuget Giraffe.TokenRouter
-    nuget jose-jwt
-
-group App
-    source https://nuget.yjpark.org/nuget/dap
-    source https://www.nuget.org/api/v2
-    storage: none
-    framework: netstandard2.0
-
-    nuget Elmish.XamarinForms
-    nuget FSharp.Data 3.0.0-beta4
-
-    nuget Dap.Farango
-    nuget Dap.Remote.FSharpData
-    nuget Dap.Remote.AspNetCore
-
-group Droid
-    source https://www.nuget.org/api/v2
-    storage: none
-    framework: monoandroid8.1
-
-    nuget Xamarin.Forms
-    nuget Xamarin.Essentials
-    nuget Xamarin.Android.FSharp.ResourceProvider
-
-group iOS
-    source https://www.nuget.org/api/v2
-    storage: none
-    framework: xamarinios
-
-    nuget Xamarin.Forms
-    nuget Xamarin.Essentials
-
-group UWP
-    source https://www.nuget.org/api/v2
-    storage: none
-    framework: uap10.0
-
-    nuget Microsoft.NETCore.UniversalWindowsPlatform
-
-    nuget Xamarin.Forms
-    nuget Xamarin.Essentials
+nuget Elmish.XamarinForms
+nuget FSharp.Data 3.0.0-beta4
+nuget Dap.Remote.FSharpData
 
 group Build
     source https://nuget.yjpark.org/nuget/dap

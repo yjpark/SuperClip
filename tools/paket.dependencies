@@ -1,0 +1,106 @@
+version 5.172.4
+
+source https://nuget.yjpark.org/nuget/dap
+source https://www.nuget.org/api/v2
+storage: none
+framework: auto-detect
+
+nuget FSharp.Core
+
+nuget Argu
+
+nuget Dap.Prelude
+nuget Dap.Platform
+nuget Dap.WebSocket
+nuget Dap.Remote
+nuget Dap.Archive
+
+group Server
+    source https://nuget.yjpark.org/nuget/dap
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: netstandard2.0
+
+    nuget Microsoft.AspNetCore
+    nuget Microsoft.AspNetCore.StaticFiles
+    nuget Microsoft.AspNetCore.WebSockets
+    nuget System.Net.NetworkInformation
+
+    nuget Saturn
+    nuget Giraffe
+    nuget Giraffe.TokenRouter
+    nuget jose-jwt
+
+    nuget Dap.Farango
+    nuget Dap.Remote.AspNetCore
+
+group App
+    source https://nuget.yjpark.org/nuget/dap
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: netstandard2.0
+
+    nuget Elmish.XamarinForms
+    nuget FSharp.Data 3.0.0-beta4
+    nuget Dap.Remote.FSharpData
+
+group UWP
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: uap10.0
+
+    nuget Microsoft.NETCore.UniversalWindowsPlatform
+
+    nuget Xamarin.Forms
+    nuget Xamarin.Essentials
+
+group Droid
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: monoandroid8.1
+
+    nuget Xamarin.Forms
+    nuget Xamarin.Essentials
+    nuget Xamarin.Android.FSharp.ResourceProvider
+
+group macOS
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: xamarinmac
+
+    nuget Xamarin.Forms
+    nuget Xamarin.Essentials
+
+group iOS
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: xamarinios
+
+    nuget Xamarin.Forms
+    nuget Xamarin.Essentials
+
+group Build
+    source https://nuget.yjpark.org/nuget/dap
+    source https://www.nuget.org/api/v2
+    storage: none
+    framework: netstandard2.0
+
+    nuget Dap.Build
+
+    # TODO: Find better solution
+    clitool dotnet-fake 5.1
+    nuget Fake.Core.Target 5.1
+    nuget Fake.Core.Process 5.1
+    nuget Fake.Core.String 5.1
+    nuget Fake.Core.ReleaseNotes 5.1
+    nuget Fake.DotNet.Cli 5.1
+    nuget Fake.DotNet.NuGet 5.1
+    nuget Fake.IO.FileSystem 5.1
+    nuget Fake.IO.Zip 5.1
+    nuget Fake.Net.Http 5.1
+    nuget Fake.Tools.Git 5.1
+
+    clitool dotnet-sourcelink
+    nuget Microsoft.SourceLink.GitHub 1.0.0-beta-62925-02
+    nuget Microsoft.Build.Tasks.Git 1.0.0-beta-62925-02
+    nuget Microsoft.SourceLink.Common 1.0.0-beta-62925-02

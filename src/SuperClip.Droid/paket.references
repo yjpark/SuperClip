@@ -1,9 +1,0 @@
-Dap.Remote
-
-group App
-    Elmish.XamarinForms
-
-group Droid
-    Xamarin.Forms
-    Xamarin.Essentials
-    Xamarin.Android.FSharp.ResourceProvider

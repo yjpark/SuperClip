@@ -1427,17 +1427,6 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETCore' And $(TargetFrameworkVersion) == 'v5.0'">
       <ItemGroup>
-        <Reference Include="System.Threading.ThreadPool">
-          <HintPath>..\..\..\..\..\.nuget\packages\system.threading.threadpool\4.3.0\lib\netstandard1.3\System.Threading.ThreadPool.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETCore' And $(TargetFrameworkVersion) == 'v5.0'">
-      <ItemGroup>
         <Reference Include="Xamarin.Essentials">
           <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.8.0-preview\lib\netstandard1.0\Xamarin.Essentials.dll</HintPath>
           <Private>True</Private>
