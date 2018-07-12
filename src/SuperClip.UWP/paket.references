@@ -1,0 +1,9 @@
+Dap.Remote
+
+group App
+    Elmish.XamarinForms
+
+group UWP
+    Microsoft.NETCore.UniversalWindowsPlatform
+    Xamarin.Forms
+    Xamarin.Essentials

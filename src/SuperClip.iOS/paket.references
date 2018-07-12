@@ -1,0 +1,8 @@
+Dap.Remote
+
+group App
+    Elmish.XamarinForms
+
+group iOS
+    Xamarin.Forms
+    Xamarin.Essentials

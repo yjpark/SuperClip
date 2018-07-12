@@ -1,0 +1,4 @@
+Dap.Remote
+
+group App
+    Elmish.XamarinForms

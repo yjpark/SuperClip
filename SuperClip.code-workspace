@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"path": "src/SuperClip.Core"
+		},
+		{
+			"path": "src/SuperClip.App"
+		},
+		{
+			"path": "src/SuperClip.Droid"
+		},
+		{
+			"path": "src/SuperClip.iOS"
+		},
+	],
+    "settings": {
+        "files.exclude": {
+            "**/bin": true,
+            "**/obj": true,
+            "*.log": true,
+            "log" : true,
+            ".vs": true,
+            ".vscode": true,
+            "node_modules": true
+		},
+		"cSpell.language": "en",
+		"cSpell.words": [
+			"Elmish",
+			"Guid",
+			"failwith",
+			"initer",
+			"sprintf",
+			"struct"
+		]
+	}
+}
