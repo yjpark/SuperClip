@@ -3,7 +3,7 @@ version 5.172.4
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
 storage: none
-framework: auto-detect
+#framework: auto-detect
 
 nuget FSharp.Core
 
@@ -18,6 +18,16 @@ nuget Dap.Archive
 nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4
 nuget Dap.Remote.FSharpData
+
+nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios
+nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios
+
+# UWP
+nuget Microsoft.NETCore.UniversalWindowsPlatform framework: uap10.0
+
+
+# Droid
+nuget Xamarin.Android.FSharp.ResourceProvider framework: monoandroid8.1
 
 group Build
     source https://nuget.yjpark.org/nuget/dap
