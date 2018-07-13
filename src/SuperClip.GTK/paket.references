@@ -4,3 +4,7 @@ Elmish.XamarinForms
 
 Xamarin.Forms
 Xamarin.Essentials
+
+Xamarin.Forms.Platform.GTK
+GtkSharp
+

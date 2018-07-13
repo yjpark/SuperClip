@@ -19,15 +19,18 @@ nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4
 nuget Dap.Remote.FSharpData
 
-nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios
-nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios
+nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471
+nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471
 
 # UWP
 nuget Microsoft.NETCore.UniversalWindowsPlatform framework: uap10.0
 
-
 # Droid
 nuget Xamarin.Android.FSharp.ResourceProvider framework: monoandroid8.1
+
+# GTK
+nuget Xamarin.Forms.Platform.GTK framework: net471
+nuget GtkSharp framework: net471
 
 group Build
     source https://nuget.yjpark.org/nuget/dap
