@@ -321,6 +321,12 @@
       <Project>{62595787-F3E8-48EB-B6C5-95166C42A669}</Project>
       <Name>SuperClip.App</Name>
     </ProjectReference>
+    <Reference Include="Elmish">
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish\1.0.3\lib\net461\Elmish.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms">
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish.xamarinforms\0.14.4\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets')" />
   <Import Project="..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.targets')" />

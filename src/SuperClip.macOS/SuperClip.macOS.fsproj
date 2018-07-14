@@ -232,6 +232,12 @@
     <Reference Include="Xamarin.Mac" />
     <Reference Include="mscorlib" />
     <Reference Include="System.Numerics" />
+    <Reference Include="Elmish.XamarinForms">
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish.xamarinforms\0.14.4\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish">
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish\1.0.3\lib\net461\Elmish.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
