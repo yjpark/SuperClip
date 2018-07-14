@@ -10,7 +10,7 @@ NUGET
     CairoSharp (3.22.24.36) - restriction: == net471
     Elmish (1.0.3) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.2.3) - restriction: || (>= net461) (>= netstandard1.6)
-    Elmish.XamarinForms (0.13)
+    Elmish.XamarinForms (0.14.4)
       FSharp.Core (>= 4.5)
       Xamarin.Forms (>= 3.0.0.482510)
     Fable.JsonConverter (1.0.8) - restriction: >= netstandard2.0
