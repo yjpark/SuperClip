@@ -5,9 +5,6 @@ NUGET
       FSharp.Core (>= 4.0.0.1) - restriction: >= net45
       FSharp.Core (>= 4.3.2) - restriction: && (< net45) (>= netstandard2.0)
       System.Configuration.ConfigurationManager (>= 4.4) - restriction: && (< net45) (>= netstandard2.0)
-    AtkSharp (3.22.24.36) - restriction: == net471
-      GLibSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-    CairoSharp (3.22.24.36) - restriction: == net471
     Elmish (1.0.3) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.2.3) - restriction: || (>= net461) (>= netstandard1.6)
     Elmish.XamarinForms (0.14.4)
@@ -43,21 +40,6 @@ NUGET
     FSharp.Data (3.0.0-beta4)
       FSharp.Core (>= 4.0.0.1) - restriction: >= net45
       FSharp.Core (>= 4.3.4) - restriction: && (< net45) (>= netstandard2.0)
-    GdkSharp (3.22.24.36) - restriction: == net471
-      CairoSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      GioSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      GLibSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      PangoSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-    GioSharp (3.22.24.36) - restriction: == net471
-      GLibSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-    GLibSharp (3.22.24.36) - restriction: == net471
-    GtkSharp (3.22.24.36) - restriction: == net471
-      AtkSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      CairoSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      GdkSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      GioSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      GLibSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      PangoSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
     Microsoft.CSharp (4.5) - restriction: || (&& (== monoandroid8.1) (>= uap10.0)) (&& (== net471) (>= uap10.0)) (== uap10.0) (&& (== xamarinios) (>= uap10.0)) (&& (== xamarinmac) (>= uap10.0))
     Microsoft.Net.Native.Compiler (2.1.8) - restriction: || (&& (== monoandroid8.1) (>= uap10.0)) (&& (== net471) (>= uap10.0)) (== uap10.0) (&& (== xamarinios) (>= uap10.0)) (&& (== xamarinmac) (>= uap10.0))
       runtime.win10-arm.Microsoft.Net.Native.Compiler (>= 2.1.8)
@@ -217,9 +199,6 @@ NUGET
     NodaTime (2.3) - restriction: >= netstandard2.0
       NETStandard.Library (>= 1.6.1) - restriction: && (< net45) (>= netstandard1.3)
       System.Runtime.Serialization.Xml (>= 4.1.1) - restriction: && (< net45) (>= netstandard1.3)
-    PangoSharp (3.22.24.36) - restriction: == net471
-      CairoSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
-      GLibSharp (>= 3.22.24.36) - restriction: >= netstandard2.0
     runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: || (&& (== monoandroid8.1) (>= uap10.0)) (&& (== net471) (< netstandard1.4) (>= uap10.0)) (&& (== net471) (< netstandard1.5) (>= uap10.0)) (&& (== net471) (< netstandard1.6) (>= uap10.0)) (&& (== net471) (< netstandard2.0) (>= uap10.0)) (== uap10.0) (&& (== xamarinios) (>= uap10.0)) (&& (== xamarinmac) (>= uap10.0))
     runtime.debian.9-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: || (&& (== monoandroid8.1) (>= uap10.0)) (&& (== net471) (< netstandard1.4) (>= uap10.0)) (&& (== net471) (< netstandard1.5) (>= uap10.0)) (&& (== net471) (< netstandard1.6) (>= uap10.0)) (&& (== net471) (< netstandard2.0) (>= uap10.0)) (== uap10.0) (&& (== xamarinios) (>= uap10.0)) (&& (== xamarinmac) (>= uap10.0))
     runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: || (&& (== monoandroid8.1) (>= uap10.0)) (&& (== net471) (< netstandard1.4) (>= uap10.0)) (&& (== net471) (< netstandard1.5) (>= uap10.0)) (&& (== net471) (< netstandard1.6) (>= uap10.0)) (&& (== net471) (< netstandard2.0) (>= uap10.0)) (== uap10.0) (&& (== xamarinios) (>= uap10.0)) (&& (== xamarinmac) (>= uap10.0))
