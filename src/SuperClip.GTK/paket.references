@@ -6,5 +6,5 @@ Xamarin.Forms
 Xamarin.Essentials
 
 Xamarin.Forms.Platform.GTK
-GtkSharp
+# GtkSharp
 

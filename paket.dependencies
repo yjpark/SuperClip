@@ -30,7 +30,7 @@ nuget Xamarin.Android.FSharp.ResourceProvider framework: monoandroid8.1
 
 # GTK
 nuget Xamarin.Forms.Platform.GTK framework: net471
-nuget GtkSharp framework: net471
+# nuget GtkSharp framework: net471
 
 group Build
     source https://nuget.yjpark.org/nuget/dap
