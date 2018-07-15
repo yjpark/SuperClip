@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="cfa510c5-b8ac-45d6-8fdd-39d8ad97b57e"
-    Publisher="CN=Charles"
+    Name="2c1b9e95-ab3a-45fe-ab9a-56f6b70f3168"
+    Publisher="CN=yjpark"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="cfa510c5-b8ac-45d6-8fdd-39d8ad97b57e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="2c1b9e95-ab3a-45fe-ab9a-56f6b70f3168" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>SuperClip.UWP</DisplayName>
-    <PublisherDisplayName>Charles</PublisherDisplayName>
+    <PublisherDisplayName>yjpark</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
