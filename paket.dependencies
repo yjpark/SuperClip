@@ -22,6 +22,8 @@ nuget Dap.Remote.FSharpData
 nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471
 nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471
 
+nuget Xamarin.Plugins.Clipboard
+
 # UWP
 nuget Microsoft.NETCore.UniversalWindowsPlatform framework: uap10.0
 

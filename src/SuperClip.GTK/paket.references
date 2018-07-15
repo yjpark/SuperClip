@@ -1,4 +1,5 @@
 Dap.Remote
+Dap.Archive
 
 Elmish.XamarinForms
 
@@ -7,4 +8,6 @@ Xamarin.Essentials
 
 Xamarin.Forms.Platform.GTK
 # GtkSharp
+
+Xamarin.Plugins.Clipboard
 

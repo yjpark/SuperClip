@@ -4,6 +4,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Clipboard.fs" />
+    <Compile Include="Primary/Types.fs" />
+    <Compile Include="Primary/Tasks.fs" />
+    <Compile Include="Primary/Logic.fs" />
+    <Compile Include="Primary/Agent.fs" />
+    <Compile Include="Helper.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

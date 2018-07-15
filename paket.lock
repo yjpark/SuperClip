@@ -845,6 +845,7 @@ NUGET
       Xamarin.Android.Support.v7.MediaRouter (>= 25.4.0.2) - restriction: >= monoandroid7.1
     Xamarin.Forms.Platform.GTK (3.1.0.637273) - restriction: == net471
       Xamarin.Forms (>= 3.1.0.637273)
+    Xamarin.Plugins.Clipboard (2.2.1)
   remote: https://nuget.yjpark.org/nuget/dap
     Dap.Archive (0.6.0)
       Dap.Platform (>= 0.6.4) - restriction: >= netstandard2.0

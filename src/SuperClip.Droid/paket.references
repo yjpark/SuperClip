@@ -1,7 +1,11 @@
 Dap.Remote
+Dap.Archive
 
 Elmish.XamarinForms
 
 Xamarin.Forms
 Xamarin.Essentials
 Xamarin.Android.FSharp.ResourceProvider
+
+Xamarin.Plugins.Clipboard
+

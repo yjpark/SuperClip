@@ -4,38 +4,44 @@ open System.Diagnostics
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Plugin.Clipboard
+
+open Dap.Platform
+
+open SuperClip.Core
 
 type Model = {
-    Count : int
-    Step : int
-    TimerOn: bool
+    Primary : Clipboard.Item
 }
 
 type Msg =
-    | Increment
-    | Decrement
-    | Reset
-    | SetStep of int
-    | TimerToggled of bool
-    | TimedTick
+    | Get
+    | Set of string
+    | OnPrimaryChanged of Clipboard.Item
 
-let initModel = { Count = 0; Step = 1; TimerOn=false }
+let (env, primary) = Helper.initLocal "super-clip-.log"
+
+let initModel = { Primary = Clipboard.Item.Empty }
 
 let init () = initModel, Cmd.none
 
-let timerCmd =
-    async { do! Async.Sleep 200
-            return TimedTick }
-    |> Cmd.ofAsyncMsg
-
 let update msg model =
     match msg with
-    | Increment -> { model with Count = model.Count + model.Step }, Cmd.none
-    | Decrement -> { model with Count = model.Count - model.Step }, Cmd.none
-    | Reset -> init ()
-    | SetStep n -> { model with Step = n }, Cmd.none
-    | TimerToggled on -> { model with TimerOn = on }, (if on then timerCmd else Cmd.none)
-    | TimedTick -> if model.TimerOn then { model with Count = model.Count + model.Step }, timerCmd else model, Cmd.none
+    | Get ->
+        primary.Actor.Handle <| Clipboard.DoGet None
+        (model, Cmd.none)
+    | Set text ->
+        let content = Clipboard.Text text
+        primary.Actor.Handle <| Clipboard.DoSet' content None
+        (model, Cmd.none)
+    | OnPrimaryChanged item ->
+        ({model with Primary = item}, Cmd.none)
+
+let getText (item : Clipboard.Item) =
+    let text =
+        match item.Content with
+        | Clipboard.Text text -> text
+    sprintf "%A [%i] %s" item.Time item.Index text
 
 let view (model: Model) dispatch =
     View.ContentPage(
@@ -44,29 +50,30 @@ let view (model: Model) dispatch =
                 yield
                     View.StackLayout(padding=20.0, verticalOptions=LayoutOptions.Center,
                     children=[
-                        View.Label(text= sprintf "%d" model.Count, horizontalOptions=LayoutOptions.Center, fontSize = "Large")
-                        View.Button(text="Increment", command= (fun () -> dispatch Increment))
-                        View.Button(text="Decrement", command= (fun () -> dispatch Decrement))
-                        (*
-                        View.StackLayout(padding=20.0, orientation=StackOrientation.Horizontal, horizontalOptions=LayoutOptions.Center,
-                                        children = [ View.Label(text="Timer")
-                                                    View.Switch(isToggled=model.TimerOn, toggled=fixf(fun on -> dispatch (TimerToggled on.Value))) ])
-                        *)
-                        View.Slider(minimum=0.0, maximum=10.0, value= double model.Step, valueChanged=fixf(fun args -> dispatch (SetStep (int (args.NewValue + 0.5)))))
-                        View.Label(text=sprintf "Step size: %d" model.Step, horizontalOptions=LayoutOptions.Center)
+                        View.Label(text=getText model.Primary, horizontalOptions=LayoutOptions.Center, fontSize = "Large")
+                        View.Button(text="Get", command= (fun () -> dispatch Get))
+                        View.Button(text="Set", command= (fun () -> dispatch (Set "test")))
                     ])
-                // If you want the button to disappear when in the initial condition then use this:
-                //if model <> initModel then
-                yield View.Button(text="Reset", horizontalOptions=LayoutOptions.Center, command=fixf(fun () -> dispatch Reset), canExecute = (model <> initModel))
+                //yield View.Button(text="Reset", horizontalOptions=LayoutOptions.Center, command=fixf(fun () -> dispatch Reset), canExecute = (model <> initModel))
             ]
         )
     )
 
+let subscribe _model =
+    let sub = fun dispatch ->
+        primary.Actor.OnEvent.AddWatcher primary "OnPrimaryChanged" (fun evt ->
+            match evt with
+            | Clipboard.OnChanged item ->
+                dispatch <| OnPrimaryChanged item
+        )
+    Cmd.ofSub sub
+
 type App () as app =
     inherit Application ()
 
-    let program = Program.mkProgram init update view
-
+    let program =
+        Program.mkProgram init update view
+        |> Program.withSubscription subscribe
     let runner =
         program
         |> Program.runWithDynamicView app
