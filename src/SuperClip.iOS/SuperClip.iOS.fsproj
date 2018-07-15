@@ -7,7 +7,6 @@
   <Import Project="..\..\..\..\..\.nuget\packages\runtime.win10-arm.microsoft.net.native.sharedlibrary\2.1.8\build\runtime.win10-arm.Microsoft.Net.Native.SharedLibrary.props" Condition="Exists('..\..\..\..\..\.nuget\packages\runtime.win10-arm.microsoft.net.native.sharedlibrary\2.1.8\build\runtime.win10-arm.Microsoft.Net.Native.SharedLibrary.props')" Label="Paket" />
   <Import Project="..\..\..\..\..\.nuget\packages\runtime.win10-arm.microsoft.net.native.compiler\2.1.8\build\runtime.win10-arm.Microsoft.Net.Native.Compiler.props" Condition="Exists('..\..\..\..\..\.nuget\packages\runtime.win10-arm.microsoft.net.native.compiler\2.1.8\build\runtime.win10-arm.Microsoft.Net.Native.Compiler.props')" Label="Paket" />
   <Import Project="..\..\..\..\..\.nuget\packages\microsoft.net.native.compiler\2.1.8\build\Microsoft.Net.Native.Compiler.props" Condition="Exists('..\..\..\..\..\.nuget\packages\microsoft.net.native.compiler\2.1.8\build\Microsoft.Net.Native.Compiler.props')" Label="Paket" />
-  <Import Project="..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
