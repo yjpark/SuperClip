@@ -41,7 +41,7 @@ let getText (item : Clipboard.Item) =
     let text =
         match item.Content with
         | Clipboard.Text text -> text
-    sprintf "%A [%i] %s" item.Time item.Index text
+    sprintf "[%A] %s" item.Time text
 
 let view (model: Model) dispatch =
     View.ContentPage(

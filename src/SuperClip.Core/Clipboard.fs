@@ -8,17 +8,23 @@ open NodaTime
 type Content =
     | Text of string
 
+type Source =
+    | Local
+    | Lan of name : string * address : string
+
 type Item = {
     Time : Instant
-    Index : int
     Content : Content
+    Source : Source
 } with
-    static member Empty =
+    static member Create time content source =
         {
-            Time = Instant.MinValue
-            Index = 0
-            Content = Text ""
+            Time = time
+            Content = content
+            Source = source
         }
+    static member Empty =
+        Item.Create Instant.MinValue (Text "") Local
 
 type Req =
     | DoGet of Callback<Item>

@@ -31,12 +31,7 @@ let private doSet req ((content, callback) : Clipboard.Content * Callback<unit>)
     fun runner (model, cmd) ->
         match content with
         | Text text -> CrossClipboard.Current.SetText (text)
-        let current =
-            {
-                Time = runner.Clock.Now
-                Index = model.Current.Index + 1
-                Content = content
-            }
+        let current = Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
         runner.Deliver <| Evt ^<| OnChanged current
         reply runner callback <| ack req ()
         ({model with Current = current}, cmd)
@@ -65,12 +60,7 @@ let private onGet (res : Result<Clipboard.Content, exn>) : ActorOperate =
         let current =
             match res with
             | Ok content ->
-                let current =
-                    {
-                        Time = runner.Clock.Now
-                        Index = model.Current.Index + 1
-                        Content = content
-                    }
+                let current = Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
                 Some current
             | Error _err ->
                 None
