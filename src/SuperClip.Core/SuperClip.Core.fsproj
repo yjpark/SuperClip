@@ -7,7 +7,10 @@
     <Compile Include="Primary/Types.fs" />
     <Compile Include="Primary/Tasks.fs" />
     <Compile Include="Primary/Logic.fs" />
-    <Compile Include="Primary/Agent.fs" />
+    <Compile Include="Primary/Service.fs" />
+    <Compile Include="History/Types.fs" />
+    <Compile Include="History/Logic.fs" />
+    <Compile Include="History/Agent.fs" />
     <Compile Include="Helper.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

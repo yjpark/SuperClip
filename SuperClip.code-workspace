@@ -7,10 +7,7 @@
 			"path": "src/SuperClip.App"
 		},
 		{
-			"path": "src/SuperClip.Droid"
-		},
-		{
-			"path": "src/SuperClip.iOS"
+			"path": "src/SuperClip.Tools"
 		},
 	],
     "settings": {

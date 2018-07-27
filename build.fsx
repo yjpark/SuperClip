@@ -14,5 +14,6 @@ let Dist = "Dist"
 let allProjects =
     !! "src/SuperClip.Core/*.fsproj"
     ++ "src/SuperClip.App/*.fsproj"
+    ++ "src/SuperClip.Tools/*.fsproj"
 
 DotNet.createAndRun DotNet.debug allProjects

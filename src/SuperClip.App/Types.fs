@@ -1,79 +1,36 @@
+[<AutoOpen>]
 module SuperClip.App.Types
 
-open System.Diagnostics
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
-open Plugin.Clipboard
 
 open Dap.Platform
+module AppTypes = Dap.Forms.App.Types
+module AppHelper = Dap.Forms.App.Helper
 
 open SuperClip.Core
+module History = SuperClip.Core.History.Agent
+module Primary = SuperClip.Core.Primary.Service
 
-type Model = {
-    Primary : Clipboard.Item
+type AppArgs = AppTypes.Args<App, AppModel, AppMsg>
+
+and AppModel = {
+    Primary : Primary.Service
+    History : History.Agent
 }
 
-type Msg =
-    | Get
-    | Set of string
-    | OnPrimaryChanged of Clipboard.Item
+and AppMsg =
+    | SetPrimary of Clipboard.Content
+    | PrimaryEvt of Clipboard.Evt
+with interface IMsg
 
-let (env, primary) = Helper.initLocal "super-clip-.log"
+and AppIniter = AppTypes.AppIniter<AppModel, AppMsg>
+and AppView = AppTypes.AppView<App, AppModel, AppMsg>
 
-let initModel = { Primary = Clipboard.Item.Empty }
-
-let init () = initModel, Cmd.none
-
-let update msg model =
-    match msg with
-    | Get ->
-        primary.Actor.Handle <| Clipboard.DoGet None
-        (model, Cmd.none)
-    | Set text ->
-        let content = Clipboard.Text text
-        primary.Actor.Handle <| Clipboard.DoSet' content None
-        (model, Cmd.none)
-    | OnPrimaryChanged item ->
-        ({model with Primary = item}, Cmd.none)
-
-let getText (item : Clipboard.Item) =
-    let text =
-        match item.Content with
-        | Clipboard.Text text -> text
-    sprintf "[%A] %s" item.Time text
-
-let view (model: Model) dispatch =
-    View.ContentPage(
-        content=View.StackLayout(padding=20.0,
-            children=[
-                yield
-                    View.StackLayout(padding=20.0, verticalOptions=LayoutOptions.Center,
-                    children=[
-                        View.Label(text=getText model.Primary, horizontalOptions=LayoutOptions.Center, fontSize = "Large")
-                        View.Button(text="Get", command= (fun () -> dispatch Get))
-                        View.Button(text="Set", command= (fun () -> dispatch (Set "test")))
-                    ])
-                //yield View.Button(text="Reset", horizontalOptions=LayoutOptions.Center, command=fixf(fun () -> dispatch Reset), canExecute = (model <> initModel))
-            ]
-        )
-    )
-
-let subscribe _model =
-    let sub = fun dispatch ->
-        primary.Actor.OnEvent.AddWatcher primary "OnPrimaryChanged" (fun evt ->
-            match evt with
-            | Clipboard.OnChanged item ->
-                dispatch <| OnPrimaryChanged item
-        )
-    Cmd.ofSub sub
-
-type App () as app =
-    inherit Application ()
-
-    let program =
-        Program.mkProgram init update view
-        |> Program.withSubscription subscribe
-    let runner =
-        program
-        |> Program.runWithDynamicView app
+and App (param) =
+    inherit AppTypes.App<App, AppModel, AppMsg> (param)
+    let app = AppHelper.newApplication ()
+    static member Spawn (param) = new App (param)
+    static member CreateAsync args consoleLogLevel logFile =
+        AppHelper.createAsync App.Spawn args "SuperClip" consoleLogLevel logFile
+    override this.Runner = this
+    override _this.Application = app

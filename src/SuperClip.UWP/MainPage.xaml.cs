@@ -26,7 +26,7 @@ namespace SuperClip.UWP
         {
             this.InitializeComponent();
 
-            LoadApplication(new SuperClip.App.Types.App());
+            LoadApplication(SuperClip.App.App.initApplication());
         }
     }
 }

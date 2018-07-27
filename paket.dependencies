@@ -9,18 +9,14 @@ nuget FSharp.Core
 
 nuget Argu
 
-nuget Dap.Prelude
-nuget Dap.Platform
-nuget Dap.WebSocket
-nuget Dap.Remote
-nuget Dap.Archive
+nuget Dap.Forms
 
 nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4
 nuget Dap.Remote.FSharpData
 
-nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471
-nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471
+nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471,netcoreapp
+nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471,netcoreapp
 
 nuget Xamarin.Plugins.Clipboard
 

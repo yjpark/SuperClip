@@ -12,7 +12,7 @@ namespace SuperClip.GTK
             Gtk.Application.Init();
             Forms.Init();
 
-            var app = new SuperClip.App.Types.App();
+            var app = SuperClip.App.App.initApplication();
             var window = new FormsWindow();
             window.LoadApplication(app);
             window.SetApplicationTitle("Super Clip");

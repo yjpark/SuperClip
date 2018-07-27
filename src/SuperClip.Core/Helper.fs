@@ -8,38 +8,23 @@ open Dap.Prelude
 open Dap.Platform
 open Dap.Archive
 
-module PrimaryAgent = SuperClip.Core.Primary.Agent
 module TickerService = Dap.Platform.Ticker.Service
 
-let doRegisterAsync (env : IEnv) = task {
+module PrimaryService = SuperClip.Core.Primary.Service
+module HistoryAgent = SuperClip.Core.History.Agent
+
+let doSetupPrimaryAsync (env : IEnv) = task {
     let args = TickerService.Args.New (10.0)
     let! _ = env |> TickerService.addAsync noKey args
-    let args = PrimaryAgent.Args.New ()
-    do! env |> PrimaryAgent.registerAsync args
+    let args = PrimaryService.Args.New ()
+    let! primary = env |> PrimaryService.addAsync noKey args
+    return primary
 }
 
-let doSpawnPrimaryAsync (env : IEnv) = task {
-    let! (agent, isNew) = env.HandleAsync <| DoGetAgent' PrimaryAgent.Kind noKey
-    return agent :?> PrimaryAgent.Agent
+let doSetupAsync (env : IEnv) = task {
+    let! _ = env |> doSetupPrimaryAsync
+    let args = HistoryAgent.Args.New ()
+    do! env |> HistoryAgent.registerAsync args
+    let! (history, _isNew) = env.HandleAsync <| DoGetAgent' HistoryAgent.Kind noKey
+    return history :?> HistoryAgent.Agent
 }
-
-let initLocal logFile =
-    let timestamp = Profile.perMinute.CalcVolumeKey <| getNow' ()
-    let ident = timestamp.Replace(":", "_")
-    let logging =
-        setupSerilog
-            [
-                addConsoleSink <| Some LogLevelError
-                addDailyFileSink <| sprintf "log/%s/%s" ident logFile
-                //addSeqSink "http://localhost:5341"
-            ]
-    let env = Env.live MailboxPlatform logging "SuperClip"
-
-    Async.AwaitTask <| doRegisterAsync env
-    |> Async.RunSynchronously
-
-    let primary =
-        Async.AwaitTask <| doSpawnPrimaryAsync env
-        |> Async.RunSynchronously
-
-    (env, primary)

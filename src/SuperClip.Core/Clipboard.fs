@@ -7,6 +7,10 @@ open NodaTime
 
 type Content =
     | Text of string
+with
+    member this.Hash =
+        match this with
+        | Text text -> calcSha256Sum text
 
 type Source =
     | Local
@@ -25,6 +29,7 @@ type Item = {
         }
     static member Empty =
         Item.Create Instant.MinValue (Text "") Local
+    member this.Hash = this.Content.Hash
 
 type Req =
     | DoGet of Callback<Item>
@@ -34,6 +39,8 @@ with interface IReq
 type Evt =
     | OnChanged of Item
 with interface IEvt
+
+type Agent = IAgent<Req, Evt>
 
 let DoSet' content callback =
     DoSet (content, callback)
