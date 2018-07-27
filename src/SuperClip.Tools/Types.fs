@@ -6,5 +6,3 @@ exception ParseException of string
 exception ExecuteException of string
 
 type App = SuperClip.App.Types.App
-
-

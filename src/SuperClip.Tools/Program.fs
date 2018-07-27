@@ -23,7 +23,6 @@ with
 let execute (args : ParseResults<Args>) =
     let verbose = args.Contains Verbose
     let consoleLogLevel = if verbose then LogLevelInformation else LogLevelWarning
-    Xamarin.Forms.Forms.Init ()
     let app = SuperClip.App.App.initApp consoleLogLevel "super-clip-tools-.log"
 
     if args.Contains Watch_Primary then
