@@ -22,13 +22,12 @@ let internal doGetAsync : GetTask<Agent, unit> =
 
 let internal onGetAsync
                 (res : Result<Clipboard.Content, exn>)
-                (current : Clipboard.Item option)
+                (current : Clipboard.Item)
                 (callbacks : (IReq * Callback<Item>) list)
                     : GetTask<Agent, unit> =
     fun runner -> task {
         res
         |> Result.iter (fun _ ->
-            let current = current |> Option.get
             callbacks
             |> List.iterBack (fun (req, callback) ->
                 reply runner callback <| ack req current

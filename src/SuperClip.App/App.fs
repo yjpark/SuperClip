@@ -86,14 +86,11 @@ let initApp application env =
     let args = AppArgs.Create init update subscribe view setupAsync application
     env
     |> AppHelper.init App.Spawn args (fun app' ->
-        printfn "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
         app <- Some app'
     )
 
 let initApplication () =
-    printfn "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     let env = AppHelper.env "SuperClip" LogLevelError "super-clip-.log"
     application <- AppHelper.newApplication env
     env |> initApp (Option.get application)
-    printfn "BBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
     application |> Option.get

@@ -63,12 +63,13 @@ let private onGet (res : Result<Clipboard.Content, exn>) : ActorOperate =
         let current =
             match res with
             | Ok content ->
-                let current = Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
-                Some current
+                if content <> model.Current.Content then
+                    Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
+                else
+                    model.Current
             | Error _err ->
-                None
+                model.Current
         runner.AddTask ignoreOnFailed <| onGetAsync res current model.WaitingCallbacks
-        let current = current |> Option.defaultValue model.Current
         let nextGetTime =
             runner.Actor.Args.CheckInterval
             |> Option.map (fun i ->
