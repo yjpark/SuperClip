@@ -6,7 +6,7 @@ open AppKit
 open Xamarin.Forms
 open Xamarin.Forms.Platform.MacOS
 
-module AppTypes = SuperClip.App.Types
+module App = SuperClip.App.App
 
 [<Register ("AppDelegate")>]
 type AppDelegate () =
@@ -22,5 +22,5 @@ type AppDelegate () =
     override this.MainWindow = window
     override this.DidFinishLaunching (notification : NSNotification) =
         Forms.Init ()
-        this.LoadApplication (new AppTypes.App())
+        this.LoadApplication (App.initApplication ())
         base.DidFinishLaunching(notification)

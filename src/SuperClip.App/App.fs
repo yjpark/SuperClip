@@ -9,8 +9,10 @@ open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
+module AppHelper = Dap.Forms.App.Helper
 
 open SuperClip.Core
+open Dap.Forms.App
 module HistoryTypes = SuperClip.Core.History.Types
 
 module History = SuperClip.Core.History.Agent
@@ -77,13 +79,21 @@ let view : AppView =
             )
         )
 
-let args = AppArgs.Create init update subscribe view setupAsync
+let mutable app : App option = None
+let mutable application : Application option = None
 
-let initApp consoleLogLevel logFile =
-    App.CreateAsync args consoleLogLevel logFile
-    |> Async.AwaitTask
-    |> Async.RunSynchronously
+let initApp application env =
+    let args = AppArgs.Create init update subscribe view setupAsync application
+    env
+    |> AppHelper.init App.Spawn args (fun app' ->
+        printfn "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+        app <- Some app'
+    )
 
 let initApplication () =
-    let app = initApp LogLevelError "super-clip-.log"
-    app.Application
+    printfn "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    let env = AppHelper.env "SuperClip" LogLevelError "super-clip-.log"
+    application <- AppHelper.newApplication env
+    env |> initApp (Option.get application)
+    printfn "BBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+    application |> Option.get

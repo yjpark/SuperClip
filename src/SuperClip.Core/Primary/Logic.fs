@@ -6,6 +6,7 @@ open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
+open Dap.Forms
 
 open SuperClip.Core
 open SuperClip.Core.Primary.Types
@@ -24,13 +25,15 @@ let private doGet req (callback : Callback<Clipboard.Item>) : ActorOperate =
                 | true ->
                     noOperation
                 | false ->
-                    runner.AddTask onGetFailed doGetAsync
+                    runner.AddUiTask onGetFailed doGetAsync
                     updateModel (fun m -> {m with Getting = true})
 
 let private doSet req ((content, callback) : Clipboard.Content * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         match content with
-        | Text text -> CrossClipboard.Current.SetText (text)
+        | Text text ->
+            runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
+            |> ignore
         let current = Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
         runner.Deliver <| Evt ^<| OnChanged current
         reply runner callback <| ack req ()
@@ -50,7 +53,7 @@ let private doInit : ActorOperate =
 let private onTick ((time, _duration) : Instant * Duration) : ActorOperate =
     fun runner (model, cmd) ->
         if not model.Getting && time >= model.NextGetTime then
-            runner.AddTask onGetFailed doGetAsync
+            runner.AddUiTask onGetFailed doGetAsync
             ({model with Getting = true}, cmd)
         else
             (model, cmd)
