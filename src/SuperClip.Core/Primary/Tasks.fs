@@ -13,11 +13,14 @@ let internal onGetFailed : OnFailed<Agent> =
     fun runner e ->
         runner.Deliver <| InternalEvt ^<| OnGet ^<| Error e
 
-let internal doGetAsync : GetTask<Agent, unit> =
+let internal doGetAsync (index : int32) : GetTask<Agent, unit> =
     fun runner -> task {
         let! text = CrossClipboard.Current.GetTextAsync ()
-        let content = Clipboard.Text text
-        runner.Deliver <| InternalEvt ^<| OnGet ^<| Ok content
+        if runner.Actor.State.GettingIndex = index then
+            let content = Clipboard.Text text
+            runner.Deliver <| InternalEvt ^<| OnGet ^<| Ok content
+        else
+            logWarn runner "doGetAsync" "Timeout" (index, runner.Actor.State.GettingIndex, text)
     }
 
 let internal onGetAsync

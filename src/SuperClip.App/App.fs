@@ -79,6 +79,7 @@ let view : AppView =
             )
         )
 
+let mutable env : IEnv option = None
 let mutable app : App option = None
 let mutable application : Application option = None
 
@@ -87,10 +88,17 @@ let initApp application env =
     env
     |> AppHelper.init App.Spawn args (fun app' ->
         app <- Some app'
+        logWarn app' "initApp" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" ()
+        app'.AppState.Primary.Post <| Clipboard.DoSet' (Clipboard.Text "TEST 1") None
+        app'.AppState.Primary.Post <| Clipboard.DoGet None
+        app'.AppState.Primary.Post <| Clipboard.DoSet' (Clipboard.Text "TEST 2") None
+        app'.AppState.Primary.Post <| Clipboard.DoGet None
+        logWarn app' "initApp" "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" ()
     )
 
 let initApplication () =
-    let env = AppHelper.env "SuperClip" LogLevelError "super-clip-.log"
-    application <- AppHelper.newApplication env
-    env |> initApp (Option.get application)
+    let env' = AppHelper.env "SuperClip" LogLevelError "super-clip-.log"
+    env <- Some env'
+    application <- AppHelper.newApplication env'
+    env' |> initApp (Option.get application)
     application |> Option.get

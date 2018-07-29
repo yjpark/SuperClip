@@ -8,16 +8,20 @@ type Evt = Clipboard.Evt
 
 type Args = {
     CheckInterval : float<second> option
+    TimeoutDuration : Duration
 } with
     static member New () =
         {
-            CheckInterval = Some 1.0<second>
+            CheckInterval = Some 0.5<second>
+            TimeoutDuration = Duration.FromSeconds 1.0
         }
 
 and Model = {
     Current : Clipboard.Item
     Getting : bool
+    GettingIndex : int
     NextGetTime : Instant
+    TimeoutTime : Instant
     WaitingCallbacks : (IReq * Callback<Item>) list
 }
 
