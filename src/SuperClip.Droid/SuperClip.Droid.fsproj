@@ -1925,11 +1925,8 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid' And $(TargetFrameworkVersion) == 'v8.1'">
       <ItemGroup>
-        <Reference Include="Java.Interop">
-          <Paket>True</Paket>
-        </Reference>
         <Reference Include="Xamarin.Essentials">
-          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.8.0-preview\lib\monoandroid81\Xamarin.Essentials.dll</HintPath>
+          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.9.1-preview\lib\monoandroid81\Xamarin.Essentials.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -1938,7 +1935,7 @@
     <When Condition="($(TargetFrameworkIdentifier) == '.NETCoreApp' And $(TargetFrameworkVersion) == 'v1.0') Or ($(TargetFrameworkIdentifier) == '.NETCore' And $(TargetFrameworkVersion) == 'v5.0') Or ($(TargetFrameworkIdentifier) == 'Xamarin.Mac')">
       <ItemGroup>
         <Reference Include="Xamarin.Essentials">
-          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.8.0-preview\lib\netstandard1.0\Xamarin.Essentials.dll</HintPath>
+          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.9.1-preview\lib\netstandard1.0\Xamarin.Essentials.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -1947,7 +1944,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.7.1'">
       <ItemGroup>
         <Reference Include="Xamarin.Essentials">
-          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.8.0-preview\lib\netstandard2.0\Xamarin.Essentials.dll</HintPath>
+          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.9.1-preview\lib\netstandard2.0\Xamarin.Essentials.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -1956,7 +1953,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == 'Xamarin.iOS'">
       <ItemGroup>
         <Reference Include="Xamarin.Essentials">
-          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.8.0-preview\lib\xamarinios10\Xamarin.Essentials.dll</HintPath>
+          <HintPath>..\..\..\..\..\.nuget\packages\xamarin.essentials\0.9.1-preview\lib\xamarinios10\Xamarin.Essentials.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

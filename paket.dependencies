@@ -20,6 +20,7 @@ nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios
 
 nuget Xamarin.Plugins.Clipboard
 
+
 # UWP
 nuget Microsoft.NETCore.UniversalWindowsPlatform framework: uap10.0
 
@@ -29,6 +30,9 @@ nuget Xamarin.Android.FSharp.ResourceProvider framework: monoandroid8.1
 # GTK
 nuget Xamarin.Forms.Platform.GTK framework: net471
 # nuget GtkSharp framework: net471
+
+# Ooui
+nuget Ooui.Forms
 
 group Build
     source https://nuget.yjpark.org/nuget/dap

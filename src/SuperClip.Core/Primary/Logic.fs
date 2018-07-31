@@ -44,7 +44,7 @@ let private doSet req ((content, callback) : Clipboard.Content * Callback<unit>)
             runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
             |> ignore
         let current = Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
-        runner.Deliver <| Evt ^<| OnChanged current
+        runner.Deliver <| Evt ^<| OnSet current
         reply runner callback <| ack req ()
         ({model with Current = current}, cmd)
 
@@ -70,16 +70,16 @@ let private onTick ((time, _duration) : Instant * Duration) : ActorOperate =
 
 let private onGet (res : Result<Clipboard.Content, exn>) : ActorOperate =
     fun runner (model, cmd) ->
-        let current =
+        let (current, changed) =
             match res with
             | Ok content ->
                 if content <> model.Current.Content then
                     logWarn runner "PrimaryClipboard" "OnGet" content
-                    Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
+                    (Clipboard.Item.Create runner.Clock.Now content Clipboard.Local, true)
                 else
-                    model.Current
+                    (model.Current, false)
             | Error _err ->
-                model.Current
+                (model.Current, false)
         runner.AddTask ignoreOnFailed <| onGetAsync res current model.WaitingCallbacks
         let nextGetTime =
             runner.Actor.Args.CheckInterval
@@ -87,14 +87,17 @@ let private onGet (res : Result<Clipboard.Content, exn>) : ActorOperate =
                 runner.Clock.Now + Duration.FromSeconds (float i)
             )|> Option.defaultValue model.NextGetTime
         (runner, model, cmd)
-        |=|> updateModel (fun m ->
+        |-|> updateModel (fun m ->
             {model with
                 Current = current
                 Getting = false
                 NextGetTime = nextGetTime
                 WaitingCallbacks = []
             }
-        )
+        )|=|> if changed then
+                addSubCmd Evt <| OnChanged current
+            else
+                noOperation
 
 let private update : Update<Agent, Model, Msg> =
     fun runner model msg ->

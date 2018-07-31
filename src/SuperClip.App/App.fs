@@ -41,6 +41,8 @@ let update : Update<App, AppModel, AppMsg> =
         | PrimaryEvt evt ->
             logError runner "Update" "PrimaryEvt" evt
             match evt with
+            | Clipboard.OnSet item ->
+                model.History.Actor.Handle <| HistoryTypes.DoAdd' item None
             | Clipboard.OnChanged item ->
                 model.History.Actor.Handle <| HistoryTypes.DoAdd' item None
             (model, Cmd.none)
@@ -79,26 +81,31 @@ let view : AppView =
             )
         )
 
-let mutable env : IEnv option = None
-let mutable app : App option = None
-let mutable application : Application option = None
+let mutable private env' : IEnv option = None
+let getEnv () = env' |> Option.get
+
+let mutable private onInit' : Bus<NoEvt> option = None
+let getOnInit () = (onInit' |> Option.get) .Publish
+
+let mutable private app' : App option = None
+let getApp () = app' |> Option.get
+
+let mutable private application' : Application option = None
+let getApplication () = application' |> Option.get
 
 let initApp application env =
+    env' <- Some env
+    application' <- Some application
+    onInit' <- Some <| new Bus<NoEvt> (env :> IOwner)
     let args = AppArgs.Create init update subscribe view setupAsync application
     env
-    |> AppHelper.init App.Spawn args (fun app' ->
-        app <- Some app'
-        logWarn app' "initApp" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" ()
-        app'.AppState.Primary.Post <| Clipboard.DoSet' (Clipboard.Text "TEST 1") None
-        app'.AppState.Primary.Post <| Clipboard.DoGet None
-        app'.AppState.Primary.Post <| Clipboard.DoSet' (Clipboard.Text "TEST 2") None
-        app'.AppState.Primary.Post <| Clipboard.DoGet None
-        logWarn app' "initApp" "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" ()
+    |> AppHelper.init App.Spawn args (fun app ->
+        app' <- Some app
+        (onInit' |> Option.get) .Trigger NoEvt
     )
 
 let initApplication () =
-    let env' = AppHelper.env "SuperClip" LogLevelError "super-clip-.log"
-    env <- Some env'
-    application <- AppHelper.newApplication env'
-    env' |> initApp (Option.get application)
-    application |> Option.get
+    let env = AppHelper.env "SuperClip" LogLevelError "super-clip-.log"
+    env
+    |> initApp (AppHelper.newApplication env |> Option.get)
+    getApplication ()

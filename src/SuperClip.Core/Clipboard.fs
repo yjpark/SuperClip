@@ -37,6 +37,7 @@ type Req =
 with interface IReq
 
 type Evt =
+    | OnSet of Item
     | OnChanged of Item
 with interface IEvt
 

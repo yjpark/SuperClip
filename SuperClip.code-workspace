@@ -7,8 +7,11 @@
 			"path": "src/SuperClip.App"
 		},
 		{
-			"path": "src/SuperClip.Tools"
+			"path": "src/SuperClip.Ooui"
 		},
+		{
+			"path": "src/SuperClip.Tools"
+		}
 	],
     "settings": {
         "files.exclude": {

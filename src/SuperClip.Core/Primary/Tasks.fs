@@ -35,7 +35,6 @@ let internal onGetAsync
             |> List.iterBack (fun (req, callback) ->
                 reply runner callback <| ack req current
             )
-            runner.Deliver <| Evt ^<| OnChanged current
         )
         res
         |> Result.iterError (fun e ->
