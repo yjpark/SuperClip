@@ -36,15 +36,15 @@ let update : Update<App, AppModel, AppMsg> =
     fun runner model msg ->
         match msg with
         | SetPrimary content ->
-            model.Primary.Actor.Handle <| Clipboard.DoSet' content None
+            model.Primary.Actor.Handle <| Clipboard.DoSet content None
             (model, Cmd.none)
         | PrimaryEvt evt ->
             logError runner "Update" "PrimaryEvt" evt
             match evt with
             | Clipboard.OnSet item ->
-                model.History.Actor.Handle <| HistoryTypes.DoAdd' item None
+                model.History.Actor.Handle <| HistoryTypes.DoAdd item None
             | Clipboard.OnChanged item ->
-                model.History.Actor.Handle <| HistoryTypes.DoAdd' item None
+                model.History.Actor.Handle <| HistoryTypes.DoAdd item None
             (model, Cmd.none)
 
 let subscribe : Subscribe<App, AppModel, AppMsg> =

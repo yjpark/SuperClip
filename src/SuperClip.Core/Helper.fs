@@ -25,6 +25,6 @@ let doSetupAsync (env : IEnv) = task {
     let! _ = env |> doSetupPrimaryAsync
     let args = HistoryAgent.Args.New ()
     do! env |> HistoryAgent.registerAsync args
-    let! (history, _isNew) = env.HandleAsync <| DoGetAgent' HistoryAgent.Kind noKey
+    let! (history, _isNew) = env.HandleAsync <| DoGetAgent HistoryAgent.Kind noKey
     return history :?> HistoryAgent.Agent
 }

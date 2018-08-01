@@ -33,4 +33,4 @@ and Agent (param) =
     override this.Runner = this
     static member Spawn (param) = new Agent (param)
 
-let DoAdd' item callback = DoAdd (item, callback)
+let DoAdd item callback = DoAdd (item, callback)

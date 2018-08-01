@@ -43,5 +43,5 @@ with interface IEvt
 
 type Agent = IAgent<Req, Evt>
 
-let DoSet' content callback =
+let DoSet content callback =
     DoSet (content, callback)

@@ -34,12 +34,13 @@ let setTestDataAsync : GetTask<App, unit> =
         for i in 1 .. 10 do
             do! Task.Delay 1.0<second>
             let text = sprintf "Test %A" i
-            primary.Post <| Clipboard.DoSet' (Clipboard.Text text) None
+            primary.Post <| Clipboard.DoSet (Clipboard.Text text) None
         return ()
     }
 
 [<EntryPoint>]
 let main argv =
+    Ooui.UI.Port <- 6060
     Xamarin.Forms.Forms.Init ();
     CrossClipboard.Current <- new ClipboardImplementation ()
     App.initApplication () |> ignore
