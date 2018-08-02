@@ -27,7 +27,7 @@ type ClipboardImplementation () =
         | Mac ->
             Shell.bash <| sprintf "echo \"%s\" | pbcopy" text
         | Linux ->
-            Shell.bash <| sprintf "echo \"%s\" | xclip -selection clipboard" text
+            Shell.bash <| sprintf "echo \"%s\" | xsel -i -b" text
         | Windows ->
             Shell.bat <| sprintf "echo %s | clip" text
         |> ignore
