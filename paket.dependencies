@@ -10,6 +10,7 @@ nuget FSharp.Core
 nuget Argu
 
 nuget Dap.Forms
+nuget Dap.Local
 
 nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4

@@ -860,6 +860,8 @@ NUGET
     Dap.Forms (0.6.0)
       Dap.Archive (>= 0.6) - restriction: >= netstandard2.0
       Elmish.XamarinForms (>= 0.15.2) - restriction: >= netstandard2.0
+    Dap.Local (0.6.0)
+      Dap.Archive (>= 0.6) - restriction: >= netstandard2.0
     Dap.Platform (0.6.4) - restriction: >= netstandard2.0
       Dap.Prelude (>= 0.6) - restriction: >= netstandard2.0
       Elmish (>= 1.0.3) - restriction: >= netstandard2.0
