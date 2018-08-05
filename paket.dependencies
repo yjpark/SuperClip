@@ -35,6 +35,22 @@ nuget Xamarin.Forms.Platform.GTK framework: net471
 # Ooui
 nuget Ooui.Forms
 
+# Server
+nuget Dap.Farango
+nuget jose-jwt
+nuget Fable.JsonConverter
+
+# Server.Web
+nuget Dap.Remote.AspNetCore
+nuget Microsoft.AspNetCore.Cors
+nuget Microsoft.AspNetCore.Hosting
+nuget Microsoft.AspNetCore.Diagnostics
+nuget Microsoft.AspNetCore.Server.Kestrel
+nuget Microsoft.AspNetCore.StaticFiles
+nuget Microsoft.AspNetCore.WebSockets
+nuget Giraffe
+nuget Saturn
+
 group Build
     source https://nuget.yjpark.org/nuget/dap
     source https://www.nuget.org/api/v2

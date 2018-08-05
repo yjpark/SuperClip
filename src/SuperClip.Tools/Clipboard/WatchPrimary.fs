@@ -22,8 +22,10 @@ with
                 sprintf "Quit after <seconds>"
 
 let executeAsync (app : App) (args : ParseResults<Args>) : Task<unit> = task {
+    (* Todo
     app.AppState.Primary.Actor.OnEvent.AddWatcher app "Watch_Primary" (fun evt ->
         logWarn app "Watch_Primary" "On_Event" evt
     )
+    *)
     ()
 }

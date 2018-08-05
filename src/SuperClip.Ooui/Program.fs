@@ -12,9 +12,9 @@ open Dap.Prelude
 open Dap.Platform
 
 open SuperClip.Core
-open SuperClip.App.Types
+open SuperClip.Forms.Types
 open SuperClip.Clipboard
-module App = SuperClip.App.App
+module App = SuperClip.Forms.App
 
 let onExit (env : IEnv) (exited : AutoResetEvent) =
     fun (_sender : obj) (cancelArgs : ConsoleCancelEventArgs) ->
@@ -34,7 +34,7 @@ let setTestDataAsync : GetTask<App, unit> =
         for i in 1 .. 10 do
             do! Task.Delay 1.0<second>
             let text = sprintf "Test %A" i
-            primary.Post <| Clipboard.DoSet (Clipboard.Text text) None
+            primary.Post <| Clipboard.DoSet (Text text) None
         return ()
     }
 

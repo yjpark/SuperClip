@@ -17,7 +17,7 @@ type Args = {
         }
 
 and Model = {
-    Current : Clipboard.Item
+    Current : Item
     Getting : bool
     GettingIndex : int
     NextGetTime : Instant
@@ -28,7 +28,7 @@ and Model = {
 and InternalEvt =
     | DoInit
     | OnTick of Instant * Duration
-    | OnGet of Result<Clipboard.Content, exn>
+    | OnGet of Result<Content, exn>
 
 and Msg =
     | Req of Req

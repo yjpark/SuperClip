@@ -2,10 +2,18 @@
 
 open Argu
 
+open Plugin.Clipboard
+
 open Dap.Prelude
 open Dap.Platform
 
-open SuperClip.App
+open SuperClip.Core
+open SuperClip.Clipboard
+
+open Dap.Prelude
+open Dap.Platform
+
+open SuperClip.Server
 open SuperClip.Tools.Clipboard
 
 type Args =
@@ -22,8 +30,13 @@ with
 
 let execute (args : ParseResults<Args>) =
     let verbose = args.Contains Verbose
+
+    Ooui.UI.Port <- 6061
+    Xamarin.Forms.Forms.Init ();
+    CrossClipboard.Current <- new ClipboardImplementation ()
+
     let consoleLogLevel = if verbose then LogLevelInformation else LogLevelWarning
-    let app = SuperClip.App.App.initApp consoleLogLevel "super-clip-tools-.log"
+    let app = App.init' consoleLogLevel "super-clip-tools-.log"
 
     if args.Contains Watch_Primary then
         WatchPrimary.executeAsync app <| args.GetResult Watch_Primary

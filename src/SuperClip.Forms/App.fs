@@ -1,7 +1,8 @@
-module SuperClip.App.App
+module SuperClip.Forms.App
 
 open FSharp.Control.Tasks.V2
 
+open Elmish
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
@@ -9,35 +10,45 @@ open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
+open Dap.Remote
+open Dap.Forms.App
 module AppHelper = Dap.Forms.App.Helper
 
 open SuperClip.Core
-open Dap.Forms.App
-module HistoryTypes = SuperClip.Core.History.Types
+module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
+module WebSocketProxy = Dap.Remote.WebSocketProxy.Proxy
 
+module HistoryTypes = SuperClip.Core.History.Types
 module History = SuperClip.Core.History.Agent
 module Primary = SuperClip.Core.Primary.Service
+module CloudTypes = SuperClip.Core.Cloud.Types
 
 let mutable history : History.Agent option = None
+let mutable cloudStub : CloudStub option = None
 
 let setupAsync (env : IEnv) = task {
     let! history' = env |> Helper.doSetupAsync
     history <- Some history'
+    do! env |> PacketClient.registerAsync true None
+    let! cloudStub' = env |> WebSocketProxy.addAsync NoKey CloudTypes.StubSpec CloudUri true
+    let cloudStub' = cloudStub' :> CloudStub
+    cloudStub <- Some cloudStub'
 }
 
 let init : Init<AppIniter, unit, AppModel, AppMsg> =
     fun initer () ->
         ({
-            Primary = initer.Env |> Primary.get noKey
+            Primary = initer.Env |> Primary.get NoKey
             History = history |> Option.get
-        }, Cmd.none)
+            CloudStub = cloudStub |> Option.get
+        }, noCmd)
 
 let update : Update<App, AppModel, AppMsg> =
     fun runner model msg ->
         match msg with
         | SetPrimary content ->
             model.Primary.Actor.Handle <| Clipboard.DoSet content None
-            (model, Cmd.none)
+            (model, noCmd)
         | PrimaryEvt evt ->
             logError runner "Update" "PrimaryEvt" evt
             match evt with
@@ -45,16 +56,30 @@ let update : Update<App, AppModel, AppMsg> =
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
             | Clipboard.OnChanged item ->
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
-            (model, Cmd.none)
+            (model, noCmd)
+        | CloudRes res ->
+            logError runner "Update" "CloudRes" res
+            (model, noCmd)
+        | CloudEvt evt ->
+            logError runner "Update" "CloudEvt" evt
+            match evt with
+            | CloudTypes.OnChanged item ->
+                model.History.Actor.Handle <| HistoryTypes.DoAdd item None
+            | _ -> ()
+            (model, noCmd)
 
 let subscribe : Subscribe<App, AppModel, AppMsg> =
     fun runner model ->
-        subscribeBus runner model PrimaryEvt model.Primary.Actor.OnEvent
+        Cmd.batch [
+            subscribeBus runner model PrimaryEvt model.Primary.Actor.OnEvent
+            subscribeBus runner model CloudRes model.CloudStub.OnResponse
+            subscribeBus runner model CloudEvt model.CloudStub.Actor.OnEvent
+        ]
 
-let getText (item : Clipboard.Item) =
+let getText (item : Item) =
     let text =
         match item.Content with
-        | Clipboard.Text text -> text
+        | Text text -> text
     sprintf "[%A] %s" item.Time text
 
 let view : AppView =

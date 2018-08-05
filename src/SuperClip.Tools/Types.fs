@@ -5,4 +5,4 @@ open Dap.Platform
 exception ParseException of string
 exception ExecuteException of string
 
-type App = SuperClip.App.Types.App
+type App = SuperClip.Server.Types.App

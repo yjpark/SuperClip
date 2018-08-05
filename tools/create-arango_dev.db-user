@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+curl -X POST --data-binary @- --dump - http://root:Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5@localhost:8529/_api/database <<EOF
+{
+  "name" : "superclip_dev",
+  "users" : [ 
+    { 
+      "username" : "superclip_dev",
+      "passwd" : "Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5",
+      "active" : true
+    }
+  ]
+}
+EOF

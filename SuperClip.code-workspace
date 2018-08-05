@@ -4,10 +4,16 @@
 			"path": "src/SuperClip.Core"
 		},
 		{
-			"path": "src/SuperClip.App"
+			"path": "src/SuperClip.Forms"
 		},
 		{
 			"path": "src/SuperClip.Ooui"
+		},
+		{
+			"path": "src/SuperClip.Server"
+		},
+		{
+			"path": "src/SuperClip.Server.Web"
 		},
 		{
 			"path": "src/SuperClip.Tools"

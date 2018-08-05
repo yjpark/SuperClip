@@ -6,7 +6,7 @@ open AppKit
 open Xamarin.Forms
 open Xamarin.Forms.Platform.MacOS
 
-module App = SuperClip.App.App
+module App = SuperClip.Forms.App
 
 [<Register ("AppDelegate")>]
 type AppDelegate () =

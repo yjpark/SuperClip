@@ -135,9 +135,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj">
+    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj">
       <Project>{62595787-f3e8-48eb-b6c5-95166c42a669}</Project>
-      <Name>SuperClip.App</Name>
+      <Name>SuperClip.Forms</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

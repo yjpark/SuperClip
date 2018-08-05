@@ -11,7 +11,7 @@ open Argu
 open Dap.Prelude
 open Dap.Platform
 
-open SuperClip.App.Types
+open SuperClip.Forms.Types
 open SuperClip.Tools
 
 let onExit (app : App) (exited : AutoResetEvent) =

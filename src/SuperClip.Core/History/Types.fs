@@ -14,14 +14,14 @@ type Args = {
         }
 
 and Model = {
-    RecentItems : Clipboard.Item list
-    AllItems : Map<string, Clipboard.Item>
+    RecentItems : Item list
+    AllItems : Map<string, Item>
 }
 
 and Req =
-    | DoAdd of Clipboard.Item * Callback<bool>      // ~> isNew
-    | DoRemoveOne of Clipboard.Content * Callback<Clipboard.Item option>
-    | DoRemoveMany of (Clipboard.Item -> bool) * Callback<Clipboard.Item list>
+    | DoAdd of Item * Callback<bool>      // ~> isNew
+    | DoRemoveOne of Content * Callback<Item option>
+    | DoRemoveMany of (Item -> bool) * Callback<Item list>
 with interface IReq
 
 and Msg =

@@ -15,9 +15,9 @@ module HistoryAgent = SuperClip.Core.History.Agent
 
 let doSetupPrimaryAsync (env : IEnv) = task {
     let args = TickerService.Args.New (10.0)
-    let! _ = env |> TickerService.addAsync noKey args
+    let! _ = env |> TickerService.addAsync NoKey args
     let args = PrimaryService.Args.New ()
-    let! primary = env |> PrimaryService.addAsync noKey args
+    let! primary = env |> PrimaryService.addAsync NoKey args
     return primary
 }
 
@@ -25,6 +25,6 @@ let doSetupAsync (env : IEnv) = task {
     let! _ = env |> doSetupPrimaryAsync
     let args = HistoryAgent.Args.New ()
     do! env |> HistoryAgent.registerAsync args
-    let! (history, _isNew) = env.HandleAsync <| DoGetAgent HistoryAgent.Kind noKey
+    let! (history, _isNew) = env.HandleAsync <| DoGetAgent HistoryAgent.Kind NoKey
     return history :?> HistoryAgent.Agent
 }

@@ -1,16 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Types.fs" />
-    <Compile Include="Util.fs" />
-    <Compile Include="Clipboard/WatchPrimary.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Ooui\SuperClip.Ooui.fsproj" />
     <ProjectReference Include="..\SuperClip.Server\SuperClip.Server.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

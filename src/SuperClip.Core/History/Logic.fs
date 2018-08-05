@@ -11,7 +11,7 @@ module TickerService = Dap.Platform.Ticker.Service
 
 type ActorOperate = Operate<Agent, Model, Msg>
 
-let private doAdd req ((item, callback) : Clipboard.Item * Callback<bool>) : ActorOperate =
+let private doAdd req ((item, callback) : Item * Callback<bool>) : ActorOperate =
     fun runner (model, cmd) ->
         let hash = item.Hash
         let recentItems =
@@ -34,14 +34,14 @@ let private doAdd req ((item, callback) : Clipboard.Item * Callback<bool>) : Act
         (runner, model, cmd)
         |=|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
 
-let private fillRecentItems (runner : Agent) (allItems : Map<string, Clipboard.Item>) (recentItems : Clipboard.Item list) =
+let private fillRecentItems (runner : Agent) (allItems : Map<string, Item>) (recentItems : Item list) =
     if (recentItems |> List.length) < runner.Actor.Args.RecentSize then
         //TODO
         recentItems
     else
         recentItems
 
-let private doRemoveOne req ((content, callback) : Clipboard.Content * Callback<Clipboard.Item option>) : ActorOperate =
+let private doRemoveOne req ((content, callback) : Content * Callback<Item option>) : ActorOperate =
     fun runner (model, cmd) ->
         let hash = content.Hash
         model.AllItems
@@ -62,7 +62,7 @@ let private doRemoveOne req ((content, callback) : Clipboard.Content * Callback<
                 reply runner callback <| ack req None
                 (model, cmd)
 
-let private doRemoveMany req ((predicate, callback) : (Clipboard.Item -> bool) * Callback<Clipboard.Item list>) : ActorOperate =
+let private doRemoveMany req ((predicate, callback) : (Item -> bool) * Callback<Item list>) : ActorOperate =
     fun runner (model, cmd) ->
         let (removed, left) =
             model.AllItems

@@ -13,8 +13,10 @@ let Dist = "Dist"
 
 let allProjects =
     !! "src/SuperClip.Core/*.fsproj"
-    ++ "src/SuperClip.App/*.fsproj"
+    ++ "src/SuperClip.Forms/*.fsproj"
     ++ "src/SuperClip.Ooui/*.fsproj"
+    ++ "src/SuperClip.Server/*.fsproj"
+    ++ "src/SuperClip.Server.Web/*.fsproj"
     ++ "src/SuperClip.Tools/*.fsproj"
 
 DotNet.createAndRun DotNet.debug allProjects

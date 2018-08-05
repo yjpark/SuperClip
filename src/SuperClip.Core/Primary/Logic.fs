@@ -27,7 +27,7 @@ let private doGet' : ActorOperate =
             TimeoutTime = runner.Clock.Now + runner.Actor.Args.TimeoutDuration
         }, cmd)
 
-let private doGet req (callback : Callback<Clipboard.Item>) : ActorOperate =
+let private doGet req (callback : Callback<Item>) : ActorOperate =
     fun runner (model, cmd) ->
         (runner, model, cmd)
         |-|> updateModel (fun m -> {m with WaitingCallbacks = (req, callback) :: m.WaitingCallbacks})
@@ -37,20 +37,20 @@ let private doGet req (callback : Callback<Clipboard.Item>) : ActorOperate =
                 | false ->
                     doGet'
 
-let private doSet req ((content, callback) : Clipboard.Content * Callback<unit>) : ActorOperate =
+let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         match content with
         | Text text ->
             runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
             |> ignore
-        let current = Clipboard.Item.Create runner.Clock.Now content Clipboard.Local
+        let current = Item.Create runner.Clock.Now content Local
         runner.Deliver <| Evt ^<| OnSet current
         reply runner callback <| ack req ()
         ({model with Current = current}, cmd)
 
 let private doInit : ActorOperate =
     fun runner (model, cmd) ->
-        let ticker = runner.Env |> TickerService.get noKey
+        let ticker = runner.Env |> TickerService.get NoKey
         ticker.Actor.OnEvent.AddWatcher runner "OnTick" (fun evt ->
             match evt with
             | TickerTypes.OnTick (a, b) ->
@@ -68,14 +68,14 @@ let private onTick ((time, _duration) : Instant * Duration) : ActorOperate =
         else
             (model, cmd)
 
-let private onGet (res : Result<Clipboard.Content, exn>) : ActorOperate =
+let private onGet (res : Result<Content, exn>) : ActorOperate =
     fun runner (model, cmd) ->
         let (current, changed) =
             match res with
             | Ok content ->
                 if content <> model.Current.Content then
                     logWarn runner "PrimaryClipboard" "OnGet" content
-                    (Clipboard.Item.Create runner.Clock.Now content Clipboard.Local, true)
+                    (Item.Create runner.Clock.Now content Local, true)
                 else
                     (model.Current, false)
             | Error _err ->
@@ -117,7 +117,7 @@ let private update : Update<Agent, Model, Msg> =
 let private init : ActorInit<Args, Model, Msg> =
     fun runner args ->
         ({
-            Current = Clipboard.Item.Empty
+            Current = Item.Empty
             Getting = false
             GettingIndex = -1
             NextGetTime = Instant.MinValue

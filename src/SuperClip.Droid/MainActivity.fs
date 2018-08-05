@@ -12,7 +12,7 @@ open Android.Widget
 open Android.OS
 open Xamarin.Forms.Platform.Android
 
-module App = SuperClip.App.App
+module App = SuperClip.Forms.App
 
 [<Activity (Label = "SuperClip.Droid", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
