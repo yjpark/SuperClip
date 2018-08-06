@@ -3,14 +3,6 @@
 module SuperClip.Core.Clipboard
 
 open NodaTime
-#if FABLE_COMPILER
-module E = Thoth.Json.Encode
-module D = Thoth.Json.Decode
-#else
-open Newtonsoft.Json
-module E = Thoth.Json.Net.Encode
-module D = Thoth.Json.Net.Decode
-#endif
 
 open Dap.Prelude
 open Dap.Platform
