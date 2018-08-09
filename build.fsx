@@ -16,7 +16,7 @@ let allProjects =
     ++ "src/SuperClip.Forms/*.fsproj"
     ++ "src/SuperClip.Ooui/*.fsproj"
     ++ "src/SuperClip.Server/*.fsproj"
-    ++ "src/SuperClip.Server.Web/*.fsproj"
+    ++ "src/SuperClip.Web/*.fsproj"
     ++ "src/SuperClip.Tools/*.fsproj"
 
 DotNet.createAndRun DotNet.debug allProjects

@@ -10,7 +10,7 @@ nuget FSharp.Core
 nuget Argu
 
 nuget Dap.Forms
-nuget Dap.Local
+nuget Dap.Local.Farango
 
 nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4
@@ -36,20 +36,10 @@ nuget Xamarin.Forms.Platform.GTK framework: net471
 nuget Ooui.Forms
 
 # Server
-nuget Dap.Farango
-nuget jose-jwt
-nuget Fable.JsonConverter
+nuget Dap.Local.Farango
+nuget Dap.Remote.Server
 
-# Server.Web
-nuget Dap.Remote.AspNetCore
-nuget Microsoft.AspNetCore.Cors
-nuget Microsoft.AspNetCore.Hosting
-nuget Microsoft.AspNetCore.Diagnostics
-nuget Microsoft.AspNetCore.Server.Kestrel
-nuget Microsoft.AspNetCore.StaticFiles
-nuget Microsoft.AspNetCore.WebSockets
-nuget Giraffe
-nuget Saturn
+nuget Dap.Remote.Web
 
 group Build
     source https://nuget.yjpark.org/nuget/dap

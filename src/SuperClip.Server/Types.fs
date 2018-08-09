@@ -5,20 +5,8 @@ open Farango.Types
 
 open Dap.Prelude
 open Dap.Platform
+open Dap.Local.Farango.App
 
-type App = {
-    Env : IEnv
-    Db : Connection
-    Ident : string
-} with
-    member this.Log m = this.Env.Log m
-    interface ILogger with
-        member this.Log m = this.Env.Log m
+type App = WithDb.Model
 
-type DbServiceArgs = {
-    Db : Connection
-} with
-    static member Create conn =
-        {
-            Db = conn
-        }
+let getInstance = WithDb.getInstance

@@ -13,7 +13,7 @@
 			"path": "src/SuperClip.Server"
 		},
 		{
-			"path": "src/SuperClip.Server.Web"
+			"path": "src/SuperClip.Web"
 		},
 		{
 			"path": "src/SuperClip.Tools"

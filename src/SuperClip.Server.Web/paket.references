@@ -1,9 +1,0 @@
-Dap.Remote.AspNetCore
-Microsoft.AspNetCore.Cors
-Microsoft.AspNetCore.Hosting
-Microsoft.AspNetCore.Diagnostics
-Microsoft.AspNetCore.Server.Kestrel
-Microsoft.AspNetCore.StaticFiles
-Microsoft.AspNetCore.WebSockets
-Giraffe
-Saturn

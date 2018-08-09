@@ -5,14 +5,12 @@ open System.Threading
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 
-open Xamarin.Forms
 open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
 
 open SuperClip.Core
-open SuperClip.Forms.Types
 open SuperClip.Clipboard
 module App = SuperClip.Forms.App
 
@@ -28,9 +26,9 @@ let waitForExit (env : IEnv) =
     Console.CancelKeyPress.AddHandler onExit'
     exited.WaitOne() |> ignore
 
-let setTestDataAsync : GetTask<App, unit> =
+let setTestDataAsync : GetTask<App.View, unit> =
     fun runner -> task {
-        let primary = runner.AppState.Primary
+        let primary = runner.ViewState.Primary
         for i in 1 .. 10 do
             do! Task.Delay 1.0<second>
             let text = sprintf "Test %A" i
@@ -38,11 +36,17 @@ let setTestDataAsync : GetTask<App, unit> =
         return ()
     }
 
+let onAppStarted (app : App.Model) =
+    Xamarin.Forms.Forms.LoadApplication <| app.View.Application
+    app.View.RunTask ignoreOnFailed setTestDataAsync
+
 [<EntryPoint>]
 let main argv =
     Ooui.UI.Port <- 6060
     Xamarin.Forms.Forms.Init ();
     CrossClipboard.Current <- new ClipboardImplementation ()
+    let app = App.create onAppStarted
+    (*
     App.initApplication () |> ignore
     let env = App.getEnv ()
     (App.getOnInit ()) .AddWatcher env "Ooui_Init" (fun _ ->
@@ -50,5 +54,6 @@ let main argv =
         let app = App.getApp ()
         app.RunTask ignoreOnFailed setTestDataAsync
     )
-    waitForExit env
+    *)
+    waitForExit app.Env
     0 // return an integer exit code

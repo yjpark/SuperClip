@@ -1,0 +1,57 @@
+    <Reference Include="Dap.Archive">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.archive\0.6.0\lib\netstandard2.0\Dap.Archive.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Forms">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.forms\0.6.0\lib\netstandard2.0\Dap.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Platform">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.platform\0.6.4\lib\netstandard2.0\Dap.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Prelude">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.prelude\0.6.0\lib\netstandard2.0\Dap.Prelude.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Remote">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.remote\0.6.0\lib\netstandard2.0\Dap.Remote.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.WebSocket">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.websocket\0.6.0\lib\netstandard2.0\Dap.WebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish">
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish\1.0.3\lib\net461\Elmish.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms">
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish.xamarinforms\0.15.2\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="NodaTime">
+      <HintPath>..\..\..\..\..\.nuget\packages\nodatime\2.3.0\lib\net45\NodaTime.dll</HintPath>
+    </Reference>
+    <Reference Include="TaskBuilder.fs">
+      <HintPath>..\..\..\..\..\.nuget\packages\taskbuilder.fs\2.0.0\lib\net47\TaskBuilder.fs.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog\2.7.1\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Enrichers.Thread">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog.enrichers.thread\3.0.0\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Formatting.Compact">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog.formatting.compact\1.0.0\lib\net45\Serilog.Formatting.Compact.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Console">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog.sinks.console\3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog.sinks.file\4.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.PeriodicBatching">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog.sinks.periodicbatching\2.1.1\lib\net45\Serilog.Sinks.PeriodicBatching.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Seq">
+      <HintPath>..\..\..\..\..\.nuget\packages\serilog.sinks.seq\4.0.0\lib\net45\Serilog.Sinks.Seq.dll</HintPath>
+    </Reference>
+    <Reference Include="Thoth.Json.Net">
+      <HintPath>..\..\..\..\..\.nuget\packages\thoth.json.net\1.1.0\lib\net46\Thoth.Json.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Local">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.local\0.6.0\lib\netstandard2.0\Dap.Local.dll</HintPath>
+    </Reference>

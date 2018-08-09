@@ -1,3 +1,2 @@
-jose-jwt
-Fable.JsonConverter
-Dap.Farango
+Dap.Local.Farango
+Dap.Remote.Server

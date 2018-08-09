@@ -22,5 +22,5 @@ type AppDelegate () =
     override this.MainWindow = window
     override this.DidFinishLaunching (notification : NSNotification) =
         Forms.Init ()
-        this.LoadApplication (App.initApplication ())
+        this.LoadApplication (App.createApplication ())
         base.DidFinishLaunching(notification)
