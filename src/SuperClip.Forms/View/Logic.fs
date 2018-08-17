@@ -14,21 +14,31 @@ open Dap.Platform
 open Dap.Remote
 
 open SuperClip.Core
+open SuperClip.Core.Cloud
 open SuperClip.Forms
 open SuperClip.Forms.View.Types
 module HistoryTypes = SuperClip.Core.History.Types
 module CloudTypes = SuperClip.Core.Cloud.Types
 
+let device = Device.New "test"
+
+let cryptoKey = calcCryptoKey "test"
+
 let init (parts : Parts) : Init<Initer, unit, Model, Msg> =
     fun initer () ->
+        let channel = Channel.New "test"
+        let peer = Peer.Create channel device
+        let req = Join.Req.Create peer <| calcPassHash "test"
+        parts.CloudStub.Post <| CloudTypes.DoJoin req
         ({
             Primary = parts.Primary
             History = parts.History
             CloudStub = parts.CloudStub
+            CloudPeers = None
         }, noCmd)
 
 let update : Update<View, Model, Msg> =
-    fun runner model msg ->
+    fun runner msg model ->
         match msg with
         | SetPrimary content ->
             model.Primary.Actor.Handle <| Clipboard.DoSet content None
@@ -38,16 +48,31 @@ let update : Update<View, Model, Msg> =
             match evt with
             | Clipboard.OnSet item ->
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
+                model.CloudPeers
+                |> Option.iter (fun peers ->
+                    let peer = Peer.Create peers.Channel device
+                    let item = item.ForCloud peer cryptoKey
+                    model.CloudStub.Post <| CloudTypes.DoSetItem item
+                )
             | Clipboard.OnChanged item ->
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
             (model, noCmd)
         | CloudRes res ->
             logError runner "Update" "CloudRes" res
-            (model, noCmd)
+            match res with
+            | CloudTypes.OnJoin (_req, (Ok token)) ->
+                model.CloudStub.Post <| CloudTypes.DoAuth token
+                (model, noCmd)
+            | CloudTypes.OnAuth (_req, (Ok peers)) ->
+                (runner, model, noCmd)
+                |=|> updateModel (fun m -> {m with CloudPeers = Some peers})
+            | _ ->
+                (model, noCmd)
         | CloudEvt evt ->
             logError runner "Update" "CloudEvt" evt
             match evt with
-            | CloudTypes.OnChanged item ->
+            | CloudTypes.OnItemChanged item ->
+                let item = item.Decrypt runner cryptoKey
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
             | _ -> ()
             (model, noCmd)
@@ -90,5 +115,5 @@ let render : Render =
             )
         )
 
-let args (parts : Parts) application =
+let args application (parts : Parts) =
     Args.Create (init parts) update subscribe render application

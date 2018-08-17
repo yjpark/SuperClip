@@ -7,6 +7,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Util.fs" />
     <Compile Include="Clipboard/WatchPrimary.fs" />
+    <Compile Include="Misc/InitDb.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

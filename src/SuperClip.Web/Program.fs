@@ -9,5 +9,5 @@ module CloudHubAgent = SuperClip.Server.CloudHub.Agent
 
 [<EntryPoint>]
 let main _ =
-    let app = App.create ()
+    let app = App.create "super-clip-web-.log"
     app.Env |> WebSocketHub.run 5700 "/ws_user" CloudHubAgent.ServiceKind

@@ -79,7 +79,7 @@ let private doRemoveMany req ((predicate, callback) : (Item -> bool) * Callback<
             |=|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = left})
 
 let private update : Update<Agent, Model, Msg> =
-    fun runner model msg ->
+    fun runner msg model ->
         match msg with
         | Req req ->
             match req with

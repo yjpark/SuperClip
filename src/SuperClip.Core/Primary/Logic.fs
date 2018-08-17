@@ -43,7 +43,7 @@ let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOp
         | Text text ->
             runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
             |> ignore
-        let current = Item.Create runner.Clock.Now content Local
+        let current = Item.Create runner.Clock.Now Local content
         runner.Deliver <| Evt ^<| OnSet current
         reply runner callback <| ack req ()
         ({model with Current = current}, cmd)
@@ -75,7 +75,7 @@ let private onGet (res : Result<Content, exn>) : ActorOperate =
             | Ok content ->
                 if content <> model.Current.Content then
                     logWarn runner "PrimaryClipboard" "OnGet" content
-                    (Item.Create runner.Clock.Now content Local, true)
+                    (Item.Create runner.Clock.Now Local content, true)
                 else
                     (model.Current, false)
             | Error _err ->
@@ -100,7 +100,7 @@ let private onGet (res : Result<Content, exn>) : ActorOperate =
                 noOperation
 
 let private update : Update<Agent, Model, Msg> =
-    fun runner model msg ->
+    fun runner msg model ->
         match msg with
         | InternalEvt evt ->
             match evt with

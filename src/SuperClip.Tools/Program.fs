@@ -14,12 +14,14 @@ open Dap.Prelude
 open Dap.Platform
 
 open SuperClip.Server
+open SuperClip.Tools.Misc
 open SuperClip.Tools.Clipboard
 
 type Args =
     | Version
     | [<AltCommandLine("-v")>] Verbose
     | [<CliPrefix(CliPrefix.None)>] ``Watch_Primary`` of ParseResults<WatchPrimary.Args>
+    | [<CliPrefix(CliPrefix.None)>] ``Init_Db`` of ParseResults<InitDb.Args>
 with
     interface IArgParserTemplate with
         member this.Usage =
@@ -27,6 +29,7 @@ with
             | Version -> "Prints the version."
             | Verbose -> "Print a lot of output to stdout."
             | Watch_Primary _ -> "Watch primary clipboard."
+            | Init_Db _ -> "Init Db."
 
 let execute (args : ParseResults<Args>) =
     let verbose = args.Contains Verbose
@@ -36,11 +39,13 @@ let execute (args : ParseResults<Args>) =
     CrossClipboard.Current <- new ClipboardImplementation ()
 
     let consoleLogLevel = if verbose then LogLevelInformation else LogLevelWarning
-    let app = App.init' consoleLogLevel "super-clip-tools-.log"
+    let app = App.create' consoleLogLevel "super-clip-tools-.log"
 
     if args.Contains Watch_Primary then
         WatchPrimary.executeAsync app <| args.GetResult Watch_Primary
         |> Util.executeAndWaitForExit app
+    elif args.Contains Init_Db then
+        InitDb.execute app <| args.GetResult Init_Db
     else
         raise <| ParseException "no command specified"
     0

@@ -4,34 +4,39 @@ module SuperClip.Server.CloudHub.Types
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Remote.Server.Auth
 
 open SuperClip.Core
 open SuperClip.Server
 
-module CloudTypes = SuperClip.Core.Cloud.Types
+open SuperClip.Core.Cloud
+module ChannelTypes = SuperClip.Core.Channel.Types
 
-type Req = CloudTypes.ServerReq
-type Evt = CloudTypes.Evt
+type Req = SuperClip.Core.Cloud.Types.ServerReq
+type Evt = SuperClip.Core.Cloud.Types.Evt
+
+type ChannelService = SuperClip.Core.Channel.Service.Service
+type ChannelAuth = SuperClip.Server.Service.ChannelAuth.Record
 
 and Args = App
 
-and Session = {
-    mutable Token : string //Token.Record option
-    // mutable UserAuth : UserAuth.Record option
-}
-
 and Model = {
-    Session : Session
-} with
-    member this.WithSession (session : Session) = {this with Session = session}
+    Devices : Map<string, Device>
+    Channels : Map<string, ChannelService>
+}
 
 and InternalEvt =
     | OnDisconnected
+    | AddChannel of ChannelService
+    | RemoveChannel of ChannelService
+    | AddDevice of Device
+    | RemoveDevice of Device
 
 and Msg =
     | HubReq of Req
     | HubEvt of Evt
     | InternalEvt of InternalEvt
+    | ChannelEvt of ChannelService * ChannelTypes.Evt
 with interface IMsg
 
 let castEvt : CastEvt<Msg, Evt> =

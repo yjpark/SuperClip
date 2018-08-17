@@ -5,6 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Types.fs" />
+    <Compile Include="Service/ChannelAuth.fs" />
+    <Compile Include="Helper.fs" />
     <Compile Include="CloudHub/Types.fs" />
     <Compile Include="CloudHub/Tasks.fs" />
     <Compile Include="CloudHub/Logic.fs" />

@@ -3,18 +3,23 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Const.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Clipboard.fs" />
     <Compile Include="Primary/Types.fs" />
     <Compile Include="Primary/Tasks.fs" />
     <Compile Include="Primary/Logic.fs" />
     <Compile Include="Primary/Service.fs" />
+    <Compile Include="Channel/Types.fs" />
+    <Compile Include="Channel/Logic.fs" />
+    <Compile Include="Channel/Service.fs" />
     <Compile Include="History/Types.fs" />
     <Compile Include="History/Logic.fs" />
     <Compile Include="History/Agent.fs" />
     <Compile Include="Cloud/Join.fs" />
     <Compile Include="Cloud/Auth.fs" />
     <Compile Include="Cloud/Leave.fs" />
+    <Compile Include="Cloud/SetItem.fs" />
     <Compile Include="Cloud/Types.fs" />
     <Compile Include="Helper.fs" />
   </ItemGroup>

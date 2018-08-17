@@ -12,8 +12,6 @@ module History = SuperClip.Core.History.Agent
 module Primary = SuperClip.Core.Primary.Service
 module CloudTypes = SuperClip.Core.Cloud.Types
 
-let CloudUri = "ws://localhost:5700/ws_user"
-
 type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
 
 type Parts = {

@@ -11,6 +11,7 @@ type Req =
     | DoJoin of Join.Req
     | DoAuth of Auth.Req
     | DoLeave of Leave.Req
+    | DoSetItem of SetItem.Req
 with
     static member JsonSpec =
         [
@@ -22,6 +23,9 @@ with
             ]
             CaseSpec<Req>.Create "DoLeave" [
                 FieldSpec.Create<Leave.Req> Leave.Req.JsonEncoder Leave.Req.JsonDecoder
+            ]
+            CaseSpec<Req>.Create "DoSetItem" [
+                FieldSpec.Create<SetItem.Req> SetItem.Req.JsonEncoder SetItem.Req.JsonDecoder
             ]
         ]
     static member JsonDecoder = D.union Req.JsonSpec
@@ -35,6 +39,7 @@ and ClientRes =
     | OnJoin of Join.Req * StubResult<Join.Res, Join.Error>
     | OnAuth of Auth.Req * StubResult<Auth.Res, Auth.Error>
     | OnLeave of Auth.Req * StubResult<Leave.Res, Leave.Error>
+    | OnSetItem of SetItem.Req * StubResult<SetItem.Res, SetItem.Error>
 with
     static member StubSpec =
         [
@@ -47,12 +52,16 @@ with
             Stub.ResponseSpec<ClientRes>.Create "DoLeave" [
                 FieldSpec.Create<Leave.Req> Leave.Req.JsonEncoder Leave.Req.JsonDecoder
             ] "OnLeave" Leave.Res.JsonDecoder Leave.Error.JsonDecoder
+            Stub.ResponseSpec<ClientRes>.Create "DoSetItem" [
+                FieldSpec.Create<SetItem.Req> SetItem.Req.JsonEncoder SetItem.Req.JsonDecoder
+            ] "OnSetItem" SetItem.Res.JsonDecoder SetItem.Error.JsonDecoder
         ]
 
 type ServerReq =
     | DoJoin of Join.Req * Callback<Result<Join.Res, Join.Error>>
     | DoAuth of Auth.Req * Callback<Result<Auth.Res, Auth.Error>>
     | DoLeave of Leave.Req * Callback<Result<Leave.Res, Leave.Error>>
+    | DoSetItem of SetItem.Req * Callback<Result<SetItem.Res, SetItem.Error>>
 with
     static member HubSpec =
         [
@@ -65,23 +74,26 @@ with
             Hub.RequestSpec<ServerReq>.Create "DoLeave" [
                 FieldSpec.Create<Leave.Req> Leave.Req.JsonEncoder Leave.Req.JsonDecoder
             ] Hub.getCallback<Leave.Res, Leave.Error>
+            Hub.RequestSpec<ServerReq>.Create "DoSetItem" [
+                FieldSpec.Create<SetItem.Req> SetItem.Req.JsonEncoder SetItem.Req.JsonDecoder
+            ] Hub.getCallback<SetItem.Res, SetItem.Error>
         ]
     interface IReq
 
 and Evt =
-    | OnJoin of Peer
-    | OnLeave of Peer
-    | OnChanged of Item
+    | OnPeerJoin of Peer
+    | OnPeerLeft of Peer
+    | OnItemChanged of Item
 with
     static member JsonSpec =
         [
-            CaseSpec<Evt>.Create "OnJoin" [
+            CaseSpec<Evt>.Create "OnPeerJoin" [
                 FieldSpec.Create<Peer> Peer.JsonEncoder Peer.JsonDecoder
             ]
-            CaseSpec<Evt>.Create "OnLeave" [
+            CaseSpec<Evt>.Create "OnPeerLeft" [
                 FieldSpec.Create<Peer> Peer.JsonEncoder Peer.JsonDecoder
             ]
-            CaseSpec<Evt>.Create "OnChanged" [
+            CaseSpec<Evt>.Create "OnItemChanged" [
                 FieldSpec.Create<Item> Item.JsonEncoder Item.JsonDecoder
             ]
         ]

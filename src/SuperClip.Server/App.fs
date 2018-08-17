@@ -8,13 +8,11 @@ open Dap.Prelude
 open Dap.Platform
 open Dap.Archive
 open Dap.Local.App
+open Dap.Local.Farango
 open Dap.Local.Farango.App
 
 module CloudHubAgent = SuperClip.Server.CloudHub.Agent
 module RegistryService = Dap.Platform.Registry.Service
-
-[<Literal>]
-let UserEnv = "UserEnv"
 
 [<Literal>]
 let Scope = "SuperClipServer"
@@ -33,9 +31,9 @@ let create' consoleLogLevel logFile =
     let dbUri = "http://superclip_dev:Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5@localhost:8529/superclip_dev"
     (Args.Create
         (Simple.Args.Default Scope consoleLogLevel logFile)
-        (WithDb.DbArgs.Create dbUri)
+        (DbArgs.Create dbUri)
         setupAsync
     )|> init
 
-let create () =
-    create' LogLevelWarning "super-clip-server.log"
+let create logFile =
+    create' LogLevelWarning logFile

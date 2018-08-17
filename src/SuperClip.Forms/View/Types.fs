@@ -14,8 +14,6 @@ module Primary = SuperClip.Core.Primary.Service
 
 module CloudTypes = SuperClip.Core.Cloud.Types
 
-let CloudUri = "ws://localhost:5700/ws_user"
-
 type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
 
 type Args = ViewTypes.Args<Model, Msg>
@@ -24,6 +22,7 @@ and Model = {
     Primary : Primary.Service
     History : History.Agent
     CloudStub : CloudStub
+    CloudPeers : Peers option
 }
 
 and Msg =
@@ -34,5 +33,5 @@ and Msg =
 with interface IMsg
 
 and View = ViewTypes.View<Model, Msg>
-and Initer = ViewTypes.ViewIniter<Model, Msg>
+and Initer = ViewTypes.Initer<Model, Msg>
 and Render = ViewTypes.Render<Model, Msg>

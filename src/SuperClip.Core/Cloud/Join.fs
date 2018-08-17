@@ -32,6 +32,8 @@ type Res = JsonString
 
 type Error =
     | PassHashNotMatched
+    | InvalidChannelName
+    | JoinChannelFailed
 with
     static member JsonEncoder = E.kind<Error>
     static member JsonDecoder = D.kind<Error>
