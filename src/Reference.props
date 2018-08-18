@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
     <Reference Include="Dap.Archive">
       <HintPath>..\..\..\..\..\.nuget\packages\dap.archive\0.6.0\lib\netstandard2.0\Dap.Archive.dll</HintPath>
     </Reference>
@@ -55,3 +58,6 @@
     <Reference Include="Dap.Local">
       <HintPath>..\..\..\..\..\.nuget\packages\dap.local\0.6.0\lib\netstandard2.0\Dap.Local.dll</HintPath>
     </Reference>
+  </ItemGroup>
+</Project>
+
