@@ -37,6 +37,14 @@ let init (parts : Parts) : Init<Initer, unit, Model, Msg> =
             CloudPeers = None
         }, noCmd)
 
+let doSetItemToCloud (item : Item) (model : Model) (runner : View) =
+    model.CloudPeers
+    |> Option.iter (fun peers ->
+        let peer = Peer.Create peers.Channel device
+        let item = item.ForCloud peer cryptoKey
+        model.CloudStub.Post <| CloudTypes.DoSetItem item
+    )
+
 let update : Update<View, Model, Msg> =
     fun runner msg model ->
         match msg with
@@ -48,14 +56,10 @@ let update : Update<View, Model, Msg> =
             match evt with
             | Clipboard.OnSet item ->
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
-                model.CloudPeers
-                |> Option.iter (fun peers ->
-                    let peer = Peer.Create peers.Channel device
-                    let item = item.ForCloud peer cryptoKey
-                    model.CloudStub.Post <| CloudTypes.DoSetItem item
-                )
+                runner |> doSetItemToCloud item model
             | Clipboard.OnChanged item ->
                 model.History.Actor.Handle <| HistoryTypes.DoAdd item None
+                runner |> doSetItemToCloud item model
             (model, noCmd)
         | CloudRes res ->
             logError runner "Update" "CloudRes" res
