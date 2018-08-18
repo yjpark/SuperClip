@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module SuperClip.Forms.Types
+module SuperClip.Forms.Parts.Types
 
 open FSharp.Control.Tasks.V2
 open Xamarin.Forms
@@ -12,6 +12,10 @@ module History = SuperClip.Core.History.Agent
 module Primary = SuperClip.Core.Primary.Service
 module CloudTypes = SuperClip.Core.Cloud.Types
 
-type CloudStub = SuperClip.Forms.Parts.Types.CloudStub
+type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
 
-type Parts = SuperClip.Forms.Parts.Types.Model
+type Model = {
+    Primary : Primary.Service
+    History : History.Agent
+    CloudStub : CloudStub
+}

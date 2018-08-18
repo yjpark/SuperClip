@@ -38,7 +38,7 @@ let setTestDataAsync : GetTask<App.View, unit> =
 
 let onAppStarted (app : App.Model) =
     Xamarin.Forms.Forms.LoadApplication <| app.View.Application
-    app.View.RunTask ignoreOnFailed setTestDataAsync
+    //app.View.RunTask ignoreOnFailed setTestDataAsync
 
 [<EntryPoint>]
 let main argv =
@@ -46,14 +46,5 @@ let main argv =
     Xamarin.Forms.Forms.Init ();
     CrossClipboard.Current <- new ClipboardImplementation ()
     let app = App.create onAppStarted
-    (*
-    App.initApplication () |> ignore
-    let env = App.getEnv ()
-    (App.getOnInit ()) .AddWatcher env "Ooui_Init" (fun _ ->
-        Xamarin.Forms.Forms.LoadApplication <| App.getApplication ()
-        let app = App.getApp ()
-        app.RunTask ignoreOnFailed setTestDataAsync
-    )
-    *)
     waitForExit app.Env
     0 // return an integer exit code

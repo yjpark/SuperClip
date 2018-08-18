@@ -9,27 +9,25 @@ open Dap.Remote
 module ViewTypes = Dap.Forms.View.Types
 
 open SuperClip.Core
-module History = SuperClip.Core.History.Agent
+open SuperClip.Forms
 module Primary = SuperClip.Core.Primary.Service
-
 module CloudTypes = SuperClip.Core.Cloud.Types
+module HistoryTypes = SuperClip.Core.History.Types
 
-type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
+type Parts = SuperClip.Forms.Parts.Types.Model
 
 type Args = ViewTypes.Args<Model, Msg>
 
 and Model = {
-    Primary : Primary.Service
-    History : History.Agent
-    CloudStub : CloudStub
-    CloudPeers : Peers option
-}
+    Parts : Parts
+} with
+    member this.Primary = this.Parts.Primary
+    member this.History = this.Parts.History
+    member this.CloudStub = this.Parts.CloudStub
 
 and Msg =
     | SetPrimary of Content
-    | PrimaryEvt of Clipboard.Evt
-    | CloudEvt of CloudTypes.Evt
-    | CloudRes of CloudTypes.ClientRes
+    | HistoryEvt of HistoryTypes.Evt
 with interface IMsg
 
 and View = ViewTypes.View<Model, Msg>

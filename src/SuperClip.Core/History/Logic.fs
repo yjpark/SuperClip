@@ -32,7 +32,8 @@ let private doAdd req ((item, callback) : Item * Callback<bool>) : ActorOperate 
             model.AllItems
             |> Map.add hash item
         (runner, model, cmd)
-        |=|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
+        |-|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
+        |=|> addSubCmd Evt OnHistoryChanged
 
 let private fillRecentItems (runner : Agent) (allItems : Map<string, Item>) (recentItems : Item list) =
     if (recentItems |> List.length) < runner.Actor.Args.RecentSize then
@@ -57,7 +58,8 @@ let private doRemoveOne req ((content, callback) : Content * Callback<Item optio
                     |> List.filter (fun item -> item.Hash <> hash)
                     |> fillRecentItems runner allItems
                 (runner, model, cmd)
-                |=|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
+                |-|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
+                |=|> addSubCmd Evt OnHistoryChanged
             | None ->
                 reply runner callback <| ack req None
                 (model, cmd)
@@ -76,7 +78,8 @@ let private doRemoveMany req ((predicate, callback) : (Item -> bool) * Callback<
                 |> fillRecentItems runner left
             reply runner callback <| ack req (removed |> Map.toList |> List.map snd)
             (runner, model, cmd)
-            |=|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = left})
+            |-|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = left})
+            |=|> addSubCmd Evt OnHistoryChanged
 
 let private update : Update<Agent, Model, Msg> =
     fun runner msg model ->
@@ -86,6 +89,8 @@ let private update : Update<Agent, Model, Msg> =
             | DoAdd (a, b) -> doAdd req (a, b)
             | DoRemoveOne (a, b) -> doRemoveOne req (a, b)
             | DoRemoveMany (a, b) -> doRemoveMany req (a, b)
+        | Evt evt ->
+            noOperation
         <| runner <| (model, [])
 
 let private init : ActorInit<Args, Model, Msg> =
@@ -96,6 +101,6 @@ let private init : ActorInit<Args, Model, Msg> =
         }, noCmd)
 
 let spec (args : Args) =
-    new ActorSpec<Agent, Args, Model, Msg, Req, NoEvt>
-        (Agent.Spawn, args, Req, noCastEvt, init, update)
+    new ActorSpec<Agent, Args, Model, Msg, Req, Evt>
+        (Agent.Spawn, args, Req, castEvt, init, update)
 

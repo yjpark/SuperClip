@@ -9,8 +9,6 @@ open Dap.Platform
 open Dap.Remote
 open Dap.Local.App
 open Dap.Forms
-module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
-module WebSocketProxy = Dap.Remote.WebSocketProxy.Proxy
 module WithView = Dap.Forms.App.WithView
 
 open SuperClip.Core
@@ -19,6 +17,7 @@ module Primary = SuperClip.Core.Primary.Service
 module CloudTypes = SuperClip.Core.Cloud.Types
 module ViewTypes = SuperClip.Forms.View.Types
 module ViewLogic = SuperClip.Forms.View.Logic
+module PartsLogic = SuperClip.Forms.Parts.Logic
 
 [<Literal>]
 let Scope = "SuperClip"
@@ -41,24 +40,12 @@ let onApp (onAppStarted : Model -> unit) (app : Model) =
 let init (args : Args) (onApp : Model -> unit) =
     WithView.init<ViewModel, ViewMsg, Parts> args onApp
 
-let newPartsAsync (app : Simple.Model) = task {
-    let! history = app.Env |> Helper.doSetupAsync
-    let primary = app.Env |> Primary.get NoKey
-    do! app.Env |> PacketClient.registerAsync true None
-    let! cloudStub = app.Env |> WebSocketProxy.addAsync NoKey CloudTypes.StubSpec CloudServerUri true
-    return {
-        Primary = primary
-        History = history
-        CloudStub = cloudStub
-    }
-}
-
 let newViewAsync (application) (parts : Parts) =
     ViewLogic.args application parts
     |> WithView.newViewAsync
 
 let create' consoleLogLevel logFile onAppStarted application =
-    let args = Args.Create (Simple.Args.Default Scope consoleLogLevel logFile) newPartsAsync (newViewAsync application)
+    let args = Args.Create (Simple.Args.Default Scope consoleLogLevel logFile) PartsLogic.initAsync (newViewAsync application)
     init args (onApp onAppStarted)
 
 let create onAppStarted =

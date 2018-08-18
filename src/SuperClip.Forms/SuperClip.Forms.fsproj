@@ -4,8 +4,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Prefs.fs" />
-    <Compile Include="Types.fs" />
+    <Compile Include="Parts/Types.fs" />
     <Compile Include="View/Types.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Parts/Logic.fs" />
     <Compile Include="View/Logic.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
