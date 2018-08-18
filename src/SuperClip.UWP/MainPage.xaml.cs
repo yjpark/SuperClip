@@ -26,8 +26,8 @@ namespace SuperClip.UWP
         {
             this.InitializeComponent();
             var cacheFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
-            Dap.Forms.Const.setLogFolder(cacheFolder + "/log");
-            LoadApplication(SuperClip.Forms.App.initApplication());
+            Dap.Local.App.Boot.setLogFolder(cacheFolder + "/log");
+            LoadApplication(SuperClip.Forms.App.createApplication());
         }
     }
 }
