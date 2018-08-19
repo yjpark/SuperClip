@@ -12,10 +12,13 @@ module History = SuperClip.Core.History.Agent
 module Primary = SuperClip.Core.Primary.Service
 module CloudTypes = SuperClip.Core.Cloud.Types
 
+module SessionTypes = SuperClip.Forms.Session.Types
+
 type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
+type ChannelService = SuperClip.Core.Channel.Service.Service
 
 type Model = {
     Primary : Primary.Service
     History : History.Agent
-    CloudStub : CloudStub
+    Session : SessionTypes.Agent
 }

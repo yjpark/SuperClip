@@ -23,7 +23,6 @@ and Model = {
 } with
     member this.Primary = this.Parts.Primary
     member this.History = this.Parts.History
-    member this.CloudStub = this.Parts.CloudStub
 
 and Msg =
     | SetPrimary of Content

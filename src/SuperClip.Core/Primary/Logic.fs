@@ -74,7 +74,6 @@ let private onGet (res : Result<Content, exn>) : ActorOperate =
             match res with
             | Ok content ->
                 if content <> model.Current.Content then
-                    logWarn runner "PrimaryClipboard" "OnGet" content
                     (Item.Create runner.Clock.Now Local content, true)
                 else
                     (model.Current, false)

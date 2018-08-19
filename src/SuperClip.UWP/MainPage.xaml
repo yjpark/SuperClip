@@ -1,4 +1,4 @@
-<forms:WindowsPage
+<runner.Deliver <| InternalEvt ^<| SetChannel channel
     x:Class="SuperClip.UWP.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,4 +12,4 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     </Grid>
-</forms:WindowsPage>
+</>

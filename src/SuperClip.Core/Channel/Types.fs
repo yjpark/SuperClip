@@ -14,6 +14,7 @@ and Req =
     | DoSet of Item * Callback<unit>
     | DoAddDevice of Device * Callback<bool>
     | DoRemoveDevice of Device * Callback<bool>
+    | DoSetDevices of Device list * Callback<int>
 with interface IReq
 
 and Evt =
@@ -43,3 +44,4 @@ let castEvt (msg : Msg) =
 let DoSet item callback = DoSet (item, callback)
 let DoAddDevice device callback = DoAddDevice (device, callback)
 let DoRemoveDevice device callback = DoRemoveDevice (device, callback)
+let DoSetDevices devices callback = DoSetDevices (devices, callback)

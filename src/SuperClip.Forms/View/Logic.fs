@@ -54,33 +54,25 @@ let private getText (item : Item) =
 let private render : Render =
     fun runner model ->
         View.ContentPage (
-            content = View.ScrollView(View.StackLayout (padding=20.0,
-                children =
-                    (model.History.Actor.State.RecentItems
-                    |> List.map (fun item ->
-                        View.Button(
-                            text = getText item,
-                            horizontalOptions = LayoutOptions.FillAndExpand,
-                            verticalOptions = LayoutOptions.Center,
-                            fontSize = "Large",
-                            command = (fun () ->
-                                runner.React <| SetPrimary item.Content
+            content = View.ScrollView(
+                View.StackLayout(
+                    padding = 20.0,
+                    children =
+                        (model.History.Actor.State.RecentItems
+                        |> List.map (fun item ->
+                            View.Button(
+                                text = getText item,
+                                horizontalOptions = LayoutOptions.FillAndExpand,
+                                verticalOptions = LayoutOptions.Center,
+                                fontSize = "Large",
+                                command = (fun () ->
+                                    runner.React <| SetPrimary item.Content
+                                )
                             )
                         )
-                    ))
-                (*
-                [
-                    yield
-                        View.StackLayout(padding=20.0, verticalOptions=LayoutOptions.Center,
-                        children = [
-                            View.Label(text=getText model.Primary, horizontalOptions=LayoutOptions.Center, fontSize = "Large")
-                            View.Button(text="Get", command= (fun () -> dispatch Get))
-                            View.Button(text="Set", command= (fun () -> dispatch (Set "test")))
-                        ])
-                    //yield View.Button(text="Reset", horizontalOptions=LayoutOptions.Center, command=fixf(fun () -> dispatch Reset), canExecute = (model <> initModel))
-                ]
-                *)
-            ))
+                    )
+                )
+            )
         )
 
 let args application (parts : Parts) =

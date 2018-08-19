@@ -51,6 +51,24 @@ let private doRemoveDevice req ((device, callback) : Device * Callback<bool>) : 
                 |-|> updateModel (fun m -> {m with Devices = devices})
                 |=|> addSubCmd Evt ^<| OnDeviceRemoved device
 
+let private doSetDevices req ((devices, callback) : Device list * Callback<int>) : ActorOperate =
+    fun runner (model, cmd) ->
+        let removes =
+            model.Devices
+            |> List.map (fun device ->
+                addSubCmd Evt ^<| OnDeviceRemoved device
+            )
+        let adds =
+            devices
+            |> List.map (fun device ->
+                addSubCmd Evt ^<| OnDeviceAdded device
+            )
+        let update = updateModel (fun (m : Model) -> {m with Devices = devices})
+        replyAfter runner callback <| ack req model.Devices.Length
+        (removes @ [ update ] @ adds)
+        |> List.reduce (|-|-)
+        <| runner <| (model, cmd)
+
 let private update : Update<Agent, Model, Msg> =
     fun runner msg model ->
         match msg with
@@ -59,6 +77,7 @@ let private update : Update<Agent, Model, Msg> =
             | DoSet (a, b) -> doSet req (a, b)
             | DoAddDevice (a, b) -> doAddDevice req (a, b)
             | DoRemoveDevice (a, b) -> doRemoveDevice req (a, b)
+            | DoSetDevices (a, b) -> doSetDevices req (a, b)
         | Evt _evt -> noOperation
         <| runner <| (model, [])
 
