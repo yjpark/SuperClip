@@ -15,7 +15,6 @@ type Res = JsonNil
 type Error =
     | InvalidSource
     | InvalidChannel
-    | AuthRequired
 with
     static member JsonEncoder = E.kind<Error>
     static member JsonDecoder = D.kind<Error>

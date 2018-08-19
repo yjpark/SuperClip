@@ -26,14 +26,13 @@ let private doSetItem req ((item, callback) : Item * Callback<Result<SetItem.Res
         | Local ->
             reply runner callback <| ack req ^<| Error SetItem.InvalidSource
         | Cloud peer ->
-            match Map.tryFind peer.Device.Guid model.Devices with
+            match Map.tryFind peer.Channel.Key model.Devices with
             | None ->
-                reply runner callback <| ack req ^<| Error SetItem.AuthRequired
-            | Some device ->
-                match Map.tryFind peer.Channel.Key model.Channels with
-                | None ->
-                    reply runner callback <| ack req ^<| Error SetItem.InvalidChannel
-                | Some channel ->
+                reply runner callback <| ack req ^<| Error SetItem.InvalidChannel
+            | Some (channel, device) ->
+                if peer.Device.Guid <> device.Guid then
+                    reply runner callback <| ack req ^<| Error SetItem.InvalidSource
+                else
                     channel.Post <| ChannelTypes.DoSet item None
                     reply runner callback <| ack req ^<| Ok JsonNil
         (model, cmd)
@@ -54,71 +53,65 @@ let private handleReq (req : Req) : ActorOperate =
             (runner, model, cmd)
             |=|> doSetItem req (r, callback)
 
+let private doRemoveDeviceFromChannel runner (channel : ChannelService) (device : Device) =
+    channel.Actor.OnEvent.RemoveWatcher runner
+    channel.Post <| ChannelTypes.DoRemoveDevice device None
+
 let private onDisconnected : ActorOperate =
     fun runner (model, cmd) ->
-        model.Channels
-        |> Map.iter (fun _k channel ->
-            channel.Actor.OnEvent.RemoveWatcher runner
+        model.Devices
+        |> Map.iter (fun _k (channel, device) ->
+            doRemoveDeviceFromChannel runner channel device
         )
         (runner, model, cmd)
         |=|> updateModel (fun m ->
             {m with
                 Devices = Map.empty
-                Channels = Map.empty
             }
         )
 
-let private addChannel (channel : ChannelService) : ActorOperate =
-    fun runner (model, cmd) ->
-        match Map.tryFind channel.Ident.Key model.Channels with
-        | None ->
-            channel.Actor.OnEvent.AddWatcher runner "CloudHub" (fun evt ->
-                runner.Deliver <| ChannelEvt (channel, evt)
-            )
-            let channels =
-                model.Channels
-                |> Map.add channel.Ident.Key channel
-            (runner, model, cmd)
-            |=|> updateModel (fun m -> {m with Channels = channels})
-        | Some channel ->
-            (model, cmd)
-
-let private removeChannel (channel : ChannelService) : ActorOperate =
-    fun runner (model, cmd) ->
-        match Map.tryFind channel.Ident.Key model.Channels with
-        | None ->
-            (model, cmd)
-        | Some channel ->
-            channel.Actor.OnEvent.RemoveWatcher runner
-            let channels =
-                model.Channels
-                |> Map.remove channel.Ident.Key
-            (runner, model, cmd)
-            |=|> updateModel (fun m -> {m with Channels = channels})
-
-let private addDevice (device : Device) : ActorOperate =
-    fun runner (model, cmd) ->
+let private removeDeviceFromChannel runner (model : Model) (channelKey : string) =
+    Map.tryFind channelKey model.Devices
+    |> Option.map (fun (channel, device) ->
+        doRemoveDeviceFromChannel runner channel device
         let devices =
             model.Devices
-            |> Map.add device.Guid device
+            |> Map.remove channelKey
+        (devices, Some (channel, device))
+    )|> Option.defaultValue (model.Devices, None)
+
+let private addDevice ((channel, device) : ChannelService * Device) : ActorOperate =
+    fun runner (model, cmd) ->
+        let devices, _ = removeDeviceFromChannel runner model channel.Ident.Key
+        channel.Post <| ChannelTypes.DoAddDevice device None
+        channel.Actor.OnEvent.AddWatcher runner "CloudHub" (fun evt ->
+            runner.Deliver <| ChannelEvt (channel, evt)
+        )
+        let devices =
+            devices
+            |> Map.add channel.Ident.Key (channel, device)
         (runner, model, cmd)
         |=|> updateModel (fun m -> {m with Devices = devices})
 
-let private removeDevice (device : Device) : ActorOperate =
+let private removeDevice ((channelKey, device) : ChannelKey * Device) : ActorOperate =
     fun runner (model, cmd) ->
-        let devices =
-            model.Devices
-            |> Map.remove device.Guid
-        (runner, model, cmd)
-        |=|> updateModel (fun m -> {m with Devices = devices})
+        let devices, removed = removeDeviceFromChannel runner model channelKey
+        match removed with
+        | None ->
+            logError runner "removeChannel" "Not_Found" (channelKey, device)
+            (model, cmd)
+        | Some (channel, removedDevice) ->
+            if removedDevice.Guid <> device.Guid then
+                logError runner "removeChannel" "Not_Matched" (channelKey, removedDevice, device)
+                doRemoveDeviceFromChannel runner channel device
+            (runner, model, cmd)
+            |=|> updateModel (fun m -> {m with Devices = devices})
 
 let private handleInternalEvt (evt : InternalEvt) : ActorOperate =
     match evt with
     | OnDisconnected -> onDisconnected
-    | AddChannel channel -> addChannel channel
-    | RemoveChannel channel -> removeChannel channel
-    | AddDevice device -> addDevice device
-    | RemoveDevice device -> removeDevice device
+    | AddDevice (a, b) -> addDevice (a, b)
+    | RemoveDevice (a, b) -> removeDevice (a, b)
 
 let private handleChannelEvt (channel : ChannelService) (evt : ChannelTypes.Evt) : ActorOperate =
     match evt with
@@ -146,7 +139,6 @@ let private init : ActorInit<Args, Model, Msg> =
     fun _runner args ->
         ({
             Devices = Map.empty
-            Channels = Map.empty
         }, Cmd.none)
 
 let spec (args : Args) =

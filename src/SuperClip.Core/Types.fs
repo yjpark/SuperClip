@@ -63,6 +63,8 @@ type Device = {
         member this.ToJson () =
             Device.JsonEncoder this
 
+type ChannelKey = string
+
 type Channel = {
     Guid : string
     Name : string
@@ -98,7 +100,7 @@ type Channel = {
     interface IJson with
         member this.ToJson () =
             Channel.JsonEncoder this
-    member this.Key =
+    member this.Key : ChannelKey =
         if this.Guid <> "" then
             this.Guid
         elif this.Name <> "" then

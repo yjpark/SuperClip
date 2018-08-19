@@ -81,17 +81,19 @@ let doJoinAsync (join : Join.Req) : GetReplyTask<Agent, Result<Join.Res, Join.Er
                     reply runner callback <| ack req ^<| Error Join.JoinChannelFailed
     }
 
-let getOrAddChannelAsync (channel : Channel) : GetTask<Agent, ChannelService.Service> =
+let getOrAddChannelAsync (channel : Channel) (device : Device) : GetTask<Agent, ChannelService.Service> =
     fun runner -> task {
         let service =
-            runner.Actor.State.Channels
+            runner.Actor.State.Devices
             |> Map.tryFind channel.Key
         match service with
-        | Some service ->
+        | Some (service, existDevice) ->
+            if device.Guid <> existDevice.Guid then
+                runner.Deliver <| InternalEvt ^<| AddDevice (service, device)
             return service
         | None ->
             let! service = runner |> setupChannelServiceAsync channel
-            runner.Deliver <| InternalEvt ^<| AddChannel service
+            runner.Deliver <| InternalEvt ^<| AddDevice (service, device)
             return service
     }
 
@@ -103,9 +105,7 @@ let doAuthAsync (auth : Auth.Req) : GetReplyTask<Agent, Result<Auth.Res, Auth.Er
             let app = runner.Actor.Args
             match app |> ChannelAuth.checkToken token auth with
             | Ok (auth, token) ->
-                let! channel = runner |> getOrAddChannelAsync auth.Channel
-                let! _ = channel.PostAsync <| ChannelTypes.DoAddDevice device
-                runner.Deliver <| InternalEvt ^<| AddDevice device
+                let! channel = runner |> getOrAddChannelAsync auth.Channel device
                 let peers = Peers.Create auth.Channel channel.Actor.State.Devices
                 reply runner callback <| ack req ^<| Ok peers
             | Error err ->
@@ -120,13 +120,7 @@ let doLeaveAsync (auth : Leave.Req) : GetReplyTask<Agent, Result<Leave.Res, Leav
         let! result = runner |> getTokenAndChannelAuthAsync auth.Value
         match result with
         | Ok (token, device, auth) ->
-            runner.Actor.State.Channels
-            |> Map.tryFind auth.Channel.Key
-            |> Option.iter (fun channel ->
-                runner.Deliver <| InternalEvt ^<| RemoveChannel channel
-                channel.Post <| ChannelTypes.DoAddDevice device None
-            )
-            runner.Deliver <| InternalEvt ^<| RemoveDevice device
+            runner.Deliver <| InternalEvt ^<| RemoveDevice (auth.Channel.Key, device)
             let app = runner.Actor.Args
             let! result = app |> ChannelAuth.removeTokenAsync token auth
             match result with

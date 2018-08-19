@@ -21,16 +21,13 @@ type ChannelAuth = SuperClip.Server.Service.ChannelAuth.Record
 and Args = App
 
 and Model = {
-    Devices : Map<string, Device>
-    Channels : Map<string, ChannelService>
+    Devices : Map<ChannelKey, ChannelService * Device>
 }
 
 and InternalEvt =
     | OnDisconnected
-    | AddChannel of ChannelService
-    | RemoveChannel of ChannelService
-    | AddDevice of Device
-    | RemoveDevice of Device
+    | AddDevice of ChannelService * Device
+    | RemoveDevice of ChannelKey * Device
 
 and Msg =
     | HubReq of Req
