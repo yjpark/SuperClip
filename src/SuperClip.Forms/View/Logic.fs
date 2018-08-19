@@ -6,8 +6,6 @@ open FSharp.Control.Tasks.V2
 open Elmish
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
-open Xamarin.Forms
-open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
@@ -20,13 +18,15 @@ open SuperClip.Forms.View.Types
 module HistoryTypes = SuperClip.Core.History.Types
 module CloudTypes = SuperClip.Core.Cloud.Types
 
-let init (parts : Parts) : Init<Initer, unit, Model, Msg> =
+type LayoutOptions = Xamarin.Forms.LayoutOptions
+
+let private init (parts : Parts) : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         ({
             Parts = parts
         }, noCmd)
 
-let update : Update<View, Model, Msg> =
+let private update : Update<View, Model, Msg> =
     fun runner msg model ->
         match msg with
         | SetPrimary content ->
@@ -35,26 +35,38 @@ let update : Update<View, Model, Msg> =
         | HistoryEvt evt ->
             (model, noCmd)
 
-let subscribe : Subscribe<View, Model, Msg> =
+let private subscribe : Subscribe<View, Model, Msg> =
     fun runner model ->
         Cmd.batch [
             subscribeBus runner model HistoryEvt model.History.Actor.OnEvent
         ]
 
-let getText (item : Item) =
-    let text =
-        match item.Content with
-        | Text text -> text
-    sprintf "[%A] %s" item.Time text
+let private capText (limit : int) (str : string) =
+    if str.Length <= limit then
+        str
+    else
+        sprintf "%s\n..." <| str.Substring (0, limit)
+let private getText (item : Item) =
+    match item.Content with
+    | Text text -> text
+    |> capText 128
 
-let render : Render =
+let private render : Render =
     fun runner model ->
         View.ContentPage (
-            content = View.StackLayout (padding=20.0,
+            content = View.ScrollView(View.StackLayout (padding=20.0,
                 children =
                     (model.History.Actor.State.RecentItems
                     |> List.map (fun item ->
-                        View.Label(text=getText item, horizontalOptions=LayoutOptions.Center, fontSize = "Large")
+                        View.Button(
+                            text = getText item,
+                            horizontalOptions = LayoutOptions.FillAndExpand,
+                            verticalOptions = LayoutOptions.Center,
+                            fontSize = "Large",
+                            command = (fun () ->
+                                runner.React <| SetPrimary item.Content
+                            )
+                        )
                     ))
                 (*
                 [
@@ -68,7 +80,7 @@ let render : Render =
                     //yield View.Button(text="Reset", horizontalOptions=LayoutOptions.Center, command=fixf(fun () -> dispatch Reset), canExecute = (model <> initModel))
                 ]
                 *)
-            )
+            ))
         )
 
 let args application (parts : Parts) =
