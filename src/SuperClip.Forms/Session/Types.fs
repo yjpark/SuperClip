@@ -6,6 +6,7 @@ open Dap.Remote
 
 open SuperClip.Core
 open SuperClip.Core.Cloud
+open SuperClip.Forms
 open Dap.Archive.WebSocket.Accessor.Types
 module History = SuperClip.Core.History.Agent
 module Primary = SuperClip.Core.Primary.Service
@@ -14,14 +15,6 @@ module CloudTypes = SuperClip.Core.Cloud.Types
 type ChannelService = SuperClip.Core.Channel.Service.Service
 type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
 
-type Credential = {
-    Device : Device
-    ChannelKey : string
-    PassHash : string
-    CryptoKey : string
-    Token : string option
-}
-
 type Args = {
     Stub : CloudStub
     Primary : Primary.Service
@@ -29,14 +22,14 @@ type Args = {
 }
 
 and Model = {
-    Auth : Credential option
+    Auth : Pref.Credential option
     Self : Peer option
     Channel : ChannelService option
     mutable LastCloudItem : Item option
 }
 
 and Req =
-    | DoSetAuth of Credential * Callback<unit>
+    | DoSetAuth of Pref.Credential * Callback<unit>
 with interface IReq
 
 and Evt =

@@ -87,7 +87,7 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
             let auth =
                 model.Auth
                 |> Option.map (fun auth ->
-                    {auth with Token = Some token.Value}
+                    {auth with Token = token.Value}
                 )
             updateModel (fun m -> {m with Auth = auth})
             |-|- addSubCmd Evt ^<| OnJoinSucceed token
@@ -104,22 +104,21 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
 
 let private doInit : ActorOperate =
     fun runner (model, cmd) ->
-        let device = Device.New "test"
         let password = "test"
-        let auth =
+        let auth : Pref.Credential =
             {
-                Device = device
-                ChannelKey = "test"
+                Device = Device.New "test"
+                Channel = Channel.CreateWithName "test"
                 PassHash = calcPassHash password
                 CryptoKey = calcCryptoKey password
-                Token = None
+                Token = ""
             }
         (runner, model, cmd)
         |=|> addSubCmd Req ^<| DoSetAuth (auth, None)
 
-let private doSetAuth req ((auth, callback) : Credential * Callback<unit>) : ActorOperate =
+let private doSetAuth req ((auth, callback) : Pref.Credential * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
-        let channel = Channel.New auth.ChannelKey
+        let channel = auth.Channel
         let self = Peer.Create channel auth.Device
         let joinReq = Join.Req.Create self auth.PassHash
         runner.Actor.Args.Stub.Post <| CloudTypes.DoJoin joinReq

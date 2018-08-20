@@ -17,6 +17,21 @@
 		},
 		{
 			"path": "src/SuperClip.Tools"
+		},
+		{
+			"path": "src/SuperClip.UWP"
+		},
+		{
+			"path": "src/SuperClip.GTK"
+		},
+		{
+			"path": "src/SuperClip.macOS"
+		},
+		{
+			"path": "src/SuperClip.iOS"
+		},
+		{
+			"path": "src/SuperClip.Droid"
 		}
 	],
     "settings": {
