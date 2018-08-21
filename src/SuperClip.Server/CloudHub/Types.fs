@@ -25,7 +25,7 @@ and Model = {
 }
 
 and InternalEvt =
-    | OnDisconnected
+    | OnStatusChanged of LinkStatus
     | AddDevice of ChannelService * Device
     | RemoveDevice of ChannelKey * Device
 

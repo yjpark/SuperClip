@@ -57,18 +57,22 @@ let private doRemoveDeviceFromChannel runner (channel : ChannelService) (device 
     channel.Actor.OnEvent.RemoveWatcher runner
     channel.Post <| ChannelTypes.DoRemoveDevice device None
 
-let private onDisconnected : ActorOperate =
+let private onStatusChanged (status : LinkStatus) : ActorOperate =
     fun runner (model, cmd) ->
-        model.Devices
-        |> Map.iter (fun _k (channel, device) ->
-            doRemoveDeviceFromChannel runner channel device
-        )
-        (runner, model, cmd)
-        |=|> updateModel (fun m ->
-            {m with
-                Devices = Map.empty
-            }
-        )
+        match status with
+        | LinkStatus.Closed ->
+            model.Devices
+            |> Map.iter (fun _k (channel, device) ->
+                doRemoveDeviceFromChannel runner channel device
+            )
+            (runner, model, cmd)
+            |=|> updateModel (fun m ->
+                {m with
+                    Devices = Map.empty
+                }
+            )
+        | _ ->
+            (model, cmd)
 
 let private removeDeviceFromChannel runner (model : Model) (channelKey : string) =
     Map.tryFind channelKey model.Devices
@@ -109,7 +113,7 @@ let private removeDevice ((channelKey, device) : ChannelKey * Device) : ActorOpe
 
 let private handleInternalEvt (evt : InternalEvt) : ActorOperate =
     match evt with
-    | OnDisconnected -> onDisconnected
+    | OnStatusChanged a -> onStatusChanged a
     | AddDevice (a, b) -> addDevice (a, b)
     | RemoveDevice (a, b) -> removeDevice (a, b)
 

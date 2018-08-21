@@ -29,7 +29,7 @@ let registerAsync app env =
 let registerServiceAsync (app : App) =
     let hubSpec =
         Hub.getHub<SuperClip.Server.CloudHub.Types.Agent, Req, Evt> app.Env Kind (fun runner ->
-            runner.Deliver <| InternalEvt OnDisconnected
+            runner.Deliver << InternalEvt << OnStatusChanged
         )|> CloudTypes.getHubSpec
     WebSocketServiceAgent.registerAsync ServiceKind hubSpec true
 
