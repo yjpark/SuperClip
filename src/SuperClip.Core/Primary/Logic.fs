@@ -39,14 +39,18 @@ let private doGet req (callback : Callback<Item>) : ActorOperate =
 
 let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
-        match content with
-        | Text text ->
-            runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
-            |> ignore
-        let current = Item.Create runner.Clock.Now Local content
-        runner.Deliver <| Evt ^<| OnSet current
-        reply runner callback <| ack req ()
-        ({model with Current = current}, cmd)
+        if content.IsEmpty then
+            reply runner callback <| ack req ()
+            (model, cmd)
+        else
+            match content with
+            | Text text ->
+                runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
+                |> ignore
+            let current = Item.Create runner.Clock.Now Local content
+            runner.Deliver <| Evt ^<| OnSet current
+            reply runner callback <| ack req ()
+            ({model with Current = current}, cmd)
 
 let private doInit : ActorOperate =
     fun runner (model, cmd) ->
@@ -73,10 +77,11 @@ let private onGet (res : Result<Content, exn>) : ActorOperate =
         let (current, changed) =
             match res with
             | Ok content ->
-                if content <> model.Current.Content then
-                    (Item.Create runner.Clock.Now Local content, true)
-                else
+                if content.IsEmpty
+                    || content = model.Current.Content then
                     (model.Current, false)
+                else
+                    (Item.Create runner.Clock.Now Local content, true)
             | Error _err ->
                 (model.Current, false)
         runner.AddTask ignoreOnFailed <| onGetAsync res current model.WaitingCallbacks

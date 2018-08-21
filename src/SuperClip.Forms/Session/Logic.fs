@@ -32,12 +32,14 @@ let mutable private cloudPeers : Peers option = None
 let private doSetItemToCloud (item : Item) : ActorOperate =
     fun runner (model, cmd) ->
         let shouldNotSet =
-            match model.LastCloudItem with
-            | None ->
-                false
-            | Some lastItem ->
-                lastItem = item
-                || lastItem.Content.Hash = item.Content.Hash
+            item.IsEmpty || (
+                match model.LastCloudItem with
+                | None ->
+                    false
+                | Some lastItem ->
+                    lastItem = item
+                    || lastItem.Content.Hash = item.Content.Hash
+            )
         if not shouldNotSet then
             model.LastCloudItem <- Some item
             (model.Auth, model.Self, model.Channel)
@@ -47,8 +49,9 @@ let private doSetItemToCloud (item : Item) : ActorOperate =
             )
         (model, cmd)
 
-let private doAddHistory (runner : Agent) item =
-    runner.Actor.Args.History.Actor.Handle <| HistoryTypes.DoAdd item None
+let private doAddHistory (runner : Agent) (item : Item) =
+    if not item.IsEmpty then
+        runner.Actor.Args.History.Actor.Handle <| HistoryTypes.DoAdd item None
     item
 
 let private onPrimaryEvt (evt : Clipboard.Evt) : ActorOperate =

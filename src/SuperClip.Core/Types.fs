@@ -12,9 +12,16 @@ open SuperClip.Core
 type Content =
     | Text of string
 with
-    member this.Hash =
+    member this.IsEmpty =
         match this with
-        | Text text -> calcSha256Sum text
+        | Text text ->
+            String.IsNullOrWhiteSpace text
+    member this.Hash =
+        if this.IsEmpty then
+            ""
+        else
+            match this with
+            | Text text -> calcSha256Sum text
     static member JsonSpec : CaseSpec<Content> list =
         [
             CaseSpec<Content>.Create "Text" [
@@ -179,6 +186,7 @@ type Item = {
         }
     static member Empty =
         Item.Create Instant.MinValue Local (Text "")
+    member this.IsEmpty = this.Content.IsEmpty
     member this.Hash = this.Content.Hash
     static member JsonDecoder =
         D.decode Item.Create

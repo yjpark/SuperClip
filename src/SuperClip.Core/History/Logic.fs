@@ -13,27 +13,30 @@ type ActorOperate = Operate<Agent, Model, Msg>
 
 let private doAdd req ((item, callback) : Item * Callback<bool>) : ActorOperate =
     fun runner (model, cmd) ->
-        let hash = item.Hash
-        let recentItems =
-            model.AllItems
-            |> Map.tryFind hash
-            |> function
-                | Some item ->
-                    replyAfter runner callback <| ack req false
-                    model.RecentItems
-                    |> List.filter (fun item -> item.Hash <> hash)
-                | None ->
-                    replyAfter runner callback <| ack req true
-                    model.RecentItems
-        let recentItems =
-            item :: recentItems
-            |> List.truncate runner.Actor.Args.RecentSize
-        let allItems =
-            model.AllItems
-            |> Map.add hash item
-        (runner, model, cmd)
-        |-|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
-        |=|> addSubCmd Evt OnHistoryChanged
+        if item.IsEmpty then
+            (model, cmd)
+        else
+            let hash = item.Hash
+            let recentItems =
+                model.AllItems
+                |> Map.tryFind hash
+                |> function
+                    | Some item ->
+                        replyAfter runner callback <| ack req false
+                        model.RecentItems
+                        |> List.filter (fun item -> item.Hash <> hash)
+                    | None ->
+                        replyAfter runner callback <| ack req true
+                        model.RecentItems
+            let recentItems =
+                item :: recentItems
+                |> List.truncate runner.Actor.Args.RecentSize
+            let allItems =
+                model.AllItems
+                |> Map.add hash item
+            (runner, model, cmd)
+            |-|> updateModel (fun m -> {m with RecentItems = recentItems ; AllItems = allItems})
+            |=|> addSubCmd Evt OnHistoryChanged
 
 let private fillRecentItems (runner : Agent) (allItems : Map<string, Item>) (recentItems : Item list) =
     if (recentItems |> List.length) < runner.Actor.Args.RecentSize then
