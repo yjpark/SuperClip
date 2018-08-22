@@ -28,7 +28,7 @@ let waitForExit (env : IEnv) =
 
 let setTestDataAsync : GetTask<App.View, unit> =
     fun runner -> task {
-        let primary = runner.ViewState.Primary
+        let primary = runner.ViewState.Parts.Primary
         for i in 1 .. 10 do
             do! Task.Delay 1.0<second>
             let text = sprintf "Test %A" i

@@ -12,25 +12,18 @@ open Dap.Remote
 open SuperClip.Core
 open SuperClip.Core.Cloud
 open SuperClip.Forms
+open SuperClip.Forms.View
 open SuperClip.Forms.View.Types
-open SuperClip.Forms.View.Widget
 module HistoryTypes = SuperClip.Core.History.Types
 module CloudTypes = SuperClip.Core.Cloud.Types
 
-let render (runner : View) (model : Model) : Widget =
-    View.ScrollView (
-        View.StackLayout (
+let render (runner : View) (model : Model) =
+    View.ContentPage (
+        content = View.StackLayout (
             padding = 20.0,
-            children = (
-                match model.History.Actor.State.RecentItems with
-                | [] ->
-                    [
-                        View.Label (
-                            text = "No Recent Items"
-                        )
-                    ]
-                | items ->
-                    Items.render runner items
-            )
+            children = [
+                yield Widget.Link.render runner model.Parts.Session
+                yield Widget.Items.render runner model.Parts.History.Actor.State.RecentItems
+            ]
         )
     )

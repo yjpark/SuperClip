@@ -32,7 +32,8 @@ let mutable private cloudPeers : Peers option = None
 let private doSetItemToCloud (item : Item) : ActorOperate =
     fun runner (model, cmd) ->
         let shouldNotSet =
-            item.IsEmpty || (
+            not model.Syncing
+            || item.IsEmpty || (
                 match model.LastCloudItem with
                 | None ->
                     false
@@ -42,9 +43,9 @@ let private doSetItemToCloud (item : Item) : ActorOperate =
             )
         if not shouldNotSet then
             model.LastCloudItem <- Some item
-            (model.Auth, model.Self, model.Channel)
-            |||> Option.iter3 (fun auth self channel ->
-                let item = item.ForCloud self auth.CryptoKey
+            (model.Auth, model.Channel)
+            ||> Option.iter2 (fun auth channel ->
+                let item = item.ForCloud auth.Self auth.CryptoKey
                 runner.Actor.Args.Stub.Post <| CloudTypes.DoSetItem item
             )
         (model, cmd)
@@ -69,16 +70,17 @@ let private onPrimaryEvt (evt : Clipboard.Evt) : ActorOperate =
 let private onStubEvt (evt : CloudTypes.Evt) : ActorOperate =
     fun runner (model, cmd) ->
         logWarn runner "Session" "CloudEvt" evt
-        match evt with
-        | CloudTypes.OnItemChanged item ->
-            let auth = model.Auth |> Option.get
-            item.Decrypt runner auth.CryptoKey
-            |> doAddHistory runner
-            |> (fun item ->
-                model.LastCloudItem <- Some item
-                runner.Actor.Args.Primary.Post <| Clipboard.DoSet item.Content None
-            )
-        | _ -> ()
+        if model.Syncing then
+            match evt with
+            | CloudTypes.OnItemChanged item ->
+                let auth = model.Auth |> Option.get
+                item.Decrypt runner auth.CryptoKey
+                |> doAddHistory runner
+                |> (fun item ->
+                    model.LastCloudItem <- Some item
+                    runner.Actor.Args.Primary.Post <| Clipboard.DoSet item.Content None
+                )
+            | _ -> ()
         (model, cmd)
 
 let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
@@ -90,12 +92,15 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
             let auth =
                 model.Auth
                 |> Option.map (fun auth ->
-                    {auth with Token = token.Value}
+                    let auth = {auth with Token = token.Value}
+                    Pref.setCredential auth
+                    auth
                 )
             updateModel (fun m -> {m with Auth = auth})
             |-|- addSubCmd Evt ^<| OnJoinSucceed token
         | CloudTypes.OnJoin (_req, (Error err)) ->
-            addSubCmd Evt ^<| OnJoinFailed err
+            updateModel (fun m -> {m with Auth = None})
+            |-|- addSubCmd Evt ^<| OnJoinFailed err
         | CloudTypes.OnAuth (_req, (Ok peers)) ->
             runner.AddTask ignoreOnFailed <| doSetChannelAsync peers
             noOperation
@@ -105,46 +110,43 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
             noOperation
         <| runner <| (model, cmd)
 
-let private doInit : ActorOperate =
-    fun runner (model, cmd) ->
-        let password = "test"
-        let auth : Pref.Credential =
-            {
-                Device = Device.New "test"
-                Channel = Channel.CreateWithName "test"
-                PassHash = calcPassHash password
-                CryptoKey = calcCryptoKey password
-                Token = ""
-            }
-        (runner, model, cmd)
-        |=|> addSubCmd Req ^<| DoSetAuth (auth, None)
-
 let private doSetAuth req ((auth, callback) : Pref.Credential * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
-        let channel = auth.Channel
-        let self = Peer.Create channel auth.Device
-        let joinReq = Join.Req.Create self auth.PassHash
+        let joinReq = Join.Req.Create auth.Self auth.PassHash
         runner.Actor.Args.Stub.Post <| CloudTypes.DoJoin joinReq
         reply runner callback <| ack req ()
         (runner, model, cmd)
-        |=|> updateModel (fun m ->
-            {m with
-                Auth = Some auth
-                Self = Some self
-            }
-        )
+        |=|> updateModel (fun m -> {m with Auth = Some auth})
+
+let private doSetSyncing req ((syncing, callback) : bool * Callback<unit>) : ActorOperate =
+    fun runner (model, cmd) ->
+        reply runner callback <| ack req ()
+        if syncing <> model.Syncing then
+            (runner, model, cmd)
+            |-|> updateModel (fun m -> {m with Syncing = syncing})
+            |=|> addSubCmd Evt ^<| OnSyncingChanged syncing
+        else
+            (model, cmd)
+
+let private onStubStatus (status : LinkStatus) : ActorOperate =
+    fun runner (model, cmd) ->
+        logWarn runner "Session" "onStubStatus" status
+        match status with
+        | LinkStatus.Linked ->
+            Pref.getCredential ()
+            |> Option.map (fun auth ->
+                addSubCmd Req ^<| DoSetAuth (auth, None)
+            )
+        | LinkStatus.Closed ->
+            Some <| updateModel (fun _ -> Model.Empty)
+        | _ ->
+            None
+        |> Option.defaultValue noOperation
+        <| runner <| (model, cmd)
 
 let private init : Init<IAgent<Msg>, Args, Model, Msg> =
     fun initer args ->
-        let model =
-            {
-                Auth = None
-                Self = None
-                Channel = None
-                LastCloudItem = None
-            }
-        (initer, model, [])
-        |=|> addSubCmd InternalEvt DoInit
+        (Model.Empty, noCmd)
 
 let private update : Update<Agent, Model, Msg> =
     fun runner msg model ->
@@ -152,16 +154,17 @@ let private update : Update<Agent, Model, Msg> =
         | Req req ->
             match req with
             | DoSetAuth (a, b) -> doSetAuth req (a, b)
+            | DoSetSyncing (a, b) -> doSetSyncing req (a, b)
         | Evt _evt -> noOperation
         | PrimaryEvt evt -> onPrimaryEvt evt
         | StubRes res -> onStubRes res
         | StubEvt evt -> onStubEvt evt
+        | StubStatus status -> onStubStatus status
         | InternalEvt evt ->
             match evt with
-            | DoInit ->
-                doInit
-            | SetChannel channel ->
+            | SetChannel (peers, channel) ->
                 updateModel (fun m -> {m with Channel = Some channel})
+                |-|- addSubCmd Evt ^<| OnAuthSucceed peers
         <| runner <| (model, [])
 
 let private subscribe : Subscribe<Agent, Model, Msg> =
@@ -170,6 +173,7 @@ let private subscribe : Subscribe<Agent, Model, Msg> =
             subscribeBus runner model PrimaryEvt runner.Actor.Args.Primary.Actor.OnEvent
             subscribeBus runner model StubRes runner.Actor.Args.Stub.OnResponse
             subscribeBus runner model StubEvt runner.Actor.Args.Stub.Actor.OnEvent
+            subscribeBus runner model StubStatus runner.Actor.Args.Stub.OnStatus
         ]
 
 let spec (args : Args) =

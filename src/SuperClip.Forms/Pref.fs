@@ -39,3 +39,20 @@ type Credential = {
     interface IJson with
         member this.ToJson () =
             Credential.JsonEncoder this
+    member this.Self =
+        Peer.Create this.Channel this.Device
+
+let getCredential () : Credential option =
+    //TODO
+    None
+
+let setCredential (credential : Credential) : unit =
+    //TODO
+    ()
+
+let clearCredential () =
+    ()
+
+let getDeviceName () =
+    //TODO
+    ""

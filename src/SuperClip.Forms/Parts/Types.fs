@@ -21,4 +21,6 @@ type Model = {
     Primary : Primary.Service
     History : History.Agent
     Session : SessionTypes.Agent
-}
+} with
+    member this.CloudStub =
+        this.Session.Actor.Args.Stub
