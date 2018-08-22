@@ -29,7 +29,7 @@ let initAsync (app : Simple.Model) = task {
     let! history = app.Env |> Helper.doSetupAsync
     let primary = app.Env |> PrimaryService.get NoKey
     do! app.Env |> PacketClient.registerAsync true None
-    let! cloudStub = app.Env |> WebSocketProxy.addAsync NoKey CloudTypes.StubSpec CloudServerUri true
+    let! cloudStub = app.Env |> WebSocketProxy.addAsync NoKey CloudTypes.StubSpec CloudServerUri (Some 5.0<second>) true
     let args : SessionService.Args =
         {
             Stub = cloudStub
