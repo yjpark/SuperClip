@@ -41,38 +41,10 @@ let private subscribe : Subscribe<View, Model, Msg> =
             subscribeBus runner model HistoryEvt model.History.Actor.OnEvent
         ]
 
-let private capText (limit : int) (str : string) =
-    if str.Length <= limit then
-        str
-    else
-        sprintf "%s\n..." <| str.Substring (0, limit)
-let private getText (item : Item) =
-    match item.Content with
-    | Text text -> text
-    |> capText 128
-
 let private render : Render =
     fun runner model ->
         View.ContentPage (
-            content = View.ScrollView(
-                View.StackLayout(
-                    padding = 20.0,
-                    children =
-                        (model.History.Actor.State.RecentItems
-                        |> List.map (fun item ->
-                            View.Button(
-                                text = getText item,
-                                horizontalOptions = LayoutOptions.FillAndExpand,
-                                verticalOptions = LayoutOptions.Center,
-                                fontSize = "Large",
-                                command = (fun () ->
-                                    runner.React <| SetPrimary item.Content
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+            content = Page.Home.render runner model
         )
 
 let args application (parts : Parts) =

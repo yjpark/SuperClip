@@ -32,3 +32,4 @@ with interface IMsg
 and View = ViewTypes.View<Model, Msg>
 and Initer = ViewTypes.Initer<Model, Msg>
 and Render = ViewTypes.Render<Model, Msg>
+and Widget = ViewTypes.Widget
