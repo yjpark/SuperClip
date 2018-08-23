@@ -20,7 +20,7 @@ type ChannelService = SuperClip.Core.Channel.Service.Service
 
 type ActorOperate = ActorOperate<Agent, Args, Model, Msg, Req, Evt>
 
-let private doSetItem req ((item, callback) : Item * Callback<Result<SetItem.Res, SetItem.Error>>) : ActorOperate =
+let private doSetItem req ((item, callback) : Item * Callback<Result<SetItem.Res, SetItem.Err>>) : ActorOperate =
     fun runner (model, cmd) ->
         match item.Source with
         | Local ->

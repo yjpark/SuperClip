@@ -43,9 +43,9 @@ with interface IReq
 
 and Evt =
     | OnJoinSucceed of Join.Res
-    | OnJoinFailed of Reason<Join.Error>
+    | OnJoinFailed of Reason<Join.Err>
     | OnAuthSucceed of Auth.Res
-    | OnAuthFailed of Reason<Auth.Error>
+    | OnAuthFailed of Reason<Auth.Err>
     | OnSyncingChanged of bool
 with interface IEvt
 

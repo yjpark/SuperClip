@@ -46,7 +46,7 @@ let private createToken runner (channelKey : string) (req : Join.Req) =
     (token, jwt)
     //reply runner callback <| ack req ^<| Ok jwt
 
-let doJoinAsync (join : Join.Req) : GetReplyTask<Agent, Result<Join.Res, Join.Error>> =
+let doJoinAsync (join : Join.Req) : GetReplyTask<Agent, Result<Join.Res, Join.Err>> =
     fun req callback runner -> task {
         let app = runner.Actor.Args
         let! auth = runner.Actor.Args |> ChannelAuth.getByChannelKeyAsync join.Peer.Channel.Key
@@ -97,7 +97,7 @@ let getOrAddChannelAsync (channel : Channel) (device : Device) : GetTask<Agent, 
             return service
     }
 
-let doAuthAsync (auth : Auth.Req) : GetReplyTask<Agent, Result<Auth.Res, Auth.Error>> =
+let doAuthAsync (auth : Auth.Req) : GetReplyTask<Agent, Result<Auth.Res, Auth.Err>> =
     fun req callback runner -> task {
         let! result = runner |> getTokenAndChannelAuthAsync auth.Value
         match result with
@@ -115,7 +115,7 @@ let doAuthAsync (auth : Auth.Req) : GetReplyTask<Agent, Result<Auth.Res, Auth.Er
             reply runner callback <| ack req ^<| Error Auth.InvalidToken
     }
 
-let doLeaveAsync (auth : Leave.Req) : GetReplyTask<Agent, Result<Leave.Res, Leave.Error>> =
+let doLeaveAsync (auth : Leave.Req) : GetReplyTask<Agent, Result<Leave.Res, Leave.Err>> =
     fun req callback runner -> task {
         let! result = runner |> getTokenAndChannelAuthAsync auth.Value
         match result with
