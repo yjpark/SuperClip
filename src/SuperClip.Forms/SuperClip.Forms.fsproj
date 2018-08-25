@@ -12,6 +12,12 @@
     <Compile Include="Session/Logic.fs" />
     <Compile Include="Session/Service.fs" />
     <Compile Include="Parts/Logic.fs" />
+    <Compile Include="View/Widget/Item.fs" />
+    <Compile Include="View/Widget/Items.fs" />
+    <Compile Include="View/Widget/Link.fs" />
+    <Compile Include="View/Dialog/Info.fs" />
+    <Compile Include="View/Page/Auth.fs" />
+    <Compile Include="View/Page/Home.fs" />
     <Compile Include="View/Logic.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>

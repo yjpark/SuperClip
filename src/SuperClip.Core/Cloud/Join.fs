@@ -31,12 +31,12 @@ type Req = {
 
 type Res = JsonString
 
-type Error =
+type Err =
     | PassHashNotMatched
     | InvalidChannelName
     | JoinChannelFailed
 with
-    static member JsonEncoder = E.kind<Error>
-    static member JsonDecoder = D.kind<Error>
+    static member JsonEncoder = E.kind<Err>
+    static member JsonDecoder = D.kind<Err>
     interface IJson with
-        member this.ToJson () = Error.JsonEncoder this
+        member this.ToJson () = Err.JsonEncoder this

@@ -14,4 +14,4 @@ type Req = Auth.Req
 
 type Res = JsonBool
 
-type Error = Auth.Error
+type Err = Auth.Err

@@ -37,47 +37,47 @@ with
         member this.Kind = Union.getKind<Req> this
 
 and ClientRes =
-    | OnJoin of Join.Req * StubResult<Join.Res, Join.Error>
-    | OnAuth of Auth.Req * StubResult<Auth.Res, Auth.Error>
-    | OnLeave of Auth.Req * StubResult<Leave.Res, Leave.Error>
-    | OnSetItem of SetItem.Req * StubResult<SetItem.Res, SetItem.Error>
+    | OnJoin of Join.Req * StubResult<Join.Res, Join.Err>
+    | OnAuth of Auth.Req * StubResult<Auth.Res, Auth.Err>
+    | OnLeave of Auth.Req * StubResult<Leave.Res, Leave.Err>
+    | OnSetItem of SetItem.Req * StubResult<SetItem.Res, SetItem.Err>
 with
     static member StubSpec =
         [
             Stub.ResponseSpec<ClientRes>.Create "DoJoin" [
                 FieldSpec.Create<Join.Req> Join.Req.JsonEncoder Join.Req.JsonDecoder
-            ] "OnJoin" Join.Res.JsonDecoder Join.Error.JsonDecoder
+            ] "OnJoin" Join.Res.JsonDecoder Join.Err.JsonDecoder
             Stub.ResponseSpec<ClientRes>.Create "DoAuth" [
                 FieldSpec.Create<Auth.Req> Auth.Req.JsonEncoder Auth.Req.JsonDecoder
-            ] "OnAuth" Auth.Res.JsonDecoder Auth.Error.JsonDecoder
+            ] "OnAuth" Auth.Res.JsonDecoder Auth.Err.JsonDecoder
             Stub.ResponseSpec<ClientRes>.Create "DoLeave" [
                 FieldSpec.Create<Leave.Req> Leave.Req.JsonEncoder Leave.Req.JsonDecoder
-            ] "OnLeave" Leave.Res.JsonDecoder Leave.Error.JsonDecoder
+            ] "OnLeave" Leave.Res.JsonDecoder Leave.Err.JsonDecoder
             Stub.ResponseSpec<ClientRes>.Create "DoSetItem" [
                 FieldSpec.Create<SetItem.Req> SetItem.Req.JsonEncoder SetItem.Req.JsonDecoder
-            ] "OnSetItem" SetItem.Res.JsonDecoder SetItem.Error.JsonDecoder
+            ] "OnSetItem" SetItem.Res.JsonDecoder SetItem.Err.JsonDecoder
         ]
 
 type ServerReq =
-    | DoJoin of Join.Req * Callback<Result<Join.Res, Join.Error>>
-    | DoAuth of Auth.Req * Callback<Result<Auth.Res, Auth.Error>>
-    | DoLeave of Leave.Req * Callback<Result<Leave.Res, Leave.Error>>
-    | DoSetItem of SetItem.Req * Callback<Result<SetItem.Res, SetItem.Error>>
+    | DoJoin of Join.Req * Callback<Result<Join.Res, Join.Err>>
+    | DoAuth of Auth.Req * Callback<Result<Auth.Res, Auth.Err>>
+    | DoLeave of Leave.Req * Callback<Result<Leave.Res, Leave.Err>>
+    | DoSetItem of SetItem.Req * Callback<Result<SetItem.Res, SetItem.Err>>
 with
     static member HubSpec =
         [
             Hub.RequestSpec<ServerReq>.Create "DoJoin" [
                 FieldSpec.Create<Join.Req> Join.Req.JsonEncoder Join.Req.JsonDecoder
-            ] Hub.getCallback<Join.Res, Join.Error>
+            ] Hub.getCallback<Join.Res, Join.Err>
             Hub.RequestSpec<ServerReq>.Create "DoAuth" [
                 FieldSpec.Create<Auth.Req> Auth.Req.JsonEncoder Auth.Req.JsonDecoder
-            ] Hub.getCallback<Auth.Res, Auth.Error>
+            ] Hub.getCallback<Auth.Res, Auth.Err>
             Hub.RequestSpec<ServerReq>.Create "DoLeave" [
                 FieldSpec.Create<Leave.Req> Leave.Req.JsonEncoder Leave.Req.JsonDecoder
-            ] Hub.getCallback<Leave.Res, Leave.Error>
+            ] Hub.getCallback<Leave.Res, Leave.Err>
             Hub.RequestSpec<ServerReq>.Create "DoSetItem" [
                 FieldSpec.Create<SetItem.Req> SetItem.Req.JsonEncoder SetItem.Req.JsonDecoder
-            ] Hub.getCallback<SetItem.Res, SetItem.Error>
+            ] Hub.getCallback<SetItem.Res, SetItem.Err>
         ]
     interface IReq
 

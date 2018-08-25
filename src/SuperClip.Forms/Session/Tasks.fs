@@ -16,6 +16,6 @@ module ChannelService = SuperClip.Core.Channel.Service
 let doSetChannelAsync (peers : Peers) : GetTask<Agent, unit> =
     fun runner -> task {
         let! channel = runner |> setupChannelServiceAsync peers.Channel
-        runner.Deliver <| InternalEvt ^<| SetChannel channel
+        runner.Deliver <| InternalEvt ^<| SetChannel (peers, channel)
         channel.Post <| ChannelTypes.DoSetDevices peers.Devices None
     }

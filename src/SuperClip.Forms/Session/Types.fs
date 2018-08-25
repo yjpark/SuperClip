@@ -23,24 +23,34 @@ type Args = {
 
 and Model = {
     Auth : Pref.Credential option
-    Self : Peer option
     Channel : ChannelService option
+    Syncing : bool
     mutable LastCloudItem : Item option
-}
+} with
+    static member Empty =
+        {
+            Auth = None
+            Channel = None
+            Syncing = true
+            LastCloudItem = None
+        }
+
 
 and Req =
     | DoSetAuth of Pref.Credential * Callback<unit>
+    | DoSetSyncing of bool * Callback<unit>
 with interface IReq
 
 and Evt =
     | OnJoinSucceed of Join.Res
-    | OnJoinFailed of Reason<Join.Error>
-    | OnAuthFailed of Reason<Auth.Error>
+    | OnJoinFailed of Reason<Join.Err>
+    | OnAuthSucceed of Auth.Res
+    | OnAuthFailed of Reason<Auth.Err>
+    | OnSyncingChanged of bool
 with interface IEvt
 
 and InternalEvt =
-    | DoInit
-    | SetChannel of ChannelService
+    | SetChannel of Auth.Res * ChannelService
 
 and Msg =
     | Req of Req
@@ -48,6 +58,7 @@ and Msg =
     | PrimaryEvt of Clipboard.Evt
     | StubRes of CloudTypes.ClientRes
     | StubEvt of CloudTypes.Evt
+    | StubStatus of LinkStatus
     | InternalEvt of InternalEvt
 with interface IMsg
 

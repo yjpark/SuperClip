@@ -46,7 +46,7 @@ with
             |> Text
 
 type Device = {
-    Guid : string
+    Guid : Guid
     Name : string
 } with
     static member Create guid name = {
@@ -74,7 +74,7 @@ type Device = {
 type ChannelKey = string
 
 type Channel = {
-    Guid : string
+    Guid : Guid
     Name : string
 } with
     static member CalcGuid (name : string) =
