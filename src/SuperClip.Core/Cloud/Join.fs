@@ -3,6 +3,7 @@
 module SuperClip.Core.Cloud.Join
 
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Remote
 

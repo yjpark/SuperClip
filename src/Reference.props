@@ -4,20 +4,26 @@
     <Reference Include="Dap.Archive">
       <HintPath>..\..\..\..\..\.nuget\packages\dap.archive\0.6.0\lib\netstandard2.0\Dap.Archive.dll</HintPath>
     </Reference>
+    <Reference Include="Dap.Local">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.local\0.6.0\lib\netstandard2.0\Dap.Local.dll</HintPath>
+    </Reference>
     <Reference Include="Dap.Forms">
       <HintPath>..\..\..\..\..\.nuget\packages\dap.forms\0.6.0\lib\netstandard2.0\Dap.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Dap.Platform">
-      <HintPath>..\..\..\..\..\.nuget\packages\dap.platform\0.6.4\lib\netstandard2.0\Dap.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="Dap.Prelude">
-      <HintPath>..\..\..\..\..\.nuget\packages\dap.prelude\0.6.0\lib\netstandard2.0\Dap.Prelude.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Remote">
       <HintPath>..\..\..\..\..\.nuget\packages\dap.remote\0.6.0\lib\netstandard2.0\Dap.Remote.dll</HintPath>
     </Reference>
     <Reference Include="Dap.WebSocket">
       <HintPath>..\..\..\..\..\.nuget\packages\dap.websocket\0.6.0\lib\netstandard2.0\Dap.WebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Platform">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.platform\0.6.4\lib\netstandard2.0\Dap.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Context">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.context\0.6.0\lib\netstandard2.0\Dap.Context.dll</HintPath>
+    </Reference>
+    <Reference Include="Dap.Prelude">
+      <HintPath>..\..\..\..\..\.nuget\packages\dap.prelude\0.6.0\lib\netstandard2.0\Dap.Prelude.dll</HintPath>
     </Reference>
     <Reference Include="Elmish">
       <HintPath>..\..\..\..\..\.nuget\packages\elmish\1.0.3\lib\net461\Elmish.dll</HintPath>
@@ -54,9 +60,6 @@
     </Reference>
     <Reference Include="Thoth.Json.Net">
       <HintPath>..\..\..\..\..\.nuget\packages\thoth.json.net\1.1.0\lib\net46\Thoth.Json.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Dap.Local">
-      <HintPath>..\..\..\..\..\.nuget\packages\dap.local\0.6.0\lib\netstandard2.0\Dap.Local.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
