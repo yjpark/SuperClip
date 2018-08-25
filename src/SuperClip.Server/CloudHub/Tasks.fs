@@ -3,6 +3,7 @@ module SuperClip.Server.CloudHub.Tasks
 open FSharp.Control.Tasks.V2
 
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Remote
 open Dap.Remote.Server.Auth
