@@ -9,10 +9,11 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open Plugin.Clipboard
 
-open Dap.Local.App
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Remote
+open Dap.Local.App
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module WebSocketProxy = Dap.Remote.WebSocketProxy.Proxy
 

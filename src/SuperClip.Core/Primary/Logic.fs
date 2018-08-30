@@ -5,6 +5,7 @@ open Elmish
 open Plugin.Clipboard
 
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Forms
 
