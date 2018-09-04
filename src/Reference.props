@@ -29,7 +29,7 @@
       <HintPath>..\..\..\..\..\.nuget\packages\elmish\1.0.3\lib\net461\Elmish.dll</HintPath>
     </Reference>
     <Reference Include="Elmish.XamarinForms">
-      <HintPath>..\..\..\..\..\.nuget\packages\elmish.xamarinforms\0.15.2\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+      <HintPath>..\..\..\..\..\.nuget\packages\elmish.xamarinforms\0.17.0\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
     </Reference>
     <Reference Include="NodaTime">
       <HintPath>..\..\..\..\..\.nuget\packages\nodatime\2.3.0\lib\net45\NodaTime.dll</HintPath>
@@ -60,6 +60,12 @@
     </Reference>
     <Reference Include="Thoth.Json.Net">
       <HintPath>..\..\..\..\..\.nuget\packages\thoth.json.net\1.1.0\lib\net46\Thoth.Json.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\.nuget\packages\newtonsoft.json\11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Fable.JsonConverter">
+        <HintPath>..\..\..\..\..\.nuget\packages\fable.jsonconverter\1.0.8\lib\net45\Fable.JsonConverter.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
