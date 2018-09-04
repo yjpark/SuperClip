@@ -6,7 +6,7 @@ open FSharp.Control.Tasks.V2
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
-open Dap.Remote
+open Dap.Forms
 open Dap.Forms.Provider
 module JsonStorage = Dap.Local.Storage.Json.Service
 
@@ -88,6 +88,3 @@ let initAsync (env : IEnv) = task {
     )
     return pref
 }
-
-let getDeviceName () =
-    ""

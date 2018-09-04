@@ -1,11 +1,10 @@
 [<AutoOpen>]
 module SuperClip.Forms.View.Types
 
-open Xamarin.Forms
 open Elmish.XamarinForms.DynamicViews
 
 open Dap.Platform
-open Dap.Remote
+open Dap.Forms
 
 module ViewTypes = Dap.Forms.View.Types
 
@@ -53,7 +52,7 @@ type AuthForm = {
         )|> Option.defaultValue
             {
                 ChannelName = ""
-                DeviceName = Pref.getDeviceName ()
+                DeviceName = getDeviceName ()
                 Password = ""
             }
 
