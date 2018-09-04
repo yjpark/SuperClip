@@ -2,70 +2,70 @@
 <Project>
   <ItemGroup>
     <Reference Include="Dap.Archive">
-      <HintPath>packages\Dap.Archive\lib\netstandard2.0\Dap.Archive.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Archive\lib\netstandard2.0\Dap.Archive.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Local">
-      <HintPath>packages\Dap.Local\lib\netstandard2.0\Dap.Local.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Local\lib\netstandard2.0\Dap.Local.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Forms">
-      <HintPath>packages\Dap.Forms\lib\netstandard2.0\Dap.Forms.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Forms\lib\netstandard2.0\Dap.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Remote">
-      <HintPath>packages\Dap.Remote\lib\netstandard2.0\Dap.Remote.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Remote\lib\netstandard2.0\Dap.Remote.dll</HintPath>
     </Reference>
     <Reference Include="Dap.WebSocket">
-      <HintPath>packages\Dap.Websocket\lib\netstandard2.0\Dap.WebSocket.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Websocket\lib\netstandard2.0\Dap.WebSocket.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Platform">
-      <HintPath>packages\Dap.Platform\0.6.4\lib\netstandard2.0\Dap.Platform.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Platform\lib\netstandard2.0\Dap.Platform.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Context">
-      <HintPath>packages\Dap.Context\lib\netstandard2.0\Dap.Context.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Context\lib\netstandard2.0\Dap.Context.dll</HintPath>
     </Reference>
     <Reference Include="Dap.Prelude">
-      <HintPath>packages\Dap.Prelude\lib\netstandard2.0\Dap.Prelude.dll</HintPath>
+      <HintPath>..\..\packages\Dap.Prelude\lib\netstandard2.0\Dap.Prelude.dll</HintPath>
     </Reference>
     <Reference Include="Elmish">
-      <HintPath>packages\Elmish\lib\netstandard2.0\Elmish.dll</HintPath>
+      <HintPath>..\..\packages\Elmish\lib\netstandard2.0\Elmish.dll</HintPath>
     </Reference>
     <Reference Include="Elmish.XamarinForms">
-      <HintPath>packages\Elmish.XamarinForms\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+      <HintPath>..\..\packages\Elmish.XamarinForms\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
     </Reference>
     <Reference Include="NodaTime">
-      <HintPath>packages\NodaTime\lib\netstandard2.0\NodaTime.dll</HintPath>
+      <HintPath>..\..\packages\NodaTime\lib\netstandard2.0\NodaTime.dll</HintPath>
     </Reference>
     <Reference Include="TaskBuilder.fs">
-      <HintPath>packages\TaskBuilder.fs\lib\net47\TaskBuilder.fs.dll</HintPath>
+      <HintPath>..\..\packages\TaskBuilder.fs\lib\net47\TaskBuilder.fs.dll</HintPath>
     </Reference>
     <Reference Include="Serilog">
-      <HintPath>packages\Serilog\lib\net46\Serilog.dll</HintPath>
+      <HintPath>..\..\packages\Serilog\lib\net46\Serilog.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Enrichers.Thread">
-      <HintPath>packages\Serilog.Enrichers.Thread\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Enrichers.Thread\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Formatting.Compact">
-      <HintPath>packages\Serilog.Formatting.Compact\lib\net45\Serilog.Formatting.Compact.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Formatting.Compact\lib\net45\Serilog.Formatting.Compact.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.Console">
-      <HintPath>packages\Serilog.Sinks.Console\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Sinks.Console\lib\net45\Serilog.Sinks.Console.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.File">
-      <HintPath>packages\Serilog.Sinks.File\lib\net45\Serilog.Sinks.File.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Sinks.File\lib\net45\Serilog.Sinks.File.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.PeriodicBatching">
-      <HintPath>packages\Serilog.Sinks.PeriodicBatching\lib\net45\Serilog.Sinks.PeriodicBatching.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Sinks.PeriodicBatching\lib\net45\Serilog.Sinks.PeriodicBatching.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.Seq">
-      <HintPath>packages\Serilog.Sinks.Seq\lib\net45\Serilog.Sinks.Seq.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Sinks.Seq\lib\net45\Serilog.Sinks.Seq.dll</HintPath>
     </Reference>
     <Reference Include="Thoth.Json.Net">
-      <HintPath>packages\Thoth.Json.Net\lib\netstandard2.0\Thoth.Json.Net.dll</HintPath>
+      <HintPath>..\..\packages\Thoth.Json.Net\lib\netstandard2.0\Thoth.Json.Net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>packages\Newtonsoft.Json\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Fable.JsonConverter">
-        <HintPath>packages\Fable.JsonConverter\lib\net45\Fable.JsonConverter.dll</HintPath>
+        <HintPath>..\..\packages\Fable.JsonConverter\lib\net45\Fable.JsonConverter.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
