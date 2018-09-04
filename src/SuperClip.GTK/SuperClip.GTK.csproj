@@ -74,6 +74,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <Import Project="../Reference.props" />
   <ItemGroup>
     <Content Include="OpenTK.dll.config">
       <Paket>True</Paket>
