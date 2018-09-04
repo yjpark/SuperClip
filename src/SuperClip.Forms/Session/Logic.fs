@@ -9,8 +9,8 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open Plugin.Clipboard
 
-open Dap.Local.App
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Remote
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
@@ -32,7 +32,8 @@ let mutable private cloudPeers : Peers option = None
 let private doSetItemToCloud (item : Item) : ActorOperate =
     fun runner (model, cmd) ->
         let shouldNotSet =
-            not model.Syncing
+            model.Auth.IsNone
+            || not model.Syncing
             || item.IsEmpty || (
                 match model.LastCloudItem with
                 | None ->
@@ -70,7 +71,7 @@ let private onPrimaryEvt (evt : Clipboard.Evt) : ActorOperate =
 let private onStubEvt (evt : CloudTypes.Evt) : ActorOperate =
     fun runner (model, cmd) ->
         logWarn runner "Session" "CloudEvt" evt
-        if model.Syncing then
+        if model.Auth.IsSome && model.Syncing then
             match evt with
             | CloudTypes.OnItemChanged item ->
                 let auth = model.Auth |> Option.get
@@ -93,10 +94,12 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
                 model.Auth
                 |> Option.map (fun auth ->
                     let auth = {auth with Token = token.Value}
-                    Pref.setCredential auth
+                    runner.Actor.Args.Pref.Properties.Credential.SetValue <| Some auth
+                    |> ignore
                     auth
                 )
             updateModel (fun m -> {m with Auth = auth})
+            |-|- addSubCmd Evt ^<| OnAuthChanged auth
             |-|- addSubCmd Evt ^<| OnJoinSucceed token
         | CloudTypes.OnJoin (_req, (Error err)) ->
             updateModel (fun m -> {m with Auth = None})
@@ -118,6 +121,20 @@ let private doSetAuth req ((auth, callback) : Pref.Credential * Callback<unit>) 
         (runner, model, cmd)
         |=|> updateModel (fun m -> {m with Auth = Some auth})
 
+let private doResetAuth req (callback : Callback<unit>) : ActorOperate =
+    fun runner (model, cmd) ->
+        model.Auth
+        |> Option.bind (fun a -> if a.Token <> "" then Some a.Token else None)
+        |> Option.iter (fun token ->
+            runner.Actor.Args.Stub.Post <| CloudTypes.DoLeave (JsonString token)
+            reply runner callback <| ack req ()
+        )
+        runner.Actor.Args.Pref.Properties.Credential.SetValue None
+        |> ignore
+        (runner, model, cmd)
+        |-|> updateModel (fun m -> {m with Auth = None})
+        |=|> addSubCmd Evt ^<| OnAuthChanged None
+
 let private doSetSyncing req ((syncing, callback) : bool * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         reply runner callback <| ack req ()
@@ -133,7 +150,7 @@ let private onStubStatus (status : LinkStatus) : ActorOperate =
         logWarn runner "Session" "onStubStatus" status
         match status with
         | LinkStatus.Linked ->
-            Pref.getCredential ()
+            runner.Actor.Args.Pref.Properties.Credential.Value
             |> Option.map (fun auth ->
                 addSubCmd Req ^<| DoSetAuth (auth, None)
             )
@@ -154,6 +171,7 @@ let private update : Update<Agent, Model, Msg> =
         | Req req ->
             match req with
             | DoSetAuth (a, b) -> doSetAuth req (a, b)
+            | DoResetAuth (a) -> doResetAuth req (a)
             | DoSetSyncing (a, b) -> doSetSyncing req (a, b)
         | Evt _evt -> noOperation
         | PrimaryEvt evt -> onPrimaryEvt evt

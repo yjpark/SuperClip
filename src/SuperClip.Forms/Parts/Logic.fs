@@ -27,6 +27,7 @@ module CloudTypes = SuperClip.Core.Cloud.Types
 module SessionService = SuperClip.Forms.Session.Service
 
 let initAsync (app : Simple.Model) = task {
+    let! pref = Pref.initAsync app.Env
     let! history = app.Env |> Helper.doSetupAsync
     let primary = app.Env |> PrimaryService.get NoKey
     do! app.Env |> PacketClient.registerAsync true None
@@ -36,6 +37,7 @@ let initAsync (app : Simple.Model) = task {
     )
     let args : SessionService.Args =
         {
+            Pref = pref
             Stub = cloudStub
             Primary = primary
             History = history

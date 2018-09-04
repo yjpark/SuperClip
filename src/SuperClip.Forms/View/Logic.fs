@@ -26,7 +26,7 @@ let private init (parts : Parts) : Init<Initer, unit, Model, Msg> =
         ({
             Parts = parts
             Page = HomePage
-            Auth = AuthForm.Default ()
+            Auth = AuthForm.Create parts.Session.Actor.Args.Pref.Properties.Credential.Value
             Info = None
             Ver = 1
         }, noCmd)

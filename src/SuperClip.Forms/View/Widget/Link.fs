@@ -40,6 +40,9 @@ let render (runner : View) (session : Session) =
                             yield button "Pause" (fun () ->
                                 session.Post <| SessionTypes.DoSetSyncing (false, None)
                             )
+                            yield button "Logout" (fun () ->
+                                session.Post <| SessionTypes.DoResetAuth None
+                            )
                         | false ->
                             yield statusLabel "Not Syncing"
                             yield button "Resume" (fun () ->

@@ -331,3 +331,7 @@ ASALocalRun/
 
 packages/build
 build
+
+src/*/log
+src/*/doc
+

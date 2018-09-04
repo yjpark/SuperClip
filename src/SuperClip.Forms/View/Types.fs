@@ -42,12 +42,12 @@ type AuthForm = {
     DeviceName : string
     Password : string
 } with
-    static member Default () =
-        Pref.getCredential ()
-        |> Option.map (fun auth ->
+    static member Create (credential : Pref.Credential option) =
+        credential
+        |> Option.map (fun c ->
             {
-                ChannelName = auth.Channel.Name
-                DeviceName = auth.Device.Name
+                ChannelName = c.Channel.Name
+                DeviceName = c.Device.Name
                 Password = ""
             }
         )|> Option.defaultValue

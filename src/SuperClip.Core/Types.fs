@@ -43,7 +43,9 @@ with
         match this with
         | Text text ->
             Des.decrypt runner cryptoKey text
-            |> Text
+            |> Option.map (fun text ->
+                Text text
+            ) |> Option.defaultValue (Text "")
 
 type Device = {
     Guid : Guid
@@ -209,7 +211,6 @@ type Item = {
             Content = this.Content.Encrypt cryptoKey
         }
     member this.Decrypt (runner : IRunner) (cryptoKey : string) =
-        {this with
-            Content = this.Content.Decrypt runner cryptoKey
-        }
+        let content = this.Content.Decrypt runner cryptoKey
+        {this with Content = content}
 

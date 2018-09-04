@@ -16,6 +16,7 @@ type ChannelService = SuperClip.Core.Channel.Service.Service
 type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
 
 type Args = {
+    Pref : SuperClip.Forms.Pref.State
     Stub : CloudStub
     Primary : Primary.Service
     History : History.Agent
@@ -38,6 +39,7 @@ and Model = {
 
 and Req =
     | DoSetAuth of Pref.Credential * Callback<unit>
+    | DoResetAuth of Callback<unit>
     | DoSetSyncing of bool * Callback<unit>
 with interface IReq
 
@@ -46,6 +48,7 @@ and Evt =
     | OnJoinFailed of Reason<Join.Err>
     | OnAuthSucceed of Auth.Res
     | OnAuthFailed of Reason<Auth.Err>
+    | OnAuthChanged of Pref.Credential option
     | OnSyncingChanged of bool
 with interface IEvt
 
