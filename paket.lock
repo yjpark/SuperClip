@@ -1,4 +1,3 @@
-STORAGE: NONE
 NUGET
   remote: https://www.nuget.org/api/v2
     Argu (5.1)

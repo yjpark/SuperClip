@@ -2,7 +2,7 @@ version 5.172.4
 
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
-storage: none
+#storage: none
 #framework: auto-detect
 
 nuget FSharp.Core
