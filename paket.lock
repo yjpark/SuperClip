@@ -1278,6 +1278,9 @@ NUGET
       Dap.Platform (>= 0.6.4) - restriction: >= netstandard2.0
       Dap.Remote (>= 0.6) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.5) - restriction: >= netstandard2.0
+    Dap.Context (0.6.0)
+      Dap.Prelude (>= 0.6) - restriction: >= netstandard2.0
+      Thoth.Json.Net (>= 1.0) - restriction: >= netstandard2.0
     Dap.Farango (0.0.4) - restriction: >= netstandard2.0
       Fable.JsonConverter (>= 1.0.8) - restriction: >= netstandard2.0
       FSharp.Control.AsyncSeq (>= 2.0.21) - restriction: >= netstandard2.0
