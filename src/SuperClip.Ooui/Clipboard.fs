@@ -10,15 +10,21 @@ open Plugin.Clipboard.Abstractions;
 open Dap.Platform
 open Dap.Local
 
+[<Literal>]
+let UseShellClipboard = false
+
 type ClipboardImplementation () =
     let mutable text' = ""
     member _this.GetText () =
-        match Runtime.Platform with
-        | Mac ->
-            Shell.bash "pbpaste"
-        | Linux ->
-            Shell.bash "xsel -b"
-        | Windows ->
+        if UseShellClipboard then
+            match Runtime.Platform with
+            | Mac ->
+                Shell.bash "pbpaste"
+            | Linux ->
+                Shell.bash "xsel -b"
+            | Windows ->
+                text'
+        else
             text'
     member _this.SetText text =
         text' <- text
