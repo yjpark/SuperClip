@@ -41,7 +41,7 @@ type AuthForm = {
     DeviceName : string
     Password : string
 } with
-    static member Create (credential : Pref.Credential option) =
+    static member Create (credential : Credential option) =
         credential
         |> Option.map (fun c ->
             {

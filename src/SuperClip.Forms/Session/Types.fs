@@ -23,7 +23,7 @@ type Args = {
 }
 
 and Model = {
-    Auth : Pref.Credential option
+    Auth : Credential option
     Channel : ChannelService option
     Syncing : bool
     mutable LastCloudItem : Item option
@@ -38,7 +38,7 @@ and Model = {
 
 
 and Req =
-    | DoSetAuth of Pref.Credential * Callback<unit>
+    | DoSetAuth of Credential * Callback<unit>
     | DoResetAuth of Callback<unit>
     | DoSetSyncing of bool * Callback<unit>
 with interface IReq
@@ -48,7 +48,7 @@ and Evt =
     | OnJoinFailed of Reason<Join.Err>
     | OnAuthSucceed of Auth.Res
     | OnAuthFailed of Reason<Auth.Err>
-    | OnAuthChanged of Pref.Credential option
+    | OnAuthChanged of Credential option
     | OnSyncingChanged of bool
 with interface IEvt
 

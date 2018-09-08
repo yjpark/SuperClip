@@ -20,7 +20,7 @@ module SessionTypes = SuperClip.Forms.Session.Types
 
 let doAuth (runner : View) (model : Model) : unit =
     let password = model.Auth.Password
-    let auth : Pref.Credential =
+    let auth : Credential =
         {
             Device = Device.New model.Auth.DeviceName
             Channel = Channel.CreateWithName model.Auth.ChannelName

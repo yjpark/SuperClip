@@ -113,7 +113,7 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
             noOperation
         <| runner <| (model, cmd)
 
-let private doSetAuth req ((auth, callback) : Pref.Credential * Callback<unit>) : ActorOperate =
+let private doSetAuth req ((auth, callback) : Credential * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         let joinReq = Join.Req.Create auth.Self auth.PassHash
         runner.Actor.Args.Stub.Post <| CloudTypes.DoJoin joinReq
