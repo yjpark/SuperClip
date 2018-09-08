@@ -154,7 +154,7 @@ type Peers = {
     static member JsonEncoder (this : Peers) =
         E.object [
             "channel", E.json this.Channel
-            "devices", E.list <| List.map Device.JsonEncoder this.Devices
+            "devices", (E.list Device.JsonEncoder) this.Devices
         ]
     interface IJson with
         member this.ToJson () = Peers.JsonEncoder this
