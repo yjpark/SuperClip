@@ -15,3 +15,7 @@ module CloudTypes = SuperClip.Core.Cloud.Types
 type CloudStub = SuperClip.Forms.Parts.Types.CloudStub
 
 type Parts = SuperClip.Forms.Parts.Types.Model
+
+type Credential with
+    member this.Self =
+        Peer.Create this.Channel this.Device

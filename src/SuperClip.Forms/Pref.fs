@@ -15,10 +15,6 @@ open SuperClip.Core
 [<Literal>]
 let CredentialLuid = "credential"
 
-type Credential with
-    member this.Self =
-        Peer.Create this.Channel this.Device
-
 type State = CustomContext<PrefProperties>
 
 let initAsync (env : IEnv) = task {
