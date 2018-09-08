@@ -51,9 +51,9 @@ type Credential = {
         Peer.Create this.Channel this.Device
 
 type PrefProperties (owner : IOwner, key : Key) =
-    inherit WrapProperties<PrefProperties, IComboProperty> ("PrefProperties")
+    inherit WrapProperties<PrefProperties, IComboProperty> ()
     let target = Properties.combo owner key
-    let credential = target.AddVar<Credential option> ("Option<Credential>", (E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None)
+    let credential = target.AddVar<Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None)
     do (
         base.Setup (target)
     )
