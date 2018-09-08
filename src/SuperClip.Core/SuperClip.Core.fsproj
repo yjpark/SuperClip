@@ -4,7 +4,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Const.fs" />
-    <Compile Include="Types.fs" />
+    <Compile Include="Dsl.fs" />
+    <Compile Include="_Gen/Types.fs" />
+    <Compile Include="Extensions.fs" />
     <Compile Include="Clipboard.fs" />
     <Compile Include="Primary/Types.fs" />
     <Compile Include="Primary/Tasks.fs" />

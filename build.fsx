@@ -6,7 +6,9 @@ open Fake.Core.TargetOperators
 open Fake.IO
 open Fake.IO.Globbing.Operators
 
-module DotNet = Dap.Build.DotNet
+open Dap.Build
+
+#load "src/SuperClip.Core/Dsl.fs"
 
 [<Literal>]
 let Dist = "Dist"
@@ -19,4 +21,13 @@ let allProjects =
     ++ "src/SuperClip.Web/*.fsproj"
     ++ "src/SuperClip.Tools/*.fsproj"
 
-DotNet.createAndRun DotNet.debug allProjects
+DotNet.create DotNet.debug allProjects
+
+DotNet.createPrepares [
+    ["SuperClip.Core"], fun _ ->
+        SuperClip.Core.Dsl.compile ["src" ; "SuperClip.Core"]
+        |> List.iter traceSuccess
+]
+
+Target.runOrDefault DotNet.Build
+

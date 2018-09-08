@@ -2,7 +2,7 @@ version 5.177.1
 
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
-storage: symlink
+#storage: symlink
 #framework: auto-detect
 
 nuget FSharp.Core
@@ -48,6 +48,8 @@ group Build
     framework: netstandard2.0
 
     nuget Dap.Build
+    nuget Dap.Context
+    nuget Dap.Platform
 
     clitool dotnet-sourcelink
     nuget Microsoft.SourceLink.GitHub 1.0.0-beta-62925-02
