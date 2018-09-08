@@ -3,11 +3,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="_Gen/Types.fs" />
     <Compile Include="Pref.fs" />
     <Compile Include="Session/Types.fs" />
     <Compile Include="Parts/Types.fs" />
     <Compile Include="View/Types.fs" />
-    <Compile Include="Types.fs" />
+    <Compile Include="Alias.fs" />
     <Compile Include="Session/Tasks.fs" />
     <Compile Include="Session/Logic.fs" />
     <Compile Include="Session/Service.fs" />

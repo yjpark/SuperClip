@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module SuperClip.Forms.Types
+module SuperClip.Forms.Alias
 
 open FSharp.Control.Tasks.V2
 open Xamarin.Forms

@@ -9,6 +9,7 @@ open Fake.IO.Globbing.Operators
 open Dap.Build
 
 #load "src/SuperClip.Core/Dsl.fs"
+#load "src/SuperClip.Forms/Dsl.fs"
 
 [<Literal>]
 let Dist = "Dist"
@@ -26,6 +27,9 @@ DotNet.create DotNet.debug allProjects
 DotNet.createPrepares [
     ["SuperClip.Core"], fun _ ->
         SuperClip.Core.Dsl.compile ["src" ; "SuperClip.Core"]
+        |> List.iter traceSuccess
+    ["SuperClip.Forms"], fun _ ->
+        SuperClip.Forms.Dsl.compile ["src" ; "SuperClip.Forms"]
         |> List.iter traceSuccess
 ]
 
