@@ -11,12 +11,18 @@ open Dap.Platform
  *)
 type Content =
     | Text of content : string
+    | Asset of url : string
 with
     static member CreateText content : Content =
         Text (content)
+    static member CreateAsset url : Content =
+        Asset (url)
     static member JsonSpec' : CaseSpec<Content> list =
         [
             CaseSpec<Content>.Create "Text" [
+                S.string
+            ]
+            CaseSpec<Content>.Create "Asset" [
                 S.string
             ]
         ]

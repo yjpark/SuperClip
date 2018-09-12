@@ -15,17 +15,23 @@ type Content with
         match this with
         | Text text ->
             String.IsNullOrWhiteSpace text
+        | Asset url ->
+            String.IsNullOrWhiteSpace url
     member this.Hash =
         if this.IsEmpty then
             ""
         else
             match this with
             | Text text -> calcSha256Sum text
+            | Asset url -> calcSha256Sum url
     member this.Encrypt (cryptoKey : string) =
         match this with
         | Text text ->
             Des.encrypt cryptoKey text
             |> Text
+        | Asset url ->
+            Des.encrypt cryptoKey url
+            |> Asset
     member this.Decrypt (runner : IRunner) (cryptoKey : string) =
         match this with
         | Text text ->
@@ -33,6 +39,11 @@ type Content with
             |> Option.map (fun text ->
                 Text text
             ) |> Option.defaultValue (Text "")
+        | Asset url ->
+            Des.decrypt runner cryptoKey url
+            |> Option.map (fun url ->
+                Asset url
+            ) |> Option.defaultValue (Asset "")
 
 type Device with
     static member New name : Device =

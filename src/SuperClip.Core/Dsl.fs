@@ -3,11 +3,16 @@ module SuperClip.Core.Dsl
 open Dap.Context.Meta
 open Dap.Context.Generator
 open Dap.Platform
+open Dap.Platform.Meta
+open Dap.Platform.Generator
 
 let Content =
     union {
         case "Text" (fields {
             var (M.string "content")
+        })
+        case "Asset" (fields {
+            var (M.string "url")
         })
     }
 
@@ -53,9 +58,9 @@ let Item =
 let compile segments =
     [
         G.File (segments, ["_Gen" ; "Types.fs"],
-            G.Module ("SuperClip.Core.Types",
+            G.AutoOpenModule ("SuperClip.Core.Types",
                 [
-                    [ "open Dap.Platform" ]
+                    G.PlatformOpens
                     G.JsonUnion <@ Content @>
                     G.JsonRecord <@ Device @>
                     G.JsonRecord <@ Channel @>

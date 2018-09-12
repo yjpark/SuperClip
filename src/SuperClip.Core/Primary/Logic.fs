@@ -48,6 +48,9 @@ let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOp
             | Text text ->
                 runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
                 |> ignore
+            | Asset url ->
+                //TODO
+                ()
             let current = Item.Create runner.Clock.Now Local content
             runner.Deliver <| Evt ^<| OnSet current
             reply runner callback <| ack req ()

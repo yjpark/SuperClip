@@ -3,6 +3,8 @@ module SuperClip.Forms.Dsl
 open Dap.Context.Meta
 open Dap.Context.Generator
 open Dap.Platform
+open Dap.Platform.Meta
+open Dap.Platform.Generator
 
 open SuperClip.Core.Dsl
 
@@ -23,7 +25,7 @@ let PrefProperties =
 let compile segments =
     [
         G.File (segments, ["_Gen" ; "Types.fs"],
-            G.Module ("SuperClip.Forms.Types",
+            G.AutoOpenModule ("SuperClip.Forms.Types",
                 [
                     [ "open SuperClip.Core" ]
                     G.JsonRecord <@ Credential @>
