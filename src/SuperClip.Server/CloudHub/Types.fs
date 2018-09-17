@@ -3,22 +3,29 @@ module SuperClip.Server.CloudHub.Types
 
 open Dap.Prelude
 open Dap.Platform
+open Dap.Local.Farango
 open Dap.Remote
 open Dap.Remote.Server.Auth
 
 open SuperClip.Core
 open SuperClip.Server
 
-open SuperClip.Core.Cloud
+module CloudTypes = SuperClip.Core.Cloud.Types
 module ChannelTypes = SuperClip.Core.Channel.Types
 
-type Req = SuperClip.Core.Cloud.Types.ServerReq
-type Evt = SuperClip.Core.Cloud.Types.Evt
+[<Literal>]
+let Kind = "CloudHub"
+
+[<Literal>]
+let GatewayKind = "CloudHubGateway"
+
+type Req = CloudTypes.ServerReq
+type Evt = CloudTypes.Evt
 
 type ChannelService = SuperClip.Core.Channel.Service.Service
 type ChannelAuth = SuperClip.Server.Service.ChannelAuth.Record
 
-and Args = App
+and Args = NoArgs
 
 and Model = {
     Devices : Map<ChannelKey, ChannelService * Device>
@@ -41,7 +48,14 @@ let castEvt : CastEvt<Msg, Evt> =
     | HubEvt evt -> Some evt
     | _ -> None
 
-type Agent (param) =
-    inherit BaseAgent<Agent, Args, Model, Msg, Req, Evt> (param)
+type Agent (pack, param) =
+    inherit PackAgent<IDbPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
     override this.Runner = this
-    static member Spawn (param) = new Agent (param)
+    static member Spawn k m = new Agent (k, m)
+
+let setGateway (gateway : IGateway) : Func<Agent, unit> =
+    fun runner ->
+        gateway.OnStatus.AddWatcher runner "OnStatus" (runner.Deliver << InternalEvt << OnStatusChanged)
+
+let HubSpec =
+    Hub.getHubSpec<Agent, Req, Evt> Kind CloudTypes.ServerReq.HubSpec setGateway

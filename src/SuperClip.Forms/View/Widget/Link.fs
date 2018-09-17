@@ -20,14 +20,14 @@ let private button text command =
         command = command
     )
 
-let render (runner : View) (session : Session) =
+let render (runner : View) (session : SessionTypes.Agent) =
     View.FlexLayout (
         direction=FlexDirection.Row,
         children = [
             yield View.Label (
-                text = sprintf "Link Status : %A" session.Actor.Args.Stub.Status
+                text = sprintf "Link Status : %A" runner.Pack.Stub.Status
             )
-            if session.Actor.Args.Stub.Status = LinkStatus.Linked then
+            if runner.Pack.Stub.Status = LinkStatus.Linked then
                 match session.Actor.State.Auth with
                 | Some auth ->
                     let statusLabel = fun status ->

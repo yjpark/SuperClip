@@ -21,12 +21,11 @@ module SessionTypes = SuperClip.Forms.Session.Types
 
 type LayoutOptions = Xamarin.Forms.LayoutOptions
 
-let private init (parts : Parts) : Init<Initer, unit, Model, Msg> =
+let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         ({
-            Parts = parts
             Page = HomePage
-            Auth = AuthForm.Create parts.Session.Actor.Args.Pref.Properties.Credential.Value
+            Auth = AuthForm.Create None
             Info = None
             Ver = 1
         }, noCmd)
@@ -37,7 +36,7 @@ let private update : Update<View, Model, Msg> =
         let model = {model with Ver = model.Ver + 1}
         match msg with
         | SetPrimary content ->
-            model.Parts.Primary.Actor.Handle <| Clipboard.DoSet content None
+            runner.Pack.Primary.Actor.Handle <| Clipboard.DoSet content None
             (model, noCmd)
         | HistoryEvt _evt ->
             (model, noCmd)
@@ -70,12 +69,12 @@ let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
 
 let private subscribe : Subscribe<View, Model, Msg> =
     fun runner model ->
-        model.Parts.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun _status ->
+        runner.Pack.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun _status ->
             runner.React DoRepaint
         )
-        model.Parts.Session.Actor.OnEvent.AddWatcher runner "onSessionEvt" <| onSessionEvt runner
+        runner.Pack.Session.Actor.OnEvent.AddWatcher runner "onSessionEvt" <| onSessionEvt runner
         Cmd.batch [
-            subscribeBus runner model HistoryEvt model.Parts.History.Actor.OnEvent
+            subscribeBus runner model HistoryEvt runner.Pack.History.Actor.OnEvent
         ]
 
 let private render : Render =
@@ -96,5 +95,9 @@ let private render : Render =
         else
             page
 
-let args application (parts : Parts) =
-    Args.Create (init parts) update subscribe render application
+let args application =
+    Args.Create init update subscribe render application
+
+let newArgs () =
+    Dap.Forms.Util.newApplication ()
+    |> args

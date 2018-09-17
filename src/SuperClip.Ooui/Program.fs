@@ -12,20 +12,21 @@ open Dap.Platform
 
 open SuperClip.Core
 open SuperClip.Clipboard
-module App = SuperClip.Forms.App
+open SuperClip.Forms
 
-let onExit (env : IEnv) (exited : AutoResetEvent) =
+let onExit (app : IApp) (exited : AutoResetEvent) =
     fun (_sender : obj) (cancelArgs : ConsoleCancelEventArgs) ->
-        logWip env "Quiting ..." cancelArgs
-        env.Logging.Close ()
+        logWip app "Quiting ..." cancelArgs
+        app.Env.Logging.Close ()
         exited.Set() |> ignore
 
-let waitForExit (env : IEnv) =
+let waitForExit (app : IApp) =
     let exited = new AutoResetEvent(false)
-    let onExit' = new ConsoleCancelEventHandler (onExit env exited)
+    let onExit' = new ConsoleCancelEventHandler (onExit app exited)
     Console.CancelKeyPress.AddHandler onExit'
     exited.WaitOne() |> ignore
 
+(*
 let setTestDataAsync : GetTask<App.View, unit> =
     fun runner -> task {
         let primary = runner.ViewState.Parts.Primary
@@ -35,8 +36,9 @@ let setTestDataAsync : GetTask<App.View, unit> =
             primary.Post <| Clipboard.DoSet (Text text) None
         return ()
     }
+*)
 
-let onAppStarted (app : App.Model) =
+let onAppStarted (app : IApp) =
     Xamarin.Forms.Forms.LoadApplication <| app.View.Application
     //app.View.RunTask ignoreOnFailed setTestDataAsync
 
@@ -45,6 +47,6 @@ let main argv =
     Ooui.UI.Port <- 6060
     Xamarin.Forms.Forms.Init ();
     CrossClipboard.Current <- new ClipboardImplementation ()
-    let app = App.create onAppStarted
-    waitForExit app.Env
+    let app = createApp onAppStarted
+    waitForExit app
     0 // return an integer exit code

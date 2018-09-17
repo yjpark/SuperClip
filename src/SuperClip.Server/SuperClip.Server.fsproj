@@ -4,14 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Types.fs" />
     <Compile Include="Service/ChannelAuth.fs" />
-    <Compile Include="Helper.fs" />
     <Compile Include="CloudHub/Types.fs" />
     <Compile Include="CloudHub/Tasks.fs" />
     <Compile Include="CloudHub/Logic.fs" />
-    <Compile Include="CloudHub/Agent.fs" />
-    <Compile Include="App.fs" />
+    <Compile Include="_Gen/Packs.fs" />
+    <Compile Include="_Gen/App.fs" />
+    <Compile Include="Helper.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />

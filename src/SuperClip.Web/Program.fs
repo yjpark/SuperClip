@@ -4,10 +4,10 @@ open Dap.Prelude
 open Dap.Platform
 module WebSocketHub = Dap.Remote.Web.WebSocketHub
 
-module App = SuperClip.Server.App
-module CloudHubAgent = SuperClip.Server.CloudHub.Agent
+open SuperClip.Server.Helper
+module CloudHubTypes = SuperClip.Server.CloudHub.Types
 
 [<EntryPoint>]
 let main _ =
-    let app = App.create "super-clip-web-.log"
-    app.Env |> WebSocketHub.run 5700 "/ws_user" CloudHubAgent.ServiceKind
+    let app = createApp "super-clip-web-.log"
+    app.Env |> WebSocketHub.run 5700 "/ws_user" CloudHubTypes.GatewayKind

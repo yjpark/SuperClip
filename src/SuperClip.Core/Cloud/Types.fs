@@ -111,8 +111,3 @@ let StubSpec : StubSpec<Req, ClientRes, Evt> =
         Response = ClientRes.StubSpec
         Event = Evt.JsonSpec
     }
-
-let getHubSpec (getHub : GetHub<ServerReq, Evt>) = {
-    Request = ServerReq.HubSpec
-    GetHub = getHub
-}

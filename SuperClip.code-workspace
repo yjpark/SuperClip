@@ -49,6 +49,7 @@
 			"Elmish",
 			"Guid",
 			"failwith",
+			"hardcoded",
 			"initer",
 			"sprintf",
 			"struct"

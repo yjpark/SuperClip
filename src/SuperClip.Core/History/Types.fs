@@ -3,15 +3,7 @@ module SuperClip.Core.History.Types
 open Dap.Platform
 open SuperClip.Core
 
-type Args = {
-    MaxSize : int
-    RecentSize : int
-} with
-    static member New () =
-        {
-            MaxSize = 400
-            RecentSize = 20
-        }
+type Args = HistoryArgs
 
 and Model = {
     RecentItems : Item list

@@ -1,9 +1,14 @@
 [<AutoOpen>]
 module SuperClip.Core.Types
 
+open System.Threading.Tasks
+open FSharp.Control.Tasks.V2
+open Dap.Prelude
 open Dap.Context
-
+open Dap.Context.Builder
 open Dap.Platform
+
+module TickerTypes = Dap.Platform.Ticker.Types
 
 (*
  * Generated: <Union>
@@ -49,7 +54,9 @@ type Device = {
             Name = name
         }
     static member Default () =
-        Device.Create (System.Guid.NewGuid().ToString()) ""
+        Device.Create
+            (System.Guid.NewGuid().ToString())
+            ""
     static member JsonEncoder : JsonEncoder<Device> =
         fun (this : Device) ->
             E.object [
@@ -65,6 +72,7 @@ type Device = {
             Device.JsonEncoder Device.JsonDecoder
     interface IJson with
         member this.ToJson () = Device.JsonEncoder this
+    interface IObj
     member this.WithGuid (guid : Guid) = {this with Guid = guid}
     member this.WithName (name : string) = {this with Name = name}
 
@@ -83,7 +91,9 @@ type Channel = {
             Name = name
         }
     static member Default () =
-        Channel.Create (System.Guid.NewGuid().ToString()) ""
+        Channel.Create
+            (System.Guid.NewGuid().ToString())
+            ""
     static member JsonEncoder : JsonEncoder<Channel> =
         fun (this : Channel) ->
             E.object [
@@ -99,6 +109,7 @@ type Channel = {
             Channel.JsonEncoder Channel.JsonDecoder
     interface IJson with
         member this.ToJson () = Channel.JsonEncoder this
+    interface IObj
     member this.WithGuid (guid : Guid) = {this with Guid = guid}
     member this.WithName (name : string) = {this with Name = name}
 
@@ -131,6 +142,7 @@ type Peer = {
             Peer.JsonEncoder Peer.JsonDecoder
     interface IJson with
         member this.ToJson () = Peer.JsonEncoder this
+    interface IObj
     member this.WithChannel (channel : Channel) = {this with Channel = channel}
     member this.WithDevice (device : Device) = {this with Device = device}
 
@@ -163,6 +175,7 @@ type Peers = {
             Peers.JsonEncoder Peers.JsonDecoder
     interface IJson with
         member this.ToJson () = Peers.JsonEncoder this
+    interface IObj
     member this.WithChannel (channel : Channel) = {this with Channel = channel}
     member this.WithDevices (devices : Device list) = {this with Devices = devices}
 
@@ -226,6 +239,88 @@ type Item = {
             Item.JsonEncoder Item.JsonDecoder
     interface IJson with
         member this.ToJson () = Item.JsonEncoder this
+    interface IObj
     member this.WithTime (time : Instant) = {this with Time = time}
     member this.WithSource (source : Source) = {this with Source = source}
     member this.WithContent (content : Content) = {this with Content = content}
+
+(*
+ * Generated: <Record>
+ *     IsJson
+ *)
+type PrimaryClipboardArgs = {
+    CheckInterval : Duration
+    TimeoutDuration : Duration
+} with
+    static member Create checkInterval timeoutDuration
+            : PrimaryClipboardArgs =
+        {
+            CheckInterval = checkInterval
+            TimeoutDuration = timeoutDuration
+        }
+    static member Default () =
+        PrimaryClipboardArgs.Create
+            (Duration.FromSeconds 0.5)
+            (Duration.FromSeconds 1.0)
+    static member JsonEncoder : JsonEncoder<PrimaryClipboardArgs> =
+        fun (this : PrimaryClipboardArgs) ->
+            E.object [
+                "check_interval", DurationFormat.Second.JsonEncoder this.CheckInterval
+                "timeout_duration", DurationFormat.Second.JsonEncoder this.TimeoutDuration
+            ]
+    static member JsonDecoder : JsonDecoder<PrimaryClipboardArgs> =
+        D.decode PrimaryClipboardArgs.Create
+        |> D.required "check_interval" DurationFormat.Second.JsonDecoder
+        |> D.required "timeout_duration" DurationFormat.Second.JsonDecoder
+    static member JsonSpec =
+        FieldSpec.Create<PrimaryClipboardArgs>
+            PrimaryClipboardArgs.JsonEncoder PrimaryClipboardArgs.JsonDecoder
+    interface IJson with
+        member this.ToJson () = PrimaryClipboardArgs.JsonEncoder this
+    interface IObj
+    member this.WithCheckInterval (checkInterval : Duration) = {this with CheckInterval = checkInterval}
+    member this.WithTimeoutDuration (timeoutDuration : Duration) = {this with TimeoutDuration = timeoutDuration}
+
+(*
+ * Generated: <Record>
+ *     IsJson
+ *)
+type HistoryArgs = {
+    MaxSize : int
+    RecentSize : int
+} with
+    static member Create maxSize recentSize
+            : HistoryArgs =
+        {
+            MaxSize = maxSize
+            RecentSize = recentSize
+        }
+    static member Default () =
+        HistoryArgs.Create
+            400
+            20
+    static member JsonEncoder : JsonEncoder<HistoryArgs> =
+        fun (this : HistoryArgs) ->
+            E.object [
+                "max_size", E.int this.MaxSize
+                "recent_size", E.int this.RecentSize
+            ]
+    static member JsonDecoder : JsonDecoder<HistoryArgs> =
+        D.decode HistoryArgs.Create
+        |> D.required "max_size" D.int
+        |> D.required "recent_size" D.int
+    static member JsonSpec =
+        FieldSpec.Create<HistoryArgs>
+            HistoryArgs.JsonEncoder HistoryArgs.JsonDecoder
+    interface IJson with
+        member this.ToJson () = HistoryArgs.JsonEncoder this
+    interface IObj
+    member this.WithMaxSize (maxSize : int) = {this with MaxSize = maxSize}
+    member this.WithRecentSize (recentSize : int) = {this with RecentSize = recentSize}
+
+type IServicesPackArgs =
+    abstract Ticker : TickerTypes.Args with get
+
+type IServicesPack =
+    abstract Args : IServicesPackArgs with get
+    abstract Ticker : IAgent<TickerTypes.Req, TickerTypes.Evt> with get

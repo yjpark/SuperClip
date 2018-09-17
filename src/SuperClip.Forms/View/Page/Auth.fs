@@ -28,7 +28,7 @@ let doAuth (runner : View) (model : Model) : unit =
             CryptoKey = calcCryptoKey password
             Token = ""
         }
-    model.Parts.Session.Post <| SessionTypes.DoSetAuth (auth, None)
+    runner.Pack.Session.Post <| SessionTypes.DoSetAuth (auth, None)
 
 let render (runner : View) (model : Model) : Widget =
     let setAuth = runner.React << DoSetAuth

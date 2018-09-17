@@ -21,7 +21,6 @@ open SuperClip.Core.Cloud
 open SuperClip.Forms
 open SuperClip.Forms.Session.Types
 open SuperClip.Forms.Session.Tasks
-module PrimaryService = SuperClip.Core.Primary.Service
 module HistoryTypes = SuperClip.Core.History.Types
 module CloudTypes = SuperClip.Core.Cloud.Types
 
@@ -47,13 +46,13 @@ let private doSetItemToCloud (item : Item) : ActorOperate =
             (model.Auth, model.Channel)
             ||> Option.iter2 (fun auth channel ->
                 let item = item.ForCloud auth.Self auth.CryptoKey
-                runner.Actor.Args.Stub.Post <| CloudTypes.DoSetItem item
+                runner.Pack.Stub.Post <| CloudTypes.DoSetItem item
             )
         (model, cmd)
 
 let private doAddHistory (runner : Agent) (item : Item) =
     if not item.IsEmpty then
-        runner.Actor.Args.History.Actor.Handle <| HistoryTypes.DoAdd item None
+        runner.Pack.History.Actor.Handle <| HistoryTypes.DoAdd item None
     item
 
 let private onPrimaryEvt (evt : Clipboard.Evt) : ActorOperate =
@@ -79,7 +78,7 @@ let private onStubEvt (evt : CloudTypes.Evt) : ActorOperate =
                 |> doAddHistory runner
                 |> (fun item ->
                     model.LastCloudItem <- Some item
-                    runner.Actor.Args.Primary.Post <| Clipboard.DoSet item.Content None
+                    runner.Pack.Primary.Post <| Clipboard.DoSet item.Content None
                 )
             | _ -> ()
         (model, cmd)
@@ -89,12 +88,12 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
         logWarn runner "Session" "CloudRes" res
         match res with
         | CloudTypes.OnJoin (_req, (Ok token)) ->
-            runner.Actor.Args.Stub.Post <| CloudTypes.DoAuth token
+            runner.Pack.Stub.Post <| CloudTypes.DoAuth token
             let auth =
                 model.Auth
                 |> Option.map (fun auth ->
                     let auth = {auth with Token = token.Value}
-                    runner.Actor.Args.Pref.Properties.Credential.SetValue <| Some auth
+                    runner.Pack.Pref.Properties.Credential.SetValue <| Some auth
                     |> ignore
                     auth
                 )
@@ -116,7 +115,7 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
 let private doSetAuth req ((auth, callback) : Credential * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         let joinReq = Join.Req.Create auth.Self auth.PassHash
-        runner.Actor.Args.Stub.Post <| CloudTypes.DoJoin joinReq
+        runner.Pack.Stub.Post <| CloudTypes.DoJoin joinReq
         reply runner callback <| ack req ()
         (runner, model, cmd)
         |=|> updateModel (fun m -> {m with Auth = Some auth})
@@ -126,10 +125,10 @@ let private doResetAuth req (callback : Callback<unit>) : ActorOperate =
         model.Auth
         |> Option.bind (fun a -> if a.Token <> "" then Some a.Token else None)
         |> Option.iter (fun token ->
-            runner.Actor.Args.Stub.Post <| CloudTypes.DoLeave (JsonString token)
+            runner.Pack.Stub.Post <| CloudTypes.DoLeave (JsonString token)
             reply runner callback <| ack req ()
         )
-        runner.Actor.Args.Pref.Properties.Credential.SetValue None
+        runner.Pack.Pref.Properties.Credential.SetValue None
         |> ignore
         (runner, model, cmd)
         |-|> updateModel (fun m -> {m with Auth = None})
@@ -150,7 +149,7 @@ let private onStubStatus (status : LinkStatus) : ActorOperate =
         logWarn runner "Session" "onStubStatus" status
         match status with
         | LinkStatus.Linked ->
-            runner.Actor.Args.Pref.Properties.Credential.Value
+            runner.Pack.Pref.Properties.Credential.Value
             |> Option.map (fun auth ->
                 addSubCmd Req ^<| DoSetAuth (auth, None)
             )
@@ -188,15 +187,15 @@ let private update : Update<Agent, Model, Msg> =
 let private subscribe : Subscribe<Agent, Model, Msg> =
     fun runner model ->
         Cmd.batch [
-            subscribeBus runner model PrimaryEvt runner.Actor.Args.Primary.Actor.OnEvent
-            subscribeBus runner model StubRes runner.Actor.Args.Stub.OnResponse
-            subscribeBus runner model StubEvt runner.Actor.Args.Stub.Actor.OnEvent
-            subscribeBus runner model StubStatus runner.Actor.Args.Stub.OnStatus
+            subscribeBus runner model PrimaryEvt runner.Pack.Primary.Actor.OnEvent
+            subscribeBus runner model StubRes runner.Pack.Stub.OnResponse
+            subscribeBus runner model StubEvt runner.Pack.Stub.Actor.OnEvent
+            subscribeBus runner model StubStatus runner.Pack.Stub.OnStatus
         ]
 
-let spec (args : Args) =
+let spec pack (args : Args) =
     new ActorSpec<Agent, Args, Model, Msg, Req, Evt>
-        (Agent.Spawn, args, Req, castEvt, init, update)
+        (Agent.Spawn pack, args, Req, castEvt, init, update)
     |> fun s -> s.WithSubscribe subscribe
 
 

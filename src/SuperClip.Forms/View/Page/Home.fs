@@ -22,8 +22,8 @@ let render (runner : View) (model : Model) =
         content = View.StackLayout (
             padding = 20.0,
             children = [
-                yield Widget.Link.render runner model.Parts.Session
-                yield Widget.Items.render runner model.Parts.History.Actor.State.RecentItems
+                yield Widget.Link.render runner runner.Pack.Session
+                yield Widget.Items.render runner runner.Pack.History.Actor.State.RecentItems
             ]
         )
     )

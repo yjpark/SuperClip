@@ -7,7 +7,6 @@ open SuperClip.Core
 open SuperClip.Core.History.Types
 
 module TickerTypes = Dap.Platform.Ticker.Types
-module TickerService = Dap.Platform.Ticker.Service
 
 type ActorOperate = Operate<Agent, Model, Msg>
 

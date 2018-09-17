@@ -44,18 +44,18 @@ type Record = {
     member this.Key = this.Channel.Guid
     member this.WithTokens tokens = {this with Tokens = tokens}
 
-let getByChannelKeyAsync (key : string) (app : DbApp) : Task<Result<Record, string>> = task {
+let getByChannelKeyAsync (key : string) (db : IDbPack) : Task<Result<Record, string>> = task {
     let! doc =
-        getDocument app.Db.Conn Collection key
+        getDocument db.Conn Collection key
         |> Async.StartAsTask
     return
         doc
         |> Result.bind (D.decodeString Record.JsonDecoder)
 }
 
-let createAsync (record : Record) (app : DbApp) = task {
+let createAsync (record : Record) (db : IDbPack) = task {
     let! doc =
-        createDocument app.Db.Conn Collection <| E.encodeJson 0 record
+        createDocument db.Conn Collection <| E.encodeJson 0 record
     return
         doc
         |> Result.map (fun _ -> record)

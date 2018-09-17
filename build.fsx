@@ -10,6 +10,7 @@ open Dap.Build
 
 #load "src/SuperClip.Core/Dsl.fs"
 #load "src/SuperClip.Forms/Dsl.fs"
+#load "src/SuperClip.Server/Dsl.fs"
 
 [<Literal>]
 let Dist = "Dist"
@@ -30,6 +31,9 @@ DotNet.createPrepares [
         |> List.iter traceSuccess
     ["SuperClip.Forms"], fun _ ->
         SuperClip.Forms.Dsl.compile ["src" ; "SuperClip.Forms"]
+        |> List.iter traceSuccess
+    ["SuperClip.Server"], fun _ ->
+        SuperClip.Server.Dsl.compile ["src" ; "SuperClip.Server"]
         |> List.iter traceSuccess
 ]
 

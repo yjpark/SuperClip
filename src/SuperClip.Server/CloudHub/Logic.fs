@@ -145,6 +145,6 @@ let private init : ActorInit<Args, Model, Msg> =
             Devices = Map.empty
         }, Cmd.none)
 
-let spec (args : Args) =
+let spec pack (args : Args) =
     new ActorSpec<Agent, Args, Model, Msg, Req, Evt>
-        (Agent.Spawn, args, HubReq, castEvt, init, update)
+        (Agent.Spawn pack, args, HubReq, castEvt, init, update)

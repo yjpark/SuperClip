@@ -12,7 +12,7 @@ namespace SuperClip.GTK
             Xamarin.Forms.Forms.Init();
 
             var window = new FormsWindow();
-            window.LoadApplication(SuperClip.Forms.App.createApplication ());
+            window.LoadApplication(SuperClip.Forms.Helper.createApplication ());
             window.SetApplicationTitle("Super Clip");
             window.Show();
 

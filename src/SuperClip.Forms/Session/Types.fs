@@ -7,20 +7,13 @@ open Dap.Remote
 open SuperClip.Core
 open SuperClip.Core.Cloud
 open SuperClip.Forms
-open Dap.Archive.WebSocket.Accessor.Types
 module History = SuperClip.Core.History.Agent
-module Primary = SuperClip.Core.Primary.Service
 module CloudTypes = SuperClip.Core.Cloud.Types
 
 type ChannelService = SuperClip.Core.Channel.Service.Service
 type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
 
-type Args = {
-    Pref : SuperClip.Forms.Pref.State
-    Stub : CloudStub
-    Primary : Primary.Service
-    History : History.Agent
-}
+type Args = NoArgs
 
 and Model = {
     Auth : Credential option
@@ -35,7 +28,6 @@ and Model = {
             Syncing = true
             LastCloudItem = None
         }
-
 
 and Req =
     | DoSetAuth of Credential * Callback<unit>
@@ -65,10 +57,10 @@ and Msg =
     | InternalEvt of InternalEvt
 with interface IMsg
 
-and Agent (param) =
-    inherit BaseAgent<Agent, Args, Model, Msg, Req, Evt> (param)
+and Agent (pack, param) =
+    inherit PackAgent<IClientPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
     override this.Runner = this
-    static member Spawn (param) = new Agent (param)
+    static member Spawn k m = new Agent (k, m)
 
 let castEvt (msg : Msg) =
     match msg with

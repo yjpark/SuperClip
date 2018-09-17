@@ -10,15 +10,7 @@ module ViewTypes = Dap.Forms.View.Types
 
 open SuperClip.Core
 open SuperClip.Forms
-module Primary = SuperClip.Core.Primary.Service
-module CloudTypes = SuperClip.Core.Cloud.Types
 module HistoryTypes = SuperClip.Core.History.Types
-module SessionTypes = SuperClip.Forms.Session.Types
-
-type Session = SessionTypes.Agent
-type History = HistoryTypes.Agent
-
-type Parts = SuperClip.Forms.Parts.Types.Model
 
 type Page =
     | HomePage
@@ -56,10 +48,9 @@ type AuthForm = {
                 Password = ""
             }
 
-type Args = ViewTypes.Args<Model, Msg>
+type Args = ViewTypes.Args<ISessionPack, Model, Msg>
 
 and Model = {
-    Parts : Parts
     Page : Page
     Auth : AuthForm
     Info : InfoDialog option
@@ -76,9 +67,9 @@ and Msg =
     | DoSetInfo of InfoDialog option
 with interface IMsg
 
-and View = ViewTypes.View<Model, Msg>
+and View = ViewTypes.View<ISessionPack, Model, Msg>
 and Initer = ViewTypes.Initer<Model, Msg>
-and Render = ViewTypes.Render<Model, Msg>
+and Render = ViewTypes.Render<ISessionPack, Model, Msg>
 and Widget = ViewTypes.Widget
 
 type Elmish.XamarinForms.DynamicViews.View with

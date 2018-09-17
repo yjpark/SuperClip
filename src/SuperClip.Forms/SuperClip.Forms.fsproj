@@ -3,16 +3,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Dsl.fs" />
     <Compile Include="_Gen/Types.fs" />
+    <Compile Include="Extensions.fs" />
     <Compile Include="Pref.fs" />
     <Compile Include="Session/Types.fs" />
-    <Compile Include="Parts/Types.fs" />
+    <Compile Include="_Gen/Packs.fs" />
     <Compile Include="View/Types.fs" />
-    <Compile Include="Alias.fs" />
     <Compile Include="Session/Tasks.fs" />
     <Compile Include="Session/Logic.fs" />
-    <Compile Include="Session/Service.fs" />
-    <Compile Include="Parts/Logic.fs" />
     <Compile Include="View/Widget/Item.fs" />
     <Compile Include="View/Widget/Items.fs" />
     <Compile Include="View/Widget/Link.fs" />
@@ -20,7 +19,8 @@
     <Compile Include="View/Page/Auth.fs" />
     <Compile Include="View/Page/Home.fs" />
     <Compile Include="View/Logic.fs" />
-    <Compile Include="App.fs" />
+    <Compile Include="_Gen/App.fs" />
+    <Compile Include="Helper.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />

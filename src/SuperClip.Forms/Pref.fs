@@ -15,27 +15,22 @@ open SuperClip.Core
 [<Literal>]
 let CredentialLuid = "credential"
 
-type State = CustomContext<PrefProperties>
-
-let initAsync (env : IEnv) = task {
-    SecureStorage.setSecret <| Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
-    let! storage = env |> SecureStorage.Service.addAsync<Credential> "Pref" 0 Credential.JsonEncoder Credential.JsonDecoder
-    let pref = Context.custom<PrefProperties> "Pref" PrefProperties.Create
-    let! credential = storage.PostAsync <| JsonStorage.TryLoad CredentialLuid
-    credential
-    |> Option.iter (fun c ->
-        logWarn env "Pref" "Credential_Loaded" (E.encodeJson 4 c)
-    )
-    pref.Properties.Credential.SetValue credential |> ignore
-    pref.Properties.Credential.OnValueChanged.AddWatcher storage "DoSave" (fun c ->
+let setup (storage : SecureStorage.Service<Credential>) (runner : Context.Agent<PrefContext>) =
+    runner.Context.Properties.Credential.OnValueChanged.AddWatcher runner "DoSave" (fun c ->
         match c.New with
         | None ->
-            logWarn env "Pref" "Remove_Credential" ()
+            logWarn runner "DoSave" "Remove_Credential" ()
             SecureStorage.remove CredentialLuid
             |> ignore
         | Some c ->
-            logWarn env "Pref" "Save_Credential" (E.encodeJson 4 c)
+            logWarn runner "DoSave" "Save_Credential" (E.encodeJson 4 c)
             storage.Post <| JsonStorage.DoSave CredentialLuid c None
     )
-    return pref
-}
+    runner.RunTask ignoreOnFailed (fun _ -> task {
+        let! credential = storage.PostAsync <| JsonStorage.TryLoad CredentialLuid
+        credential
+        |> Option.iter (fun c ->
+            logWarn runner "Setup" "Credential_Loaded" (E.encodeJson 4 c)
+        )
+        runner.Context.Properties.Credential.SetValue credential |> ignore
+    })

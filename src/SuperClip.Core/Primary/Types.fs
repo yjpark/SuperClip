@@ -6,15 +6,7 @@ open SuperClip.Core
 type Req = Clipboard.Req
 type Evt = Clipboard.Evt
 
-type Args = {
-    CheckInterval : float<second> option
-    TimeoutDuration : Duration
-} with
-    static member New () =
-        {
-            CheckInterval = Some 0.5<second>
-            TimeoutDuration = Duration.FromSeconds 1.0
-        }
+type Args = PrimaryClipboardArgs
 
 and Model = {
     Current : Item
@@ -36,10 +28,10 @@ and Msg =
     | InternalEvt of InternalEvt
 with interface IMsg
 
-and Agent (param) =
-    inherit BaseAgent<Agent, Args, Model, Msg, Req, Evt> (param)
+and Agent (pack, param) =
+    inherit PackAgent<IServicesPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
     override this.Runner = this
-    static member Spawn (param) = new Agent (param)
+    static member Spawn pack param = new Agent (pack, param)
 
 let castEvt (msg : Msg) =
     match msg with
