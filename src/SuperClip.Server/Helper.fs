@@ -13,13 +13,14 @@ let Scope = "SuperClipServer"
 
 let DbUri = "http://superclip_dev:Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5@localhost:8529/superclip_dev"
 
-let createApp' logFile consoleLogLevel =
-    let logging = createLocalLogging logFile consoleLogLevel
-    let app = new App (logging, Scope)
-    let args =
-        AppArgs.Default ()
-        |> fun a -> a.WithFarangoDb (DbArgs.Create DbUri)
-    app.SetupArgs ignore args
+type App with
+    static member Create (logFile, consoleLogLevel) =
+        let loggingArgs = LoggingArgs.LocalCreate (logFile, consoleLogLevel)
 
-let createApp logFile =
-    createApp' logFile LogLevelWarning
+        let app = new App (loggingArgs, Scope)
+        let args =
+            AppArgs.Default ()
+            |> fun a -> a.WithFarangoDb (DbArgs.Create DbUri)
+        app.SetupArgs ignore args
+    static member Create logFile =
+        App.Create (logFile, LogLevelWarning)

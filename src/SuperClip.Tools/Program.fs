@@ -39,7 +39,7 @@ let execute (args : ParseResults<Args>) =
     CrossClipboard.Current <- new ClipboardImplementation ()
 
     let consoleLogLevel = if verbose then LogLevelInformation else LogLevelWarning
-    let app = createApp' "super-clip-tools-.log" consoleLogLevel
+    let app = App.Create ("super-clip-tools-.log", consoleLogLevel)
 
     if args.Contains Watch_Primary then
         WatchPrimary.executeAsync app <| args.GetResult Watch_Primary
