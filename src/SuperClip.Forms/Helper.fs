@@ -16,19 +16,19 @@ let Scope = "SuperClip"
 
 type IAppPack with
     member this.View = this.FormsView
-    member this.Application = this.FormsView.Actor.Args.Application
 
 let private setSecret () =
     Dap.Forms.Provider.SecureStorage.setSecret <| Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
 
-let createApp' logFile consoleLogLevel onAppStarted : IApp =
-    setSecret ()
-    let logging = createFormsLogging logFile consoleLogLevel
-    let app = new App (logging, Scope)
-    app.Setup onAppStarted AppArgs.Default
-let createApp onAppStarted =
-    createApp' "super-clip-.log" LogLevelWarning onAppStarted
+type App with
+    static member Create (logFile, consoleLogLevel, onAppStarted) =
+        setSecret ()
+        let loggingArgs = LoggingArgs.FormsCreate (logFile, consoleLogLevel)
+        new App (loggingArgs, Scope)
+        |> fun app -> app.Setup (fun a -> a.View.Run a onAppStarted) AppArgs.Default
+    static member Create onAppStarted =
+        App.Create ("super-clip-.log", LogLevelWarning, onAppStarted)
 
 let createApplication () =
-    createApp' "super-clip-.log" LogLevelWarning ignore
-    |> fun app -> app.Application
+    App.Create ("super-clip-.log", LogLevelWarning, ignore)
+    |> fun app -> app.Args.FormsView.Application

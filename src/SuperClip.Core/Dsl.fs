@@ -57,8 +57,8 @@ let Item =
 
 let PrimaryClipboardArgs =
     combo {
-        var (M.duration (DurationFormat.Second, "check_interval", "(Duration.FromSeconds 0.5)"))
-        var (M.duration (DurationFormat.Second, "timeout_duration", "(Duration.FromSeconds 1.0)"))
+        var (M.duration (DurationFormat.Second, "check_interval", Duration.FromSeconds 0.5))
+        var (M.duration (DurationFormat.Second, "timeout_duration", Duration.FromSeconds 1.0))
     }
 
 let HistoryArgs =

@@ -23,6 +23,7 @@ type LayoutOptions = Xamarin.Forms.LayoutOptions
 
 let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
+        logWarn initer "View" "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII" ()
         ({
             Page = HomePage
             Auth = AuthForm.Create None
@@ -69,7 +70,9 @@ let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
 
 let private subscribe : Subscribe<View, Model, Msg> =
     fun runner model ->
+        logWarn runner "View" "BBBBBBBBBBBBBBBBBBBBBBB" model
         runner.Pack.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun _status ->
+            logWarn runner "View" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" _status
             runner.React DoRepaint
         )
         runner.Pack.Session.Actor.OnEvent.AddWatcher runner "onSessionEvt" <| onSessionEvt runner
@@ -79,6 +82,7 @@ let private subscribe : Subscribe<View, Model, Msg> =
 
 let private render : Render =
     fun runner model ->
+        logWarn runner "View" "render" model.Page
         let page =
             match model.Page with
             | HomePage ->

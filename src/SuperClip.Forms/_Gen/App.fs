@@ -25,7 +25,9 @@ type IAppPackArgs =
     abstract FormsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg> with get
 
 type IAppPack =
+    inherit ILogger
     inherit ISessionPack
+    abstract Env : IEnv with get
     abstract Args : IAppPackArgs with get
     abstract FormsView : FormsViewTypes.View<ISessionPack, ViewTypes.Model, ViewTypes.Msg> with get
 
@@ -147,15 +149,16 @@ let appArgs = AppArgsBuilder ()
 
 type IApp =
     inherit ILogger
+    abstract LoggingArgs : LoggingArgs with get
     abstract Env : IEnv with get
     abstract Args : AppArgs with get
     inherit IAppPack
 
-type App (logging : ILogging, scope : Scope) =
-    let env = Env.live MailboxPlatform logging scope
+type App (loggingArgs : LoggingArgs, scope : Scope) =
+    let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
     let mutable args : AppArgs option = None
     let mutable setupError : exn option = None
-    let mutable (* IServicesPack *) ticker : IAgent<TickerTypes.Req, TickerTypes.Evt> option = None
+    let mutable (* IServicesPack *) ticker : TickerTypes.Agent option = None
     let mutable (* ICorePack *) primaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> option = None
     let mutable (* ICorePack *) localHistory : HistoryTypes.Agent option = None
     let mutable (* ICloudStubPack *) cloudStub : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> option = None
@@ -163,51 +166,45 @@ type App (logging : ILogging, scope : Scope) =
     let mutable (* IClientPack *) preferences : Context.Agent<PrefContext> option = None
     let mutable (* ISessionPack *) session : SessionTypes.Agent option = None
     let mutable (* IAppPack *) formsView : FormsViewTypes.View<ISessionPack, ViewTypes.Model, ViewTypes.Msg> option = None
-    static member Create logging scope = new App (logging, scope)
-    abstract member SetupExtrasAsync : unit -> Task<unit>
-    default __.SetupExtrasAsync () = task {
-        return ()
-    }
-    member this.SetupAsync (getArgs : unit -> AppArgs) : Task<unit> = task {
-        if args.IsNone then
-            let args' = getArgs ()
-            args <- Some args'
-            try
-                let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) "Ticker" ""
-                ticker <- Some (ticker' :> IAgent<TickerTypes.Req, TickerTypes.Evt>)
-                let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) "Clipboard" "Primary"
-                primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
-                let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) "History" "Local"
-                localHistory <- Some localHistory'
-                do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) "History"
-                let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.spec args'.CloudStub) "CloudStub" ""
-                cloudStub <- Some cloudStub'
-                do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) args'.PacketClient) "PacketClient"
-                let! (* IClientPack *) credentialSecureStorage' = env |> Env.addServiceAsync (Dap.Local.Storage.Base.Logic.spec args'.CredentialSecureStorage) "SecureStorage" "credential"
-                credentialSecureStorage <- Some credentialSecureStorage'
-                let! (* IClientPack *) preferences' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args'.Preferences) "preferences" ""
-                preferences <- Some preferences'
-                let! (* ISessionPack *) session' = env |> Env.addServiceAsync (SuperClip.Forms.Session.Logic.spec this.AsClientPack args'.Session) "Session" ""
-                session <- Some session'
-                let! (* IAppPack *) formsView' = env |> Env.addServiceAsync (Dap.Forms.View.Logic.spec this.AsSessionPack args'.FormsView) "FormsView" ""
-                formsView <- Some formsView'
-                do! this.SetupExtrasAsync ()
-                logInfo env "App.SetupAsync" "Setup_Succeed" (E.encodeJson 4 args')
-            with e ->
-                setupError <- Some e
-                logException env "App.SetupAsync" "Setup_Failed" (E.encodeJson 4 args') e
-        else
-            logError env "App.SetupAsync" "Already_Setup" (args, setupError, getArgs)
+    let setupAsync (this : App) : Task<unit> = task {
+        let args' = args |> Option.get
+        try
+            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) "Ticker" ""
+            ticker <- Some ticker'
+            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) "Clipboard" "Primary"
+            primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
+            let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) "History" "Local"
+            localHistory <- Some localHistory'
+            do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) "History"
+            let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.spec args'.CloudStub) "CloudStub" ""
+            cloudStub <- Some cloudStub'
+            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) args'.PacketClient) "PacketClient"
+            let! (* IClientPack *) credentialSecureStorage' = env |> Env.addServiceAsync (Dap.Local.Storage.Base.Logic.spec args'.CredentialSecureStorage) "SecureStorage" "credential"
+            credentialSecureStorage <- Some credentialSecureStorage'
+            let! (* IClientPack *) preferences' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args'.Preferences) "preferences" ""
+            preferences <- Some preferences'
+            let! (* ISessionPack *) session' = env |> Env.addServiceAsync (SuperClip.Forms.Session.Logic.spec this.AsClientPack args'.Session) "Session" ""
+            session <- Some session'
+            let! (* IAppPack *) formsView' = env |> Env.addServiceAsync (Dap.Forms.View.Logic.spec this.AsSessionPack args'.FormsView) "FormsView" ""
+            formsView <- Some formsView'
+            do! this.SetupAsync' ()
+            logInfo env "App.setupAsync" "Setup_Succeed" (E.encodeJson 4 args')
+        with e ->
+            setupError <- Some e
+            logException env "App.setupAsync" "Setup_Failed" (E.encodeJson 4 args') e
     }
     member this.Setup (callback : IApp -> unit) (getArgs : unit -> AppArgs) : IApp =
         if args.IsSome then
             failWith "Already_Setup" <| E.encodeJson 4 args.Value
-        env.RunTask0 raiseOnFailed (fun _ -> task {
-            do! this.SetupAsync getArgs
-            match setupError with
-            | None -> callback this.AsApp
-            | Some e -> raise e
-        })
+        else
+            let args' = getArgs ()
+            args <- Some args'
+            env.RunTask0 raiseOnFailed (fun _ -> task {
+                do! setupAsync this
+                match setupError with
+                | None -> callback this.AsApp
+                | Some e -> raise e
+            })
         this.AsApp
     member this.SetupArgs (callback : IApp -> unit) (args' : AppArgs) : IApp =
         fun () -> args'
@@ -224,21 +221,31 @@ type App (logging : ILogging, scope : Scope) =
         parseJson args'
         |> this.SetupJson callback
     member __.SetupError : exn option = setupError
+    abstract member SetupAsync' : unit -> Task<unit>
+    default __.SetupAsync' () = task {
+        return ()
+    }
+    member __.Args : AppArgs = args |> Option.get
     interface IApp with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
         member __.Env : IEnv = env
-        member __.Args : AppArgs = args |> Option.get
+        member this.Args : AppArgs = this.Args
     interface IAppPack with
-        member __.Args = (Option.get args) .AsAppPackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsAppPackArgs
         member __.FormsView (* IAppPack *) : FormsViewTypes.View<ISessionPack, ViewTypes.Model, ViewTypes.Msg> = formsView |> Option.get
     interface ISessionPack with
-        member __.Args = (Option.get args) .AsSessionPackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsSessionPackArgs
         member __.Session (* ISessionPack *) : SessionTypes.Agent = session |> Option.get
     interface IClientPack with
-        member __.Args = (Option.get args) .AsClientPackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsClientPackArgs
         member __.CredentialSecureStorage (* IClientPack *) : SecureStorage.Service<Credential> = credentialSecureStorage |> Option.get
         member __.Preferences (* IClientPack *) : Context.Agent<PrefContext> = preferences |> Option.get
     interface ICorePack with
-        member __.Args = (Option.get args) .AsCorePackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsCorePackArgs
         member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
         member __.LocalHistory (* ICorePack *) : HistoryTypes.Agent = localHistory |> Option.get
         member __.GetHistoryAsync (key : Key) (* ICorePack *) : Task<HistoryTypes.Agent * bool> = task {
@@ -246,16 +253,18 @@ type App (logging : ILogging, scope : Scope) =
             return (agent :?> HistoryTypes.Agent, isNew)
         }
     interface IServicesPack with
-        member __.Args = (Option.get args) .AsServicesPackArgs
-        member __.Ticker (* IServicesPack *) : IAgent<TickerTypes.Req, TickerTypes.Evt> = ticker |> Option.get
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsServicesPackArgs
+        member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
     member this.AsServicesPack = this :> IServicesPack
     member this.AsCorePack = this :> ICorePack
     interface ICloudStubPack with
-        member __.Args = (Option.get args) .AsCloudStubPackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsCloudStubPackArgs
         member __.CloudStub (* ICloudStubPack *) : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> = cloudStub |> Option.get
-        member __.GetPacketClientAsync (key : Key) (* ICloudStubPack *) : Task<IAgent<PacketClient.Req, PacketClient.Evt> * bool> = task {
+        member __.GetPacketClientAsync (key : Key) (* ICloudStubPack *) : Task<PacketClient.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketClient" key
-            return (agent :?> IAgent<PacketClient.Req, PacketClient.Evt>, isNew)
+            return (agent :?> PacketClient.Agent, isNew)
         }
     member this.AsCloudStubPack = this :> ICloudStubPack
     member this.AsClientPack = this :> IClientPack

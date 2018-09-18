@@ -93,9 +93,11 @@ type ICloudStubPackArgs =
     abstract PacketClient : PacketClient.Args with get
 
 type ICloudStubPack =
+    inherit ILogger
+    abstract Env : IEnv with get
     abstract Args : ICloudStubPackArgs with get
     abstract CloudStub : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> with get
-    abstract GetPacketClientAsync : Key -> Task<IAgent<PacketClient.Req, PacketClient.Evt> * bool>
+    abstract GetPacketClientAsync : Key -> Task<PacketClient.Agent * bool>
 
 type IClientPackArgs =
     inherit ICorePackArgs
@@ -104,8 +106,10 @@ type IClientPackArgs =
     abstract Preferences : Context.Args<PrefContext> with get
 
 type IClientPack =
+    inherit ILogger
     inherit ICorePack
     inherit ICloudStubPack
+    abstract Env : IEnv with get
     abstract Args : IClientPackArgs with get
     abstract CredentialSecureStorage : SecureStorage.Service<Credential> with get
     abstract Preferences : Context.Agent<PrefContext> with get

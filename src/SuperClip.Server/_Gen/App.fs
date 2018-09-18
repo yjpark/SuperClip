@@ -80,48 +80,43 @@ let appArgs = AppArgsBuilder ()
 
 type IApp =
     inherit ILogger
+    abstract LoggingArgs : LoggingArgs with get
     abstract Env : IEnv with get
     abstract Args : AppArgs with get
     inherit IDbPack
     inherit ICloudHubPack
 
-type App (logging : ILogging, scope : Scope) =
-    let env = Env.live MailboxPlatform logging scope
+type App (loggingArgs : LoggingArgs, scope : Scope) =
+    let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
     let mutable args : AppArgs option = None
     let mutable setupError : exn option = None
     let mutable (* IDbPack *) farangoDb : FarangoDb.Agent option = None
-    static member Create logging scope = new App (logging, scope)
-    abstract member SetupExtrasAsync : unit -> Task<unit>
-    default __.SetupExtrasAsync () = task {
-        return ()
-    }
-    member this.SetupAsync (getArgs : unit -> AppArgs) : Task<unit> = task {
-        if args.IsNone then
-            let args' = getArgs ()
-            args <- Some args'
-            try
-                let! (* IDbPack *) farangoDb' = env |> Env.addServiceAsync (FarangoDb.spec args'.FarangoDb) "FarangoDb" ""
-                farangoDb <- Some farangoDb'
-                do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudHubPack *) args'.PacketConn) "PacketConn"
-                do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args'.CloudHub) "CloudHub"
-                do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args'.CloudHubGateway) "CloudHubGateway"
-                do! this.SetupExtrasAsync ()
-                logInfo env "App.SetupAsync" "Setup_Succeed" (E.encodeJson 4 args')
-            with e ->
-                setupError <- Some e
-                logException env "App.SetupAsync" "Setup_Failed" (E.encodeJson 4 args') e
-        else
-            logError env "App.SetupAsync" "Already_Setup" (args, setupError, getArgs)
+    let setupAsync (this : App) : Task<unit> = task {
+        let args' = args |> Option.get
+        try
+            let! (* IDbPack *) farangoDb' = env |> Env.addServiceAsync (FarangoDb.spec args'.FarangoDb) "FarangoDb" ""
+            farangoDb <- Some farangoDb'
+            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudHubPack *) args'.PacketConn) "PacketConn"
+            do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args'.CloudHub) "CloudHub"
+            do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args'.CloudHubGateway) "CloudHubGateway"
+            do! this.SetupAsync' ()
+            logInfo env "App.setupAsync" "Setup_Succeed" (E.encodeJson 4 args')
+        with e ->
+            setupError <- Some e
+            logException env "App.setupAsync" "Setup_Failed" (E.encodeJson 4 args') e
     }
     member this.Setup (callback : IApp -> unit) (getArgs : unit -> AppArgs) : IApp =
         if args.IsSome then
             failWith "Already_Setup" <| E.encodeJson 4 args.Value
-        env.RunTask0 raiseOnFailed (fun _ -> task {
-            do! this.SetupAsync getArgs
-            match setupError with
-            | None -> callback this.AsApp
-            | Some e -> raise e
-        })
+        else
+            let args' = getArgs ()
+            args <- Some args'
+            env.RunTask0 raiseOnFailed (fun _ -> task {
+                do! setupAsync this
+                match setupError with
+                | None -> callback this.AsApp
+                | Some e -> raise e
+            })
         this.AsApp
     member this.SetupArgs (callback : IApp -> unit) (args' : AppArgs) : IApp =
         fun () -> args'
@@ -138,18 +133,26 @@ type App (logging : ILogging, scope : Scope) =
         parseJson args'
         |> this.SetupJson callback
     member __.SetupError : exn option = setupError
+    abstract member SetupAsync' : unit -> Task<unit>
+    default __.SetupAsync' () = task {
+        return ()
+    }
+    member __.Args : AppArgs = args |> Option.get
     interface IApp with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
         member __.Env : IEnv = env
-        member __.Args : AppArgs = args |> Option.get
+        member this.Args : AppArgs = this.Args
     interface IDbPack with
-        member __.Args = (Option.get args) .AsDbPackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsDbPackArgs
         member __.FarangoDb (* IDbPack *) : FarangoDb.Agent = farangoDb |> Option.get
     member this.AsDbPack = this :> IDbPack
     interface ICloudHubPack with
-        member __.Args = (Option.get args) .AsCloudHubPackArgs
-        member __.GetPacketConnAsync (key : Key) (* ICloudHubPack *) : Task<IAgent<PacketConn.Req, PacketConn.Evt> * bool> = task {
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsCloudHubPackArgs
+        member __.GetPacketConnAsync (key : Key) (* ICloudHubPack *) : Task<PacketConn.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketConn" key
-            return (agent :?> IAgent<PacketConn.Req, PacketConn.Evt>, isNew)
+            return (agent :?> PacketConn.Agent, isNew)
         }
         member __.GetCloudHubAsync (key : Key) (* ICloudHubPack *) : Task<CloudHubTypes.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "CloudHub" key

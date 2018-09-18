@@ -16,6 +16,8 @@ type ISessionPackArgs =
     abstract Session : NoArgs with get
 
 type ISessionPack =
+    inherit ILogger
     inherit IClientPack
+    abstract Env : IEnv with get
     abstract Args : ISessionPackArgs with get
     abstract Session : SessionTypes.Agent with get

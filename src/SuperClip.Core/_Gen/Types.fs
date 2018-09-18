@@ -260,8 +260,8 @@ type PrimaryClipboardArgs = {
         }
     static member Default () =
         PrimaryClipboardArgs.Create
-            (Duration.FromSeconds 0.5)
-            (Duration.FromSeconds 1.0)
+            (decodeJsonString Duration.JsonDecoder """0:00:00:00.5""")
+            (decodeJsonString Duration.JsonDecoder """0:00:00:01""")
     static member JsonEncoder : JsonEncoder<PrimaryClipboardArgs> =
         fun (this : PrimaryClipboardArgs) ->
             E.object [
@@ -322,5 +322,7 @@ type IServicesPackArgs =
     abstract Ticker : TickerTypes.Args with get
 
 type IServicesPack =
+    inherit ILogger
+    abstract Env : IEnv with get
     abstract Args : IServicesPackArgs with get
-    abstract Ticker : IAgent<TickerTypes.Req, TickerTypes.Evt> with get
+    abstract Ticker : TickerTypes.Agent with get

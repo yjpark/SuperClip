@@ -20,7 +20,9 @@ type ICloudHubPackArgs =
     abstract CloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> with get
 
 type ICloudHubPack =
+    inherit ILogger
+    abstract Env : IEnv with get
     abstract Args : ICloudHubPackArgs with get
-    abstract GetPacketConnAsync : Key -> Task<IAgent<PacketConn.Req, PacketConn.Evt> * bool>
+    abstract GetPacketConnAsync : Key -> Task<PacketConn.Agent * bool>
     abstract GetCloudHubAsync : Key -> Task<CloudHubTypes.Agent * bool>
     abstract GetCloudHubGatewayAsync : Key -> Task<Gateway.Gateway * bool>

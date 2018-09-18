@@ -91,51 +91,46 @@ let coreAppArgs = CoreAppArgsBuilder ()
 
 type ICoreApp =
     inherit ILogger
+    abstract LoggingArgs : LoggingArgs with get
     abstract Env : IEnv with get
     abstract Args : CoreAppArgs with get
     inherit ICorePack
 
-type CoreApp (logging : ILogging, scope : Scope) =
-    let env = Env.live MailboxPlatform logging scope
+type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
+    let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
     let mutable args : CoreAppArgs option = None
     let mutable setupError : exn option = None
-    let mutable (* IServicesPack *) ticker : IAgent<TickerTypes.Req, TickerTypes.Evt> option = None
+    let mutable (* IServicesPack *) ticker : TickerTypes.Agent option = None
     let mutable (* ICorePack *) primaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> option = None
     let mutable (* ICorePack *) localHistory : HistoryTypes.Agent option = None
-    static member Create logging scope = new CoreApp (logging, scope)
-    abstract member SetupExtrasAsync : unit -> Task<unit>
-    default __.SetupExtrasAsync () = task {
-        return ()
-    }
-    member this.SetupAsync (getArgs : unit -> CoreAppArgs) : Task<unit> = task {
-        if args.IsNone then
-            let args' = getArgs ()
-            args <- Some args'
-            try
-                let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) "Ticker" ""
-                ticker <- Some (ticker' :> IAgent<TickerTypes.Req, TickerTypes.Evt>)
-                let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) "Clipboard" "Primary"
-                primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
-                let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) "History" "Local"
-                localHistory <- Some localHistory'
-                do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) "History"
-                do! this.SetupExtrasAsync ()
-                logInfo env "CoreApp.SetupAsync" "Setup_Succeed" (E.encodeJson 4 args')
-            with e ->
-                setupError <- Some e
-                logException env "CoreApp.SetupAsync" "Setup_Failed" (E.encodeJson 4 args') e
-        else
-            logError env "CoreApp.SetupAsync" "Already_Setup" (args, setupError, getArgs)
+    let setupAsync (this : CoreApp) : Task<unit> = task {
+        let args' = args |> Option.get
+        try
+            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) "Ticker" ""
+            ticker <- Some ticker'
+            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) "Clipboard" "Primary"
+            primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
+            let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) "History" "Local"
+            localHistory <- Some localHistory'
+            do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) "History"
+            do! this.SetupAsync' ()
+            logInfo env "CoreApp.setupAsync" "Setup_Succeed" (E.encodeJson 4 args')
+        with e ->
+            setupError <- Some e
+            logException env "CoreApp.setupAsync" "Setup_Failed" (E.encodeJson 4 args') e
     }
     member this.Setup (callback : ICoreApp -> unit) (getArgs : unit -> CoreAppArgs) : ICoreApp =
         if args.IsSome then
             failWith "Already_Setup" <| E.encodeJson 4 args.Value
-        env.RunTask0 raiseOnFailed (fun _ -> task {
-            do! this.SetupAsync getArgs
-            match setupError with
-            | None -> callback this.AsCoreApp
-            | Some e -> raise e
-        })
+        else
+            let args' = getArgs ()
+            args <- Some args'
+            env.RunTask0 raiseOnFailed (fun _ -> task {
+                do! setupAsync this
+                match setupError with
+                | None -> callback this.AsCoreApp
+                | Some e -> raise e
+            })
         this.AsCoreApp
     member this.SetupArgs (callback : ICoreApp -> unit) (args' : CoreAppArgs) : ICoreApp =
         fun () -> args'
@@ -152,11 +147,18 @@ type CoreApp (logging : ILogging, scope : Scope) =
         parseJson args'
         |> this.SetupJson callback
     member __.SetupError : exn option = setupError
+    abstract member SetupAsync' : unit -> Task<unit>
+    default __.SetupAsync' () = task {
+        return ()
+    }
+    member __.Args : CoreAppArgs = args |> Option.get
     interface ICoreApp with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
         member __.Env : IEnv = env
-        member __.Args : CoreAppArgs = args |> Option.get
+        member this.Args : CoreAppArgs = this.Args
     interface ICorePack with
-        member __.Args = (Option.get args) .AsCorePackArgs
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsCorePackArgs
         member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
         member __.LocalHistory (* ICorePack *) : HistoryTypes.Agent = localHistory |> Option.get
         member __.GetHistoryAsync (key : Key) (* ICorePack *) : Task<HistoryTypes.Agent * bool> = task {
@@ -164,8 +166,9 @@ type CoreApp (logging : ILogging, scope : Scope) =
             return (agent :?> HistoryTypes.Agent, isNew)
         }
     interface IServicesPack with
-        member __.Args = (Option.get args) .AsServicesPackArgs
-        member __.Ticker (* IServicesPack *) : IAgent<TickerTypes.Req, TickerTypes.Evt> = ticker |> Option.get
+        member __.Env : IEnv = env
+        member this.Args = this.Args.AsServicesPackArgs
+        member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
     member this.AsServicesPack = this :> IServicesPack
     member this.AsCorePack = this :> ICorePack
     interface ILogger with
