@@ -10,19 +10,13 @@ open Dap.Remote.Meta
 open Dap.Local.Farango.Dsl
 
 open SuperClip.Core.Dsl
+open SuperClip.Server.Meta
 
 let ICloudHubPack =
     pack [] {
         register (M.packetConnSpawner (true))
-        register_pack <@ IDbPack @> (
-            M.spawner (
-                [("CloudHubTypes", "SuperClip.Server.CloudHub.Types")],
-                M.noArgs, "CloudHubTypes.Agent", "SuperClip.Server.CloudHub.Logic.spec", "CloudHub"))
-        register (
-            M.gatewaySpawner (
-                [("CloudHubTypes", "SuperClip.Server.CloudHub.Types")],
-                "CloudHubTypes.Req, CloudHubTypes.Evt", "CloudHubTypes.HubSpec",
-                true, "CloudHubGateway"))
+        register_pack <@ IDbPack @> (M.cloudHubSpawner ())
+        register (M.cloudHubGatewaySpawner ())
     }
 
 let App =

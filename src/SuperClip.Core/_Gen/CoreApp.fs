@@ -90,11 +90,9 @@ type CoreAppArgsBuilder () =
 let coreAppArgs = CoreAppArgsBuilder ()
 
 type ICoreApp =
-    inherit ILogger
-    abstract LoggingArgs : LoggingArgs with get
-    abstract Env : IEnv with get
-    abstract Args : CoreAppArgs with get
+    inherit IPack
     inherit ICorePack
+    abstract Args : CoreAppArgs with get
 
 type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
     let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
@@ -153,11 +151,8 @@ type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
     }
     member __.Args : CoreAppArgs = args |> Option.get
     interface ICoreApp with
-        member __.LoggingArgs : LoggingArgs = loggingArgs
-        member __.Env : IEnv = env
         member this.Args : CoreAppArgs = this.Args
     interface ICorePack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsCorePackArgs
         member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
         member __.LocalHistory (* ICorePack *) : HistoryTypes.Agent = localHistory |> Option.get
@@ -166,11 +161,13 @@ type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
             return (agent :?> HistoryTypes.Agent, isNew)
         }
     interface IServicesPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsServicesPackArgs
         member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
     member this.AsServicesPack = this :> IServicesPack
     member this.AsCorePack = this :> ICorePack
+    interface IPack with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
+        member __.Env : IEnv = env
     interface ILogger with
         member __.Log m = env.Log m
     member this.AsCoreApp = this :> ICoreApp

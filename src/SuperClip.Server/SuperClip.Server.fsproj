@@ -4,6 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Meta.fs" />
+    <Compile Include="Dsl.fs" />
     <Compile Include="Service/ChannelAuth.fs" />
     <Compile Include="CloudHub/Types.fs" />
     <Compile Include="CloudHub/Tasks.fs" />

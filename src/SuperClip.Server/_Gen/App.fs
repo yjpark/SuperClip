@@ -79,12 +79,10 @@ type AppArgsBuilder () =
 let appArgs = AppArgsBuilder ()
 
 type IApp =
-    inherit ILogger
-    abstract LoggingArgs : LoggingArgs with get
-    abstract Env : IEnv with get
-    abstract Args : AppArgs with get
+    inherit IPack
     inherit IDbPack
     inherit ICloudHubPack
+    abstract Args : AppArgs with get
 
 type App (loggingArgs : LoggingArgs, scope : Scope) =
     let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
@@ -139,16 +137,12 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
     }
     member __.Args : AppArgs = args |> Option.get
     interface IApp with
-        member __.LoggingArgs : LoggingArgs = loggingArgs
-        member __.Env : IEnv = env
         member this.Args : AppArgs = this.Args
     interface IDbPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsDbPackArgs
         member __.FarangoDb (* IDbPack *) : FarangoDb.Agent = farangoDb |> Option.get
     member this.AsDbPack = this :> IDbPack
     interface ICloudHubPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsCloudHubPackArgs
         member __.GetPacketConnAsync (key : Key) (* ICloudHubPack *) : Task<PacketConn.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketConn" key
@@ -163,6 +157,9 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
             return (agent :?> Gateway.Gateway, isNew)
         }
     member this.AsCloudHubPack = this :> ICloudHubPack
+    interface IPack with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
+        member __.Env : IEnv = env
     interface ILogger with
         member __.Log m = env.Log m
     member this.AsApp = this :> IApp

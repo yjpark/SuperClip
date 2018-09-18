@@ -50,6 +50,7 @@ group Build
     nuget Dap.Build
     nuget Dap.Context
     nuget Dap.Platform
+    nuget Dap.Remote
     nuget Dap.Forms
     nuget Dap.Local.Farango
 

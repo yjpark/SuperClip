@@ -10,6 +10,7 @@ open Dap.Build
 
 #load "src/SuperClip.Core/Dsl.fs"
 #load "src/SuperClip.Forms/Dsl.fs"
+#load "src/SuperClip.Server/Meta.fs"
 #load "src/SuperClip.Server/Dsl.fs"
 
 [<Literal>]

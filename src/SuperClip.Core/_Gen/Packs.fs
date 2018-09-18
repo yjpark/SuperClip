@@ -18,9 +18,8 @@ type ICorePackArgs =
     abstract History : HistoryTypes.Args with get
 
 type ICorePack =
-    inherit ILogger
+    inherit IPack
     inherit IServicesPack
-    abstract Env : IEnv with get
     abstract Args : ICorePackArgs with get
     abstract PrimaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> with get
     abstract LocalHistory : HistoryTypes.Agent with get

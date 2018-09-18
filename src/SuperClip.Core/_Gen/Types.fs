@@ -322,7 +322,6 @@ type IServicesPackArgs =
     abstract Ticker : TickerTypes.Args with get
 
 type IServicesPack =
-    inherit ILogger
-    abstract Env : IEnv with get
+    inherit IPack
     abstract Args : IServicesPackArgs with get
     abstract Ticker : TickerTypes.Agent with get

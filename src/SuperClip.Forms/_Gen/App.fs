@@ -25,9 +25,8 @@ type IAppPackArgs =
     abstract FormsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg> with get
 
 type IAppPack =
-    inherit ILogger
+    inherit IPack
     inherit ISessionPack
-    abstract Env : IEnv with get
     abstract Args : IAppPackArgs with get
     abstract FormsView : FormsViewTypes.View<ISessionPack, ViewTypes.Model, ViewTypes.Msg> with get
 
@@ -148,11 +147,9 @@ type AppArgsBuilder () =
 let appArgs = AppArgsBuilder ()
 
 type IApp =
-    inherit ILogger
-    abstract LoggingArgs : LoggingArgs with get
-    abstract Env : IEnv with get
-    abstract Args : AppArgs with get
+    inherit IPack
     inherit IAppPack
+    abstract Args : AppArgs with get
 
 type App (loggingArgs : LoggingArgs, scope : Scope) =
     let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
@@ -227,24 +224,18 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
     }
     member __.Args : AppArgs = args |> Option.get
     interface IApp with
-        member __.LoggingArgs : LoggingArgs = loggingArgs
-        member __.Env : IEnv = env
         member this.Args : AppArgs = this.Args
     interface IAppPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsAppPackArgs
         member __.FormsView (* IAppPack *) : FormsViewTypes.View<ISessionPack, ViewTypes.Model, ViewTypes.Msg> = formsView |> Option.get
     interface ISessionPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsSessionPackArgs
         member __.Session (* ISessionPack *) : SessionTypes.Agent = session |> Option.get
     interface IClientPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsClientPackArgs
         member __.CredentialSecureStorage (* IClientPack *) : SecureStorage.Service<Credential> = credentialSecureStorage |> Option.get
         member __.Preferences (* IClientPack *) : Context.Agent<PrefContext> = preferences |> Option.get
     interface ICorePack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsCorePackArgs
         member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
         member __.LocalHistory (* ICorePack *) : HistoryTypes.Agent = localHistory |> Option.get
@@ -253,13 +244,11 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
             return (agent :?> HistoryTypes.Agent, isNew)
         }
     interface IServicesPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsServicesPackArgs
         member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
     member this.AsServicesPack = this :> IServicesPack
     member this.AsCorePack = this :> ICorePack
     interface ICloudStubPack with
-        member __.Env : IEnv = env
         member this.Args = this.Args.AsCloudStubPackArgs
         member __.CloudStub (* ICloudStubPack *) : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> = cloudStub |> Option.get
         member __.GetPacketClientAsync (key : Key) (* ICloudStubPack *) : Task<PacketClient.Agent * bool> = task {
@@ -270,6 +259,9 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
     member this.AsClientPack = this :> IClientPack
     member this.AsSessionPack = this :> ISessionPack
     member this.AsAppPack = this :> IAppPack
+    interface IPack with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
+        member __.Env : IEnv = env
     interface ILogger with
         member __.Log m = env.Log m
     member this.AsApp = this :> IApp
