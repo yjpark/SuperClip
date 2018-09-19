@@ -1,5 +1,6 @@
 module SuperClip.Forms.Dsl
 
+open Dap.Context
 open Dap.Context.Meta
 open Dap.Context.Generator
 open Dap.Platform
@@ -39,7 +40,8 @@ let ICloudStubPack =
         add (M.proxyService (
                 [("CloudTypes", "SuperClip.Core.Cloud.Types")],
                 "CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt", "CloudTypes.StubSpec",
-                "(getCloudServerUri ())", Some 5.0<second>, true, "CloudStub"
+                "(getCloudServerUri ())", Some 5.0<second>, true,
+                "CloudStub", NoKey
             ))
     }
 
