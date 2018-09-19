@@ -14,9 +14,11 @@ module SessionTypes = SuperClip.Forms.Session.Types
 type ISessionPackArgs =
     inherit IClientPackArgs
     abstract Session : NoArgs with get
+    abstract AsClientPackArgs : IClientPackArgs with get
 
 type ISessionPack =
     inherit IPack
     inherit IClientPack
     abstract Args : ISessionPackArgs with get
     abstract Session : SessionTypes.Agent with get
+    abstract AsClientPack : IClientPack with get

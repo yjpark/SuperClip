@@ -83,6 +83,8 @@ type IApp =
     inherit IDbPack
     inherit ICloudHubPack
     abstract Args : AppArgs with get
+    abstract AsDbPack : IDbPack with get
+    abstract AsCloudHubPack : ICloudHubPack with get
 
 type App (loggingArgs : LoggingArgs, scope : Scope) =
     let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
@@ -136,8 +138,11 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
         return ()
     }
     member __.Args : AppArgs = args |> Option.get
-    interface IApp with
-        member this.Args : AppArgs = this.Args
+    interface ILogger with
+        member __.Log m = env.Log m
+    interface IPack with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
+        member __.Env : IEnv = env
     interface IDbPack with
         member this.Args = this.Args.AsDbPackArgs
         member __.FarangoDb (* IDbPack *) : FarangoDb.Agent = farangoDb |> Option.get
@@ -157,9 +162,8 @@ type App (loggingArgs : LoggingArgs, scope : Scope) =
             return (agent :?> Gateway.Gateway, isNew)
         }
     member this.AsCloudHubPack = this :> ICloudHubPack
-    interface IPack with
-        member __.LoggingArgs : LoggingArgs = loggingArgs
-        member __.Env : IEnv = env
-    interface ILogger with
-        member __.Log m = env.Log m
+    interface IApp with
+        member this.Args : AppArgs = this.Args
+        member this.AsDbPack = this.AsDbPack
+        member this.AsCloudHubPack = this.AsCloudHubPack
     member this.AsApp = this :> IApp

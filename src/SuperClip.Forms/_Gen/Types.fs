@@ -13,6 +13,7 @@ module Proxy = Dap.Remote.WebSocketProxy.Proxy
 module CloudTypes = SuperClip.Core.Cloud.Types
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module SecureStorage = Dap.Forms.Provider.SecureStorage
+module Context = Dap.Platform.Context
 
 (*
  * Generated: <Record>
@@ -103,6 +104,8 @@ type IClientPackArgs =
     inherit ICloudStubPackArgs
     abstract CredentialSecureStorage : SecureStorage.Args<Credential> with get
     abstract Preferences : Context.Args<PrefContext> with get
+    abstract AsCorePackArgs : ICorePackArgs with get
+    abstract AsCloudStubPackArgs : ICloudStubPackArgs with get
 
 type IClientPack =
     inherit IPack
@@ -111,3 +114,5 @@ type IClientPack =
     abstract Args : IClientPackArgs with get
     abstract CredentialSecureStorage : SecureStorage.Service<Credential> with get
     abstract Preferences : Context.Agent<PrefContext> with get
+    abstract AsCorePack : ICorePack with get
+    abstract AsCloudStubPack : ICloudStubPack with get

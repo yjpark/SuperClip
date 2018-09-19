@@ -16,6 +16,7 @@ type ICorePackArgs =
     abstract PrimaryClipboard : PrimaryTypes.Args with get
     abstract LocalHistory : HistoryTypes.Args with get
     abstract History : HistoryTypes.Args with get
+    abstract AsServicesPackArgs : IServicesPackArgs with get
 
 type ICorePack =
     inherit IPack
@@ -24,3 +25,4 @@ type ICorePack =
     abstract PrimaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> with get
     abstract LocalHistory : HistoryTypes.Agent with get
     abstract GetHistoryAsync : Key -> Task<HistoryTypes.Agent * bool>
+    abstract AsServicesPack : IServicesPack with get

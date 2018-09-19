@@ -59,13 +59,14 @@ type CoreAppArgs = {
     member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) = {this with PrimaryClipboard = primaryClipboard}
     member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) = {this with LocalHistory = localHistory}
     member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) = {this with History = history}
+    interface IServicesPackArgs with
+        member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
+    member this.AsServicesPackArgs = this :> IServicesPackArgs
     interface ICorePackArgs with
         member this.PrimaryClipboard (* ICorePack *) : PrimaryTypes.Args = this.PrimaryClipboard
         member this.LocalHistory (* ICorePack *) : HistoryTypes.Args = this.LocalHistory
         member this.History (* ICorePack *) : HistoryTypes.Args = this.History
-    interface IServicesPackArgs with
-        member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
-    member this.AsServicesPackArgs = this :> IServicesPackArgs
+        member this.AsServicesPackArgs = this.AsServicesPackArgs
     member this.AsCorePackArgs = this :> ICorePackArgs
 
 (*
@@ -93,6 +94,7 @@ type ICoreApp =
     inherit IPack
     inherit ICorePack
     abstract Args : CoreAppArgs with get
+    abstract AsCorePack : ICorePack with get
 
 type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
     let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
@@ -150,8 +152,15 @@ type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
         return ()
     }
     member __.Args : CoreAppArgs = args |> Option.get
-    interface ICoreApp with
-        member this.Args : CoreAppArgs = this.Args
+    interface ILogger with
+        member __.Log m = env.Log m
+    interface IPack with
+        member __.LoggingArgs : LoggingArgs = loggingArgs
+        member __.Env : IEnv = env
+    interface IServicesPack with
+        member this.Args = this.Args.AsServicesPackArgs
+        member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
+    member this.AsServicesPack = this :> IServicesPack
     interface ICorePack with
         member this.Args = this.Args.AsCorePackArgs
         member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
@@ -160,14 +169,9 @@ type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "History" key
             return (agent :?> HistoryTypes.Agent, isNew)
         }
-    interface IServicesPack with
-        member this.Args = this.Args.AsServicesPackArgs
-        member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
-    member this.AsServicesPack = this :> IServicesPack
+        member this.AsServicesPack = this.AsServicesPack
     member this.AsCorePack = this :> ICorePack
-    interface IPack with
-        member __.LoggingArgs : LoggingArgs = loggingArgs
-        member __.Env : IEnv = env
-    interface ILogger with
-        member __.Log m = env.Log m
+    interface ICoreApp with
+        member this.Args : CoreAppArgs = this.Args
+        member this.AsCorePack = this.AsCorePack
     member this.AsCoreApp = this :> ICoreApp
