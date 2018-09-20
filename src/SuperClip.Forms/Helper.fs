@@ -21,14 +21,20 @@ let private setSecret () =
     Dap.Forms.Provider.SecureStorage.setSecret <| Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
 
 type App with
-    static member Create (logFile, consoleLogLevel, onAppStarted) =
+    static member CreateAsync (logFile, consoleLogLevel, onAppStarted : IApp -> unit) = task {
         setSecret ()
         let loggingArgs = LoggingArgs.FormsCreate (logFile, consoleLogLevel)
-        new App (loggingArgs, Scope)
-        |> fun app -> app.Setup (fun a -> a.View.Run a onAppStarted) AppArgs.Default
+        let app = new App (loggingArgs, Scope)
+        do! app.SetupAsync AppArgs.Default
+        let app = app.AsApp
+        do! app.FormsView.StartAsync ()
+        onAppStarted app
+        return app
+    }
     static member Create onAppStarted =
-        App.Create ("super-clip-.log", LogLevelWarning, onAppStarted)
+        App.CreateAsync ("super-clip-.log", LogLevelWarning, onAppStarted)
+        |> runTask
 
 let createApplication () =
-    App.Create ("super-clip-.log", LogLevelWarning, ignore)
+    App.Create ignore
     |> fun app -> app.Args.FormsView.Application

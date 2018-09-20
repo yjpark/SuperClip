@@ -96,8 +96,8 @@ type ICoreApp =
     abstract Args : CoreAppArgs with get
     abstract AsCorePack : ICorePack with get
 
-type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
-    let env = Env.live MailboxPlatform (loggingArgs.CreateLogging ()) scope
+type CoreApp (logging : ILogging, scope : Scope) =
+    let env = Env.live MailboxPlatform logging scope
     let mutable args : CoreAppArgs option = None
     let mutable setupError : exn option = None
     let mutable (* IServicesPack *) ticker : TickerTypes.Agent option = None
@@ -119,33 +119,36 @@ type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
             setupError <- Some e
             logException env "CoreApp.setupAsync" "Setup_Failed" (E.encodeJson 4 args') e
     }
-    member this.Setup (callback : ICoreApp -> unit) (getArgs : unit -> CoreAppArgs) : ICoreApp =
+    new (loggingArgs : LoggingArgs, scope : Scope) =
+        CoreApp (loggingArgs.CreateLogging (), scope)
+    new (scope : Scope) =
+        CoreApp (getLogging (), scope)
+    member this.SetupAsync (getArgs : unit -> CoreAppArgs) : Task<unit> = task {
         if args.IsSome then
             failWith "Already_Setup" <| E.encodeJson 4 args.Value
         else
             let args' = getArgs ()
             args <- Some args'
-            env.RunTask0 raiseOnFailed (fun _ -> task {
-                do! setupAsync this
-                match setupError with
-                | None -> callback this.AsCoreApp
-                | Some e -> raise e
-            })
-        this.AsCoreApp
-    member this.SetupArgs (callback : ICoreApp -> unit) (args' : CoreAppArgs) : ICoreApp =
+            do! setupAsync this
+            match setupError with
+            | None -> ()
+            | Some e -> raise e
+        return ()
+        }
+    member this.SetupAsync (args' : CoreAppArgs) : Task<unit> =
         fun () -> args'
-        |> this.Setup callback
-    member this.SetupJson (callback : ICoreApp -> unit) (args' : Json) : ICoreApp =
+        |> this.SetupAsync
+    member this.SetupAsync (args' : Json) : Task<unit> =
         fun () ->
             try
                 castJson CoreAppArgs.JsonDecoder args'
             with e ->
-                logException env "CoreApp.Setup" "Decode_Failed" args e
+                logException env "CoreApp.SetupAsync" "Decode_Failed" args e
                 raise e
-        |> this.Setup callback
-    member this.SetupText (callback : ICoreApp -> unit) (args' : string) : ICoreApp =
-        parseJson args'
-        |> this.SetupJson callback
+        |> this.SetupAsync
+    member this.SetupAsync (args' : string) : Task<unit> =
+        let json : Json = parseJson args'
+        this.SetupAsync json
     member __.SetupError : exn option = setupError
     abstract member SetupAsync' : unit -> Task<unit>
     default __.SetupAsync' () = task {
@@ -155,7 +158,6 @@ type CoreApp (loggingArgs : LoggingArgs, scope : Scope) =
     interface ILogger with
         member __.Log m = env.Log m
     interface IPack with
-        member __.LoggingArgs : LoggingArgs = loggingArgs
         member __.Env : IEnv = env
     interface IServicesPack with
         member this.Args = this.Args.AsServicesPackArgs
