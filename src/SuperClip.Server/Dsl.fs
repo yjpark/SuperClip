@@ -55,8 +55,7 @@ let compile segments =
                 [
                     G.PackOpens
                     opens
-                    G.AppInterface <@ App @>
-                    G.AppClass <@ App @>
+                    G.App <@ App @>
                 ]
             )
         )

@@ -142,8 +142,7 @@ let compile segments =
             G.Module ("SuperClip.Core.CoreApp",
                 [
                     G.PackOpens
-                    G.AppInterface <@ CoreApp @>
-                    G.AppClass <@ CoreApp @>
+                    G.App <@ CoreApp @>
                 ]
             )
         )

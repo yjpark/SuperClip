@@ -57,6 +57,14 @@ type Device = {
         Device.Create
             (System.Guid.NewGuid().ToString())
             ""
+    static member SetGuid (guid : Guid) (this : Device) =
+        {this with Guid = guid}
+    static member SetName (name : string) (this : Device) =
+        {this with Name = name}
+    static member UpdateGuid (update : Guid -> Guid) (this : Device) =
+        this |> Device.SetGuid (update this.Guid)
+    static member UpdateName (update : string -> string) (this : Device) =
+        this |> Device.SetName (update this.Name)
     static member JsonEncoder : JsonEncoder<Device> =
         fun (this : Device) ->
             E.object [
@@ -73,8 +81,10 @@ type Device = {
     interface IJson with
         member this.ToJson () = Device.JsonEncoder this
     interface IObj
-    member this.WithGuid (guid : Guid) = {this with Guid = guid}
-    member this.WithName (name : string) = {this with Name = name}
+    member this.WithGuid (guid : Guid) =
+        this |> Device.SetGuid guid
+    member this.WithName (name : string) =
+        this |> Device.SetName name
 
 (*
  * Generated: <Record>
@@ -94,6 +104,14 @@ type Channel = {
         Channel.Create
             (System.Guid.NewGuid().ToString())
             ""
+    static member SetGuid (guid : Guid) (this : Channel) =
+        {this with Guid = guid}
+    static member SetName (name : string) (this : Channel) =
+        {this with Name = name}
+    static member UpdateGuid (update : Guid -> Guid) (this : Channel) =
+        this |> Channel.SetGuid (update this.Guid)
+    static member UpdateName (update : string -> string) (this : Channel) =
+        this |> Channel.SetName (update this.Name)
     static member JsonEncoder : JsonEncoder<Channel> =
         fun (this : Channel) ->
             E.object [
@@ -110,8 +128,10 @@ type Channel = {
     interface IJson with
         member this.ToJson () = Channel.JsonEncoder this
     interface IObj
-    member this.WithGuid (guid : Guid) = {this with Guid = guid}
-    member this.WithName (name : string) = {this with Name = name}
+    member this.WithGuid (guid : Guid) =
+        this |> Channel.SetGuid guid
+    member this.WithName (name : string) =
+        this |> Channel.SetName name
 
 (*
  * Generated: <Record>
@@ -127,6 +147,14 @@ type Peer = {
             Channel = channel
             Device = device
         }
+    static member SetChannel (channel : Channel) (this : Peer) =
+        {this with Channel = channel}
+    static member SetDevice (device : Device) (this : Peer) =
+        {this with Device = device}
+    static member UpdateChannel (update : Channel -> Channel) (this : Peer) =
+        this |> Peer.SetChannel (update this.Channel)
+    static member UpdateDevice (update : Device -> Device) (this : Peer) =
+        this |> Peer.SetDevice (update this.Device)
     static member JsonEncoder : JsonEncoder<Peer> =
         fun (this : Peer) ->
             E.object [
@@ -143,8 +171,10 @@ type Peer = {
     interface IJson with
         member this.ToJson () = Peer.JsonEncoder this
     interface IObj
-    member this.WithChannel (channel : Channel) = {this with Channel = channel}
-    member this.WithDevice (device : Device) = {this with Device = device}
+    member this.WithChannel (channel : Channel) =
+        this |> Peer.SetChannel channel
+    member this.WithDevice (device : Device) =
+        this |> Peer.SetDevice device
 
 (*
  * Generated: <Record>
@@ -160,6 +190,14 @@ type Peers = {
             Channel = channel
             Devices = devices
         }
+    static member SetChannel (channel : Channel) (this : Peers) =
+        {this with Channel = channel}
+    static member SetDevices (devices : Device list) (this : Peers) =
+        {this with Devices = devices}
+    static member UpdateChannel (update : Channel -> Channel) (this : Peers) =
+        this |> Peers.SetChannel (update this.Channel)
+    static member UpdateDevices (update : Device list -> Device list) (this : Peers) =
+        this |> Peers.SetDevices (update this.Devices)
     static member JsonEncoder : JsonEncoder<Peers> =
         fun (this : Peers) ->
             E.object [
@@ -176,8 +214,10 @@ type Peers = {
     interface IJson with
         member this.ToJson () = Peers.JsonEncoder this
     interface IObj
-    member this.WithChannel (channel : Channel) = {this with Channel = channel}
-    member this.WithDevices (devices : Device list) = {this with Devices = devices}
+    member this.WithChannel (channel : Channel) =
+        this |> Peers.SetChannel channel
+    member this.WithDevices (devices : Device list) =
+        this |> Peers.SetDevices devices
 
 (*
  * Generated: <Union>
@@ -222,6 +262,18 @@ type Item = {
             Source = source
             Content = content
         }
+    static member SetTime (time : Instant) (this : Item) =
+        {this with Time = time}
+    static member SetSource (source : Source) (this : Item) =
+        {this with Source = source}
+    static member SetContent (content : Content) (this : Item) =
+        {this with Content = content}
+    static member UpdateTime (update : Instant -> Instant) (this : Item) =
+        this |> Item.SetTime (update this.Time)
+    static member UpdateSource (update : Source -> Source) (this : Item) =
+        this |> Item.SetSource (update this.Source)
+    static member UpdateContent (update : Content -> Content) (this : Item) =
+        this |> Item.SetContent (update this.Content)
     static member JsonEncoder : JsonEncoder<Item> =
         fun (this : Item) ->
             E.object [
@@ -240,9 +292,12 @@ type Item = {
     interface IJson with
         member this.ToJson () = Item.JsonEncoder this
     interface IObj
-    member this.WithTime (time : Instant) = {this with Time = time}
-    member this.WithSource (source : Source) = {this with Source = source}
-    member this.WithContent (content : Content) = {this with Content = content}
+    member this.WithTime (time : Instant) =
+        this |> Item.SetTime time
+    member this.WithSource (source : Source) =
+        this |> Item.SetSource source
+    member this.WithContent (content : Content) =
+        this |> Item.SetContent content
 
 (*
  * Generated: <Record>
@@ -262,6 +317,14 @@ type PrimaryClipboardArgs = {
         PrimaryClipboardArgs.Create
             (decodeJsonString Duration.JsonDecoder """0:00:00:00.5""")
             (decodeJsonString Duration.JsonDecoder """0:00:00:01""")
+    static member SetCheckInterval (checkInterval : Duration) (this : PrimaryClipboardArgs) =
+        {this with CheckInterval = checkInterval}
+    static member SetTimeoutDuration (timeoutDuration : Duration) (this : PrimaryClipboardArgs) =
+        {this with TimeoutDuration = timeoutDuration}
+    static member UpdateCheckInterval (update : Duration -> Duration) (this : PrimaryClipboardArgs) =
+        this |> PrimaryClipboardArgs.SetCheckInterval (update this.CheckInterval)
+    static member UpdateTimeoutDuration (update : Duration -> Duration) (this : PrimaryClipboardArgs) =
+        this |> PrimaryClipboardArgs.SetTimeoutDuration (update this.TimeoutDuration)
     static member JsonEncoder : JsonEncoder<PrimaryClipboardArgs> =
         fun (this : PrimaryClipboardArgs) ->
             E.object [
@@ -278,8 +341,10 @@ type PrimaryClipboardArgs = {
     interface IJson with
         member this.ToJson () = PrimaryClipboardArgs.JsonEncoder this
     interface IObj
-    member this.WithCheckInterval (checkInterval : Duration) = {this with CheckInterval = checkInterval}
-    member this.WithTimeoutDuration (timeoutDuration : Duration) = {this with TimeoutDuration = timeoutDuration}
+    member this.WithCheckInterval (checkInterval : Duration) =
+        this |> PrimaryClipboardArgs.SetCheckInterval checkInterval
+    member this.WithTimeoutDuration (timeoutDuration : Duration) =
+        this |> PrimaryClipboardArgs.SetTimeoutDuration timeoutDuration
 
 (*
  * Generated: <Record>
@@ -299,6 +364,14 @@ type HistoryArgs = {
         HistoryArgs.Create
             400
             20
+    static member SetMaxSize (maxSize : int) (this : HistoryArgs) =
+        {this with MaxSize = maxSize}
+    static member SetRecentSize (recentSize : int) (this : HistoryArgs) =
+        {this with RecentSize = recentSize}
+    static member UpdateMaxSize (update : int -> int) (this : HistoryArgs) =
+        this |> HistoryArgs.SetMaxSize (update this.MaxSize)
+    static member UpdateRecentSize (update : int -> int) (this : HistoryArgs) =
+        this |> HistoryArgs.SetRecentSize (update this.RecentSize)
     static member JsonEncoder : JsonEncoder<HistoryArgs> =
         fun (this : HistoryArgs) ->
             E.object [
@@ -315,8 +388,10 @@ type HistoryArgs = {
     interface IJson with
         member this.ToJson () = HistoryArgs.JsonEncoder this
     interface IObj
-    member this.WithMaxSize (maxSize : int) = {this with MaxSize = maxSize}
-    member this.WithRecentSize (recentSize : int) = {this with RecentSize = recentSize}
+    member this.WithMaxSize (maxSize : int) =
+        this |> HistoryArgs.SetMaxSize maxSize
+    member this.WithRecentSize (recentSize : int) =
+        this |> HistoryArgs.SetRecentSize recentSize
 
 type IServicesPackArgs =
     abstract Ticker : TickerTypes.Args with get

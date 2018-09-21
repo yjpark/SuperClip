@@ -39,6 +39,22 @@ type AppArgs = {
             (PacketConn.args true 1048576)
             NoArgs
             (Gateway.args CloudHubTypes.HubSpec true)
+    static member SetFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) (this : AppArgs) =
+        {this with FarangoDb = farangoDb}
+    static member SetPacketConn ((* ICloudHubPack *) packetConn : PacketConn.Args) (this : AppArgs) =
+        {this with PacketConn = packetConn}
+    static member SetCloudHub ((* ICloudHubPack *) cloudHub : NoArgs) (this : AppArgs) =
+        {this with CloudHub = cloudHub}
+    static member SetCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
+        {this with CloudHubGateway = cloudHubGateway}
+    static member UpdateFarangoDb ((* IDbPack *) update : FarangoDb.Args -> FarangoDb.Args) (this : AppArgs) =
+        this |> AppArgs.SetFarangoDb (update this.FarangoDb)
+    static member UpdatePacketConn ((* ICloudHubPack *) update : PacketConn.Args -> PacketConn.Args) (this : AppArgs) =
+        this |> AppArgs.SetPacketConn (update this.PacketConn)
+    static member UpdateCloudHub ((* ICloudHubPack *) update : NoArgs -> NoArgs) (this : AppArgs) =
+        this |> AppArgs.SetCloudHub (update this.CloudHub)
+    static member UpdateCloudHubGateway ((* ICloudHubPack *) update : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> -> Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
+        this |> AppArgs.SetCloudHubGateway (update this.CloudHubGateway)
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
@@ -56,7 +72,14 @@ type AppArgs = {
     interface IJson with
         member this.ToJson () = AppArgs.JsonEncoder this
     interface IObj
-    member this.WithFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) = {this with FarangoDb = farangoDb}
+    member this.WithFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) =
+        this |> AppArgs.SetFarangoDb farangoDb
+    member this.WithPacketConn ((* ICloudHubPack *) packetConn : PacketConn.Args) =
+        this |> AppArgs.SetPacketConn packetConn
+    member this.WithCloudHub ((* ICloudHubPack *) cloudHub : NoArgs) =
+        this |> AppArgs.SetCloudHub cloudHub
+    member this.WithCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) =
+        this |> AppArgs.SetCloudHubGateway cloudHubGateway
     interface IDbPackArgs with
         member this.FarangoDb (* IDbPack *) : FarangoDb.Args = this.FarangoDb
     member this.AsDbPackArgs = this :> IDbPackArgs
@@ -86,6 +109,15 @@ type IApp =
     abstract AsDbPack : IDbPack with get
     abstract AsCloudHubPack : ICloudHubPack with get
 
+type AppKinds () =
+    static member FarangoDb (* IDbPack *) = "FarangoDb"
+    static member PacketConn (* ICloudHubPack *) = "PacketConn"
+    static member CloudHub (* ICloudHubPack *) = "CloudHub"
+    static member CloudHubGateway (* ICloudHubPack *) = "CloudHubGateway"
+
+type AppKeys () =
+    static member FarangoDb (* IDbPack *) = ""
+
 type App (logging : ILogging, scope : Scope) =
     let env = Env.live MailboxPlatform logging scope
     let mutable args : AppArgs option = None
@@ -94,11 +126,11 @@ type App (logging : ILogging, scope : Scope) =
     let setupAsync (this : App) : Task<unit> = task {
         let args' = args |> Option.get
         try
-            let! (* IDbPack *) farangoDb' = env |> Env.addServiceAsync (FarangoDb.spec args'.FarangoDb) "FarangoDb" ""
+            let! (* IDbPack *) farangoDb' = env |> Env.addServiceAsync (FarangoDb.spec args'.FarangoDb) AppKinds.FarangoDb AppKeys.FarangoDb
             farangoDb <- Some farangoDb'
-            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudHubPack *) args'.PacketConn) "PacketConn"
-            do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args'.CloudHub) "CloudHub"
-            do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args'.CloudHubGateway) "CloudHubGateway"
+            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudHubPack *) args'.PacketConn) AppKinds.PacketConn
+            do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args'.CloudHub) AppKinds.CloudHub
+            do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args'.CloudHubGateway) AppKinds.CloudHubGateway
             do! this.SetupAsync' ()
             logInfo env "App.setupAsync" "Setup_Succeed" (E.encodeJson 4 args')
         with e ->

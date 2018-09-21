@@ -35,6 +35,22 @@ type CoreAppArgs = {
             (PrimaryTypes.Args.Default ())
             (HistoryTypes.Args.Default ())
             (HistoryTypes.Args.Default ())
+    static member SetTicker ((* IServicesPack *) ticker : TickerTypes.Args) (this : CoreAppArgs) =
+        {this with Ticker = ticker}
+    static member SetPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) (this : CoreAppArgs) =
+        {this with PrimaryClipboard = primaryClipboard}
+    static member SetLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) (this : CoreAppArgs) =
+        {this with LocalHistory = localHistory}
+    static member SetHistory ((* ICorePack *) history : HistoryTypes.Args) (this : CoreAppArgs) =
+        {this with History = history}
+    static member UpdateTicker ((* IServicesPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : CoreAppArgs) =
+        this |> CoreAppArgs.SetTicker (update this.Ticker)
+    static member UpdatePrimaryClipboard ((* ICorePack *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : CoreAppArgs) =
+        this |> CoreAppArgs.SetPrimaryClipboard (update this.PrimaryClipboard)
+    static member UpdateLocalHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : CoreAppArgs) =
+        this |> CoreAppArgs.SetLocalHistory (update this.LocalHistory)
+    static member UpdateHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : CoreAppArgs) =
+        this |> CoreAppArgs.SetHistory (update this.History)
     static member JsonEncoder : JsonEncoder<CoreAppArgs> =
         fun (this : CoreAppArgs) ->
             E.object [
@@ -55,10 +71,14 @@ type CoreAppArgs = {
     interface IJson with
         member this.ToJson () = CoreAppArgs.JsonEncoder this
     interface IObj
-    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) = {this with Ticker = ticker}
-    member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) = {this with PrimaryClipboard = primaryClipboard}
-    member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) = {this with LocalHistory = localHistory}
-    member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) = {this with History = history}
+    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) =
+        this |> CoreAppArgs.SetTicker ticker
+    member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
+        this |> CoreAppArgs.SetPrimaryClipboard primaryClipboard
+    member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) =
+        this |> CoreAppArgs.SetLocalHistory localHistory
+    member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) =
+        this |> CoreAppArgs.SetHistory history
     interface IServicesPackArgs with
         member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
     member this.AsServicesPackArgs = this :> IServicesPackArgs
@@ -96,6 +116,17 @@ type ICoreApp =
     abstract Args : CoreAppArgs with get
     abstract AsCorePack : ICorePack with get
 
+type CoreAppKinds () =
+    static member Ticker (* IServicesPack *) = "Ticker"
+    static member PrimaryClipboard (* ICorePack *) = "Clipboard"
+    static member LocalHistory (* ICorePack *) = "History"
+    static member History (* ICorePack *) = "History"
+
+type CoreAppKeys () =
+    static member Ticker (* IServicesPack *) = ""
+    static member PrimaryClipboard (* ICorePack *) = "Primary"
+    static member LocalHistory (* ICorePack *) = "Local"
+
 type CoreApp (logging : ILogging, scope : Scope) =
     let env = Env.live MailboxPlatform logging scope
     let mutable args : CoreAppArgs option = None
@@ -106,13 +137,13 @@ type CoreApp (logging : ILogging, scope : Scope) =
     let setupAsync (this : CoreApp) : Task<unit> = task {
         let args' = args |> Option.get
         try
-            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) "Ticker" ""
+            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) CoreAppKinds.Ticker CoreAppKeys.Ticker
             ticker <- Some ticker'
-            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) "Clipboard" "Primary"
+            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) CoreAppKinds.PrimaryClipboard CoreAppKeys.PrimaryClipboard
             primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
-            let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) "History" "Local"
+            let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) CoreAppKinds.LocalHistory CoreAppKeys.LocalHistory
             localHistory <- Some localHistory'
-            do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) "History"
+            do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) CoreAppKinds.History
             do! this.SetupAsync' ()
             logInfo env "CoreApp.setupAsync" "Setup_Succeed" (E.encodeJson 4 args')
         with e ->

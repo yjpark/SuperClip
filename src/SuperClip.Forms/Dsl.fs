@@ -109,8 +109,7 @@ let compile segments =
                     G.PackOpens
                     coreOpens
                     G.PackInterface <@ IAppPack @>
-                    G.AppInterface <@ App @>
-                    G.AppClass <@ App @>
+                    G.App <@ App @>
                 ]
             )
         )

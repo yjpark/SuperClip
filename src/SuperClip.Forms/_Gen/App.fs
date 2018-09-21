@@ -75,6 +75,46 @@ type AppArgs = {
             spawnPrefContext
             NoArgs
             (SuperClip.Forms.View.Logic.newArgs ())
+    static member SetTicker ((* IServicesPack *) ticker : TickerTypes.Args) (this : AppArgs) =
+        {this with Ticker = ticker}
+    static member SetPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) (this : AppArgs) =
+        {this with PrimaryClipboard = primaryClipboard}
+    static member SetLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) (this : AppArgs) =
+        {this with LocalHistory = localHistory}
+    static member SetHistory ((* ICorePack *) history : HistoryTypes.Args) (this : AppArgs) =
+        {this with History = history}
+    static member SetCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
+        {this with CloudStub = cloudStub}
+    static member SetPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) (this : AppArgs) =
+        {this with PacketClient = packetClient}
+    static member SetCredentialSecureStorage ((* IClientPack *) credentialSecureStorage : SecureStorage.Args<Credential>) (this : AppArgs) =
+        {this with CredentialSecureStorage = credentialSecureStorage}
+    static member SetPreferences ((* IClientPack *) preferences : Context.Args<PrefContext>) (this : AppArgs) =
+        {this with Preferences = preferences}
+    static member SetSession ((* ISessionPack *) session : NoArgs) (this : AppArgs) =
+        {this with Session = session}
+    static member SetFormsView ((* IAppPack *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) (this : AppArgs) =
+        {this with FormsView = formsView}
+    static member UpdateTicker ((* IServicesPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : AppArgs) =
+        this |> AppArgs.SetTicker (update this.Ticker)
+    static member UpdatePrimaryClipboard ((* ICorePack *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : AppArgs) =
+        this |> AppArgs.SetPrimaryClipboard (update this.PrimaryClipboard)
+    static member UpdateLocalHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
+        this |> AppArgs.SetLocalHistory (update this.LocalHistory)
+    static member UpdateHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
+        this |> AppArgs.SetHistory (update this.History)
+    static member UpdateCloudStub ((* ICloudStubPack *) update : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> -> Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
+        this |> AppArgs.SetCloudStub (update this.CloudStub)
+    static member UpdatePacketClient ((* ICloudStubPack *) update : PacketClient.Args -> PacketClient.Args) (this : AppArgs) =
+        this |> AppArgs.SetPacketClient (update this.PacketClient)
+    static member UpdateCredentialSecureStorage ((* IClientPack *) update : SecureStorage.Args<Credential> -> SecureStorage.Args<Credential>) (this : AppArgs) =
+        this |> AppArgs.SetCredentialSecureStorage (update this.CredentialSecureStorage)
+    static member UpdatePreferences ((* IClientPack *) update : Context.Args<PrefContext> -> Context.Args<PrefContext>) (this : AppArgs) =
+        this |> AppArgs.SetPreferences (update this.Preferences)
+    static member UpdateSession ((* ISessionPack *) update : NoArgs -> NoArgs) (this : AppArgs) =
+        this |> AppArgs.SetSession (update this.Session)
+    static member UpdateFormsView ((* IAppPack *) update : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg> -> FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) (this : AppArgs) =
+        this |> AppArgs.SetFormsView (update this.FormsView)
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
@@ -101,10 +141,26 @@ type AppArgs = {
     interface IJson with
         member this.ToJson () = AppArgs.JsonEncoder this
     interface IObj
-    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) = {this with Ticker = ticker}
-    member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) = {this with PrimaryClipboard = primaryClipboard}
-    member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) = {this with LocalHistory = localHistory}
-    member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) = {this with History = history}
+    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) =
+        this |> AppArgs.SetTicker ticker
+    member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
+        this |> AppArgs.SetPrimaryClipboard primaryClipboard
+    member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) =
+        this |> AppArgs.SetLocalHistory localHistory
+    member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) =
+        this |> AppArgs.SetHistory history
+    member this.WithCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) =
+        this |> AppArgs.SetCloudStub cloudStub
+    member this.WithPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) =
+        this |> AppArgs.SetPacketClient packetClient
+    member this.WithCredentialSecureStorage ((* IClientPack *) credentialSecureStorage : SecureStorage.Args<Credential>) =
+        this |> AppArgs.SetCredentialSecureStorage credentialSecureStorage
+    member this.WithPreferences ((* IClientPack *) preferences : Context.Args<PrefContext>) =
+        this |> AppArgs.SetPreferences preferences
+    member this.WithSession ((* ISessionPack *) session : NoArgs) =
+        this |> AppArgs.SetSession session
+    member this.WithFormsView ((* IAppPack *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) =
+        this |> AppArgs.SetFormsView formsView
     interface IServicesPackArgs with
         member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
     member this.AsServicesPackArgs = this :> IServicesPackArgs
@@ -160,6 +216,28 @@ type IApp =
     abstract Args : AppArgs with get
     abstract AsAppPack : IAppPack with get
 
+type AppKinds () =
+    static member Ticker (* IServicesPack *) = "Ticker"
+    static member PrimaryClipboard (* ICorePack *) = "Clipboard"
+    static member LocalHistory (* ICorePack *) = "History"
+    static member History (* ICorePack *) = "History"
+    static member CloudStub (* ICloudStubPack *) = "CloudStub"
+    static member PacketClient (* ICloudStubPack *) = "PacketClient"
+    static member CredentialSecureStorage (* IClientPack *) = "SecureStorage"
+    static member Preferences (* IClientPack *) = "Preferences"
+    static member Session (* ISessionPack *) = "Session"
+    static member FormsView (* IAppPack *) = "FormsView"
+
+type AppKeys () =
+    static member Ticker (* IServicesPack *) = ""
+    static member PrimaryClipboard (* ICorePack *) = "Primary"
+    static member LocalHistory (* ICorePack *) = "Local"
+    static member CloudStub (* ICloudStubPack *) = ""
+    static member CredentialSecureStorage (* IClientPack *) = "Credential"
+    static member Preferences (* IClientPack *) = ""
+    static member Session (* ISessionPack *) = ""
+    static member FormsView (* IAppPack *) = ""
+
 type App (logging : ILogging, scope : Scope) =
     let env = Env.live MailboxPlatform logging scope
     let mutable args : AppArgs option = None
@@ -175,23 +253,23 @@ type App (logging : ILogging, scope : Scope) =
     let setupAsync (this : App) : Task<unit> = task {
         let args' = args |> Option.get
         try
-            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) "Ticker" ""
+            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args'.Ticker) AppKinds.Ticker AppKeys.Ticker
             ticker <- Some ticker'
-            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) "Clipboard" "Primary"
+            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args'.PrimaryClipboard) AppKinds.PrimaryClipboard AppKeys.PrimaryClipboard
             primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
-            let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) "History" "Local"
+            let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args'.LocalHistory) AppKinds.LocalHistory AppKeys.LocalHistory
             localHistory <- Some localHistory'
-            do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) "History"
-            let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.spec args'.CloudStub) "CloudStub" ""
+            do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args'.History) AppKinds.History
+            let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.spec args'.CloudStub) AppKinds.CloudStub AppKeys.CloudStub
             cloudStub <- Some cloudStub'
-            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) args'.PacketClient) "PacketClient"
-            let! (* IClientPack *) credentialSecureStorage' = env |> Env.addServiceAsync (Dap.Local.Storage.Base.Logic.spec args'.CredentialSecureStorage) "SecureStorage" "credential"
+            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) args'.PacketClient) AppKinds.PacketClient
+            let! (* IClientPack *) credentialSecureStorage' = env |> Env.addServiceAsync (Dap.Local.Storage.Base.Logic.spec args'.CredentialSecureStorage) AppKinds.CredentialSecureStorage AppKeys.CredentialSecureStorage
             credentialSecureStorage <- Some credentialSecureStorage'
-            let! (* IClientPack *) preferences' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args'.Preferences) "preferences" ""
+            let! (* IClientPack *) preferences' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args'.Preferences) AppKinds.Preferences AppKeys.Preferences
             preferences <- Some preferences'
-            let! (* ISessionPack *) session' = env |> Env.addServiceAsync (SuperClip.Forms.Session.Logic.spec this.AsClientPack args'.Session) "Session" ""
+            let! (* ISessionPack *) session' = env |> Env.addServiceAsync (SuperClip.Forms.Session.Logic.spec this.AsClientPack args'.Session) AppKinds.Session AppKeys.Session
             session <- Some session'
-            let! (* IAppPack *) formsView' = env |> Env.addServiceAsync (Dap.Forms.View.Logic.spec this.AsSessionPack args'.FormsView) "FormsView" ""
+            let! (* IAppPack *) formsView' = env |> Env.addServiceAsync (Dap.Forms.View.Logic.spec this.AsSessionPack args'.FormsView) AppKinds.FormsView AppKeys.FormsView
             formsView <- Some formsView'
             do! this.SetupAsync' ()
             logInfo env "App.setupAsync" "Setup_Succeed" (E.encodeJson 4 args')

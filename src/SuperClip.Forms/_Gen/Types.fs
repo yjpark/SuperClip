@@ -35,6 +35,26 @@ type Credential = {
             CryptoKey = cryptoKey
             Token = token
         }
+    static member SetDevice (device : Device) (this : Credential) =
+        {this with Device = device}
+    static member SetChannel (channel : Channel) (this : Credential) =
+        {this with Channel = channel}
+    static member SetPassHash (passHash : string) (this : Credential) =
+        {this with PassHash = passHash}
+    static member SetCryptoKey (cryptoKey : string) (this : Credential) =
+        {this with CryptoKey = cryptoKey}
+    static member SetToken (token : string) (this : Credential) =
+        {this with Token = token}
+    static member UpdateDevice (update : Device -> Device) (this : Credential) =
+        this |> Credential.SetDevice (update this.Device)
+    static member UpdateChannel (update : Channel -> Channel) (this : Credential) =
+        this |> Credential.SetChannel (update this.Channel)
+    static member UpdatePassHash (update : string -> string) (this : Credential) =
+        this |> Credential.SetPassHash (update this.PassHash)
+    static member UpdateCryptoKey (update : string -> string) (this : Credential) =
+        this |> Credential.SetCryptoKey (update this.CryptoKey)
+    static member UpdateToken (update : string -> string) (this : Credential) =
+        this |> Credential.SetToken (update this.Token)
     static member JsonEncoder : JsonEncoder<Credential> =
         fun (this : Credential) ->
             E.object [
@@ -57,11 +77,16 @@ type Credential = {
     interface IJson with
         member this.ToJson () = Credential.JsonEncoder this
     interface IObj
-    member this.WithDevice (device : Device) = {this with Device = device}
-    member this.WithChannel (channel : Channel) = {this with Channel = channel}
-    member this.WithPassHash (passHash : string) = {this with PassHash = passHash}
-    member this.WithCryptoKey (cryptoKey : string) = {this with CryptoKey = cryptoKey}
-    member this.WithToken (token : string) = {this with Token = token}
+    member this.WithDevice (device : Device) =
+        this |> Credential.SetDevice device
+    member this.WithChannel (channel : Channel) =
+        this |> Credential.SetChannel channel
+    member this.WithPassHash (passHash : string) =
+        this |> Credential.SetPassHash passHash
+    member this.WithCryptoKey (cryptoKey : string) =
+        this |> Credential.SetCryptoKey cryptoKey
+    member this.WithToken (token : string) =
+        this |> Credential.SetToken token
 
 (*
  * Generated: <Class>
