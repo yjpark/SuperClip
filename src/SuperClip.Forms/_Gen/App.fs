@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Forms.App
 
+open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -38,128 +39,128 @@ type IAppPack =
  *     IsJson, IsLoose
  *)
 type AppArgs = {
-    Ticker : (* IServicesPack *) TickerTypes.Args
-    PrimaryClipboard : (* ICorePack *) PrimaryTypes.Args
-    LocalHistory : (* ICorePack *) HistoryTypes.Args
-    History : (* ICorePack *) HistoryTypes.Args
-    CloudStub : (* ICloudStubPack *) Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
-    PacketClient : (* ICloudStubPack *) PacketClient.Args
-    CredentialSecureStorage : (* IClientPack *) SecureStorage.Args<Credential>
-    Preferences : (* IClientPack *) Context.Args<PrefContext>
-    Session : (* ISessionPack *) NoArgs
-    FormsView : (* IAppPack *) FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>
+    Ticker : (* AppArgs *) TickerTypes.Args
+    PrimaryClipboard : (* AppArgs *) PrimaryTypes.Args
+    LocalHistory : (* AppArgs *) HistoryTypes.Args
+    History : (* AppArgs *) HistoryTypes.Args
+    CloudStub : (* AppArgs *) Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
+    PacketClient : (* AppArgs *) PacketClient.Args
+    CredentialSecureStorage : (* AppArgs *) SecureStorage.Args<Credential>
+    Preferences : (* AppArgs *) Context.Args<PrefContext>
+    Session : (* AppArgs *) NoArgs
+    FormsView : (* AppArgs *) FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>
 } with
     static member Create ticker primaryClipboard localHistory history cloudStub packetClient credentialSecureStorage preferences session formsView
             : AppArgs =
         {
-            Ticker = ticker
-            PrimaryClipboard = primaryClipboard
-            LocalHistory = localHistory
-            History = history
-            CloudStub = cloudStub
-            PacketClient = packetClient
-            CredentialSecureStorage = credentialSecureStorage
-            Preferences = preferences
-            Session = session
-            FormsView = formsView
+            Ticker = (* AppArgs *) ticker
+            PrimaryClipboard = (* AppArgs *) primaryClipboard
+            LocalHistory = (* AppArgs *) localHistory
+            History = (* AppArgs *) history
+            CloudStub = (* AppArgs *) cloudStub
+            PacketClient = (* AppArgs *) packetClient
+            CredentialSecureStorage = (* AppArgs *) credentialSecureStorage
+            Preferences = (* AppArgs *) preferences
+            Session = (* AppArgs *) session
+            FormsView = (* AppArgs *) formsView
         }
     static member Default () =
         AppArgs.Create
-            (TickerTypes.Args.Default ())
-            (PrimaryTypes.Args.Default ())
-            (HistoryTypes.Args.Default ())
-            (HistoryTypes.Args.Default ())
-            (Proxy.args CloudTypes.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
-            (PacketClient.args true 1048576)
-            (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder)
-            spawnPrefContext
-            NoArgs
-            (SuperClip.Forms.View.Logic.newArgs ())
-    static member SetTicker ((* IServicesPack *) ticker : TickerTypes.Args) (this : AppArgs) =
+            (TickerTypes.Args.Default ()) (* AppArgs *) (* ticker *)
+            (PrimaryTypes.Args.Default ()) (* AppArgs *) (* primaryClipboard *)
+            (HistoryTypes.Args.Default ()) (* AppArgs *) (* localHistory *)
+            (HistoryTypes.Args.Default ()) (* AppArgs *) (* history *)
+            (Proxy.args CloudTypes.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true) (* AppArgs *) (* cloudStub *)
+            (PacketClient.args true 1048576) (* AppArgs *) (* packetClient *)
+            (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder) (* AppArgs *) (* credentialSecureStorage *)
+            spawnPrefContext (* AppArgs *) (* preferences *)
+            NoArgs (* AppArgs *) (* session *)
+            (SuperClip.Forms.View.Logic.newArgs ()) (* AppArgs *) (* formsView *)
+    static member SetTicker ((* AppArgs *) ticker : TickerTypes.Args) (this : AppArgs) =
         {this with Ticker = ticker}
-    static member SetPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) (this : AppArgs) =
+    static member SetPrimaryClipboard ((* AppArgs *) primaryClipboard : PrimaryTypes.Args) (this : AppArgs) =
         {this with PrimaryClipboard = primaryClipboard}
-    static member SetLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) (this : AppArgs) =
+    static member SetLocalHistory ((* AppArgs *) localHistory : HistoryTypes.Args) (this : AppArgs) =
         {this with LocalHistory = localHistory}
-    static member SetHistory ((* ICorePack *) history : HistoryTypes.Args) (this : AppArgs) =
+    static member SetHistory ((* AppArgs *) history : HistoryTypes.Args) (this : AppArgs) =
         {this with History = history}
-    static member SetCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
+    static member SetCloudStub ((* AppArgs *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
         {this with CloudStub = cloudStub}
-    static member SetPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) (this : AppArgs) =
+    static member SetPacketClient ((* AppArgs *) packetClient : PacketClient.Args) (this : AppArgs) =
         {this with PacketClient = packetClient}
-    static member SetCredentialSecureStorage ((* IClientPack *) credentialSecureStorage : SecureStorage.Args<Credential>) (this : AppArgs) =
+    static member SetCredentialSecureStorage ((* AppArgs *) credentialSecureStorage : SecureStorage.Args<Credential>) (this : AppArgs) =
         {this with CredentialSecureStorage = credentialSecureStorage}
-    static member SetPreferences ((* IClientPack *) preferences : Context.Args<PrefContext>) (this : AppArgs) =
+    static member SetPreferences ((* AppArgs *) preferences : Context.Args<PrefContext>) (this : AppArgs) =
         {this with Preferences = preferences}
-    static member SetSession ((* ISessionPack *) session : NoArgs) (this : AppArgs) =
+    static member SetSession ((* AppArgs *) session : NoArgs) (this : AppArgs) =
         {this with Session = session}
-    static member SetFormsView ((* IAppPack *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) (this : AppArgs) =
+    static member SetFormsView ((* AppArgs *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) (this : AppArgs) =
         {this with FormsView = formsView}
-    static member UpdateTicker ((* IServicesPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : AppArgs) =
+    static member UpdateTicker ((* AppArgs *) update : TickerTypes.Args -> TickerTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetTicker (update this.Ticker)
-    static member UpdatePrimaryClipboard ((* ICorePack *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : AppArgs) =
+    static member UpdatePrimaryClipboard ((* AppArgs *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetPrimaryClipboard (update this.PrimaryClipboard)
-    static member UpdateLocalHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
+    static member UpdateLocalHistory ((* AppArgs *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetLocalHistory (update this.LocalHistory)
-    static member UpdateHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
+    static member UpdateHistory ((* AppArgs *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetHistory (update this.History)
-    static member UpdateCloudStub ((* ICloudStubPack *) update : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> -> Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
+    static member UpdateCloudStub ((* AppArgs *) update : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> -> Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
         this |> AppArgs.SetCloudStub (update this.CloudStub)
-    static member UpdatePacketClient ((* ICloudStubPack *) update : PacketClient.Args -> PacketClient.Args) (this : AppArgs) =
+    static member UpdatePacketClient ((* AppArgs *) update : PacketClient.Args -> PacketClient.Args) (this : AppArgs) =
         this |> AppArgs.SetPacketClient (update this.PacketClient)
-    static member UpdateCredentialSecureStorage ((* IClientPack *) update : SecureStorage.Args<Credential> -> SecureStorage.Args<Credential>) (this : AppArgs) =
+    static member UpdateCredentialSecureStorage ((* AppArgs *) update : SecureStorage.Args<Credential> -> SecureStorage.Args<Credential>) (this : AppArgs) =
         this |> AppArgs.SetCredentialSecureStorage (update this.CredentialSecureStorage)
-    static member UpdatePreferences ((* IClientPack *) update : Context.Args<PrefContext> -> Context.Args<PrefContext>) (this : AppArgs) =
+    static member UpdatePreferences ((* AppArgs *) update : Context.Args<PrefContext> -> Context.Args<PrefContext>) (this : AppArgs) =
         this |> AppArgs.SetPreferences (update this.Preferences)
-    static member UpdateSession ((* ISessionPack *) update : NoArgs -> NoArgs) (this : AppArgs) =
+    static member UpdateSession ((* AppArgs *) update : NoArgs -> NoArgs) (this : AppArgs) =
         this |> AppArgs.SetSession (update this.Session)
-    static member UpdateFormsView ((* IAppPack *) update : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg> -> FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) (this : AppArgs) =
+    static member UpdateFormsView ((* AppArgs *) update : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg> -> FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) (this : AppArgs) =
         this |> AppArgs.SetFormsView (update this.FormsView)
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
-                "ticker", TickerTypes.Args.JsonEncoder this.Ticker
-                "primary_clipboard", PrimaryTypes.Args.JsonEncoder this.PrimaryClipboard
-                "local_history", HistoryTypes.Args.JsonEncoder this.LocalHistory
-                "history", HistoryTypes.Args.JsonEncoder this.History
+                "ticker", TickerTypes.Args.JsonEncoder (* AppArgs *) this.Ticker
+                "primary_clipboard", PrimaryTypes.Args.JsonEncoder (* AppArgs *) this.PrimaryClipboard
+                "local_history", HistoryTypes.Args.JsonEncoder (* AppArgs *) this.LocalHistory
+                "history", HistoryTypes.Args.JsonEncoder (* AppArgs *) this.History
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
         D.decode AppArgs.Create
-        |> D.optional "ticker" TickerTypes.Args.JsonDecoder (TickerTypes.Args.Default ())
-        |> D.optional "primary_clipboard" PrimaryTypes.Args.JsonDecoder (PrimaryTypes.Args.Default ())
-        |> D.optional "local_history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
-        |> D.optional "history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
-        |> D.hardcoded (Proxy.args CloudTypes.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
-        |> D.hardcoded (PacketClient.args true 1048576)
-        |> D.hardcoded (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder)
-        |> D.hardcoded spawnPrefContext
-        |> D.hardcoded NoArgs
-        |> D.hardcoded (SuperClip.Forms.View.Logic.newArgs ())
+        |> D.optional (* AppArgs *) "ticker" TickerTypes.Args.JsonDecoder (TickerTypes.Args.Default ())
+        |> D.optional (* AppArgs *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder (PrimaryTypes.Args.Default ())
+        |> D.optional (* AppArgs *) "local_history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
+        |> D.optional (* AppArgs *) "history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
+        |> D.hardcoded (* AppArgs *) (* cloud_stub *) (Proxy.args CloudTypes.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
+        |> D.hardcoded (* AppArgs *) (* packet_client *) (PacketClient.args true 1048576)
+        |> D.hardcoded (* AppArgs *) (* credential_secure_storage *) (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder)
+        |> D.hardcoded (* AppArgs *) (* preferences *) spawnPrefContext
+        |> D.hardcoded (* AppArgs *) (* session *) NoArgs
+        |> D.hardcoded (* AppArgs *) (* forms_view *) (SuperClip.Forms.View.Logic.newArgs ())
     static member JsonSpec =
         FieldSpec.Create<AppArgs>
             AppArgs.JsonEncoder AppArgs.JsonDecoder
     interface IJson with
         member this.ToJson () = AppArgs.JsonEncoder this
     interface IObj
-    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) =
+    member this.WithTicker ((* AppArgs *) ticker : TickerTypes.Args) =
         this |> AppArgs.SetTicker ticker
-    member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
+    member this.WithPrimaryClipboard ((* AppArgs *) primaryClipboard : PrimaryTypes.Args) =
         this |> AppArgs.SetPrimaryClipboard primaryClipboard
-    member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) =
+    member this.WithLocalHistory ((* AppArgs *) localHistory : HistoryTypes.Args) =
         this |> AppArgs.SetLocalHistory localHistory
-    member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) =
+    member this.WithHistory ((* AppArgs *) history : HistoryTypes.Args) =
         this |> AppArgs.SetHistory history
-    member this.WithCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) =
+    member this.WithCloudStub ((* AppArgs *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) =
         this |> AppArgs.SetCloudStub cloudStub
-    member this.WithPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) =
+    member this.WithPacketClient ((* AppArgs *) packetClient : PacketClient.Args) =
         this |> AppArgs.SetPacketClient packetClient
-    member this.WithCredentialSecureStorage ((* IClientPack *) credentialSecureStorage : SecureStorage.Args<Credential>) =
+    member this.WithCredentialSecureStorage ((* AppArgs *) credentialSecureStorage : SecureStorage.Args<Credential>) =
         this |> AppArgs.SetCredentialSecureStorage credentialSecureStorage
-    member this.WithPreferences ((* IClientPack *) preferences : Context.Args<PrefContext>) =
+    member this.WithPreferences ((* AppArgs *) preferences : Context.Args<PrefContext>) =
         this |> AppArgs.SetPreferences preferences
-    member this.WithSession ((* ISessionPack *) session : NoArgs) =
+    member this.WithSession ((* AppArgs *) session : NoArgs) =
         this |> AppArgs.SetSession session
-    member this.WithFormsView ((* IAppPack *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) =
+    member this.WithFormsView ((* AppArgs *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) =
         this |> AppArgs.SetFormsView formsView
     interface IServicesPackArgs with
         member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
@@ -196,19 +197,19 @@ type AppArgsBuilder () =
     inherit ObjBuilder<AppArgs> ()
     override __.Zero () = AppArgs.Default ()
     [<CustomOperation("ticker")>]
-    member __.Ticker (target : AppArgs, (* IServicesPack *) ticker : TickerTypes.Args) =
+    member __.Ticker (target : AppArgs, (* AppArgs *) ticker : TickerTypes.Args) =
         target.WithTicker ticker
     [<CustomOperation("primary_clipboard")>]
-    member __.PrimaryClipboard (target : AppArgs, (* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
+    member __.PrimaryClipboard (target : AppArgs, (* AppArgs *) primaryClipboard : PrimaryTypes.Args) =
         target.WithPrimaryClipboard primaryClipboard
     [<CustomOperation("local_history")>]
-    member __.LocalHistory (target : AppArgs, (* ICorePack *) localHistory : HistoryTypes.Args) =
+    member __.LocalHistory (target : AppArgs, (* AppArgs *) localHistory : HistoryTypes.Args) =
         target.WithLocalHistory localHistory
     [<CustomOperation("history")>]
-    member __.History (target : AppArgs, (* ICorePack *) history : HistoryTypes.Args) =
+    member __.History (target : AppArgs, (* AppArgs *) history : HistoryTypes.Args) =
         target.WithHistory history
 
-let appArgs = AppArgsBuilder ()
+let app_args = AppArgsBuilder ()
 
 type IApp =
     inherit IPack

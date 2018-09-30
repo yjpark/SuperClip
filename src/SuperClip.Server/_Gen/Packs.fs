@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Server.Packs
 
+open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude

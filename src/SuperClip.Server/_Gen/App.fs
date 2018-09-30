@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Server.App
 
+open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -20,65 +21,65 @@ module Gateway = Dap.Remote.WebSocketGateway.Gateway
  *     IsJson, IsLoose
  *)
 type AppArgs = {
-    FarangoDb : (* IDbPack *) FarangoDb.Args
-    PacketConn : (* ICloudHubPack *) PacketConn.Args
-    CloudHub : (* ICloudHubPack *) NoArgs
-    CloudHubGateway : (* ICloudHubPack *) Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
+    FarangoDb : (* AppArgs *) FarangoDb.Args
+    PacketConn : (* AppArgs *) PacketConn.Args
+    CloudHub : (* AppArgs *) NoArgs
+    CloudHubGateway : (* AppArgs *) Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
 } with
     static member Create farangoDb packetConn cloudHub cloudHubGateway
             : AppArgs =
         {
-            FarangoDb = farangoDb
-            PacketConn = packetConn
-            CloudHub = cloudHub
-            CloudHubGateway = cloudHubGateway
+            FarangoDb = (* AppArgs *) farangoDb
+            PacketConn = (* AppArgs *) packetConn
+            CloudHub = (* AppArgs *) cloudHub
+            CloudHubGateway = (* AppArgs *) cloudHubGateway
         }
     static member Default () =
         AppArgs.Create
-            (FarangoDb.Args.Default ())
-            (PacketConn.args true 1048576)
-            NoArgs
-            (Gateway.args CloudHubTypes.HubSpec true)
-    static member SetFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) (this : AppArgs) =
+            (FarangoDb.Args.Default ()) (* AppArgs *) (* farangoDb *)
+            (PacketConn.args true 1048576) (* AppArgs *) (* packetConn *)
+            NoArgs (* AppArgs *) (* cloudHub *)
+            (Gateway.args CloudHubTypes.HubSpec true) (* AppArgs *) (* cloudHubGateway *)
+    static member SetFarangoDb ((* AppArgs *) farangoDb : FarangoDb.Args) (this : AppArgs) =
         {this with FarangoDb = farangoDb}
-    static member SetPacketConn ((* ICloudHubPack *) packetConn : PacketConn.Args) (this : AppArgs) =
+    static member SetPacketConn ((* AppArgs *) packetConn : PacketConn.Args) (this : AppArgs) =
         {this with PacketConn = packetConn}
-    static member SetCloudHub ((* ICloudHubPack *) cloudHub : NoArgs) (this : AppArgs) =
+    static member SetCloudHub ((* AppArgs *) cloudHub : NoArgs) (this : AppArgs) =
         {this with CloudHub = cloudHub}
-    static member SetCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
+    static member SetCloudHubGateway ((* AppArgs *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
         {this with CloudHubGateway = cloudHubGateway}
-    static member UpdateFarangoDb ((* IDbPack *) update : FarangoDb.Args -> FarangoDb.Args) (this : AppArgs) =
+    static member UpdateFarangoDb ((* AppArgs *) update : FarangoDb.Args -> FarangoDb.Args) (this : AppArgs) =
         this |> AppArgs.SetFarangoDb (update this.FarangoDb)
-    static member UpdatePacketConn ((* ICloudHubPack *) update : PacketConn.Args -> PacketConn.Args) (this : AppArgs) =
+    static member UpdatePacketConn ((* AppArgs *) update : PacketConn.Args -> PacketConn.Args) (this : AppArgs) =
         this |> AppArgs.SetPacketConn (update this.PacketConn)
-    static member UpdateCloudHub ((* ICloudHubPack *) update : NoArgs -> NoArgs) (this : AppArgs) =
+    static member UpdateCloudHub ((* AppArgs *) update : NoArgs -> NoArgs) (this : AppArgs) =
         this |> AppArgs.SetCloudHub (update this.CloudHub)
-    static member UpdateCloudHubGateway ((* ICloudHubPack *) update : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> -> Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
+    static member UpdateCloudHubGateway ((* AppArgs *) update : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> -> Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
         this |> AppArgs.SetCloudHubGateway (update this.CloudHubGateway)
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
-                "farango_db", FarangoDb.Args.JsonEncoder this.FarangoDb
+                "farango_db", FarangoDb.Args.JsonEncoder (* AppArgs *) this.FarangoDb
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
         D.decode AppArgs.Create
-        |> D.optional "farango_db" FarangoDb.Args.JsonDecoder (FarangoDb.Args.Default ())
-        |> D.hardcoded (PacketConn.args true 1048576)
-        |> D.hardcoded NoArgs
-        |> D.hardcoded (Gateway.args CloudHubTypes.HubSpec true)
+        |> D.optional (* AppArgs *) "farango_db" FarangoDb.Args.JsonDecoder (FarangoDb.Args.Default ())
+        |> D.hardcoded (* AppArgs *) (* packet_conn *) (PacketConn.args true 1048576)
+        |> D.hardcoded (* AppArgs *) (* cloud_hub *) NoArgs
+        |> D.hardcoded (* AppArgs *) (* cloud_hub_gateway *) (Gateway.args CloudHubTypes.HubSpec true)
     static member JsonSpec =
         FieldSpec.Create<AppArgs>
             AppArgs.JsonEncoder AppArgs.JsonDecoder
     interface IJson with
         member this.ToJson () = AppArgs.JsonEncoder this
     interface IObj
-    member this.WithFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) =
+    member this.WithFarangoDb ((* AppArgs *) farangoDb : FarangoDb.Args) =
         this |> AppArgs.SetFarangoDb farangoDb
-    member this.WithPacketConn ((* ICloudHubPack *) packetConn : PacketConn.Args) =
+    member this.WithPacketConn ((* AppArgs *) packetConn : PacketConn.Args) =
         this |> AppArgs.SetPacketConn packetConn
-    member this.WithCloudHub ((* ICloudHubPack *) cloudHub : NoArgs) =
+    member this.WithCloudHub ((* AppArgs *) cloudHub : NoArgs) =
         this |> AppArgs.SetCloudHub cloudHub
-    member this.WithCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) =
+    member this.WithCloudHubGateway ((* AppArgs *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) =
         this |> AppArgs.SetCloudHubGateway cloudHubGateway
     interface IDbPackArgs with
         member this.FarangoDb (* IDbPack *) : FarangoDb.Args = this.FarangoDb
@@ -96,10 +97,10 @@ type AppArgsBuilder () =
     inherit ObjBuilder<AppArgs> ()
     override __.Zero () = AppArgs.Default ()
     [<CustomOperation("farango_db")>]
-    member __.FarangoDb (target : AppArgs, (* IDbPack *) farangoDb : FarangoDb.Args) =
+    member __.FarangoDb (target : AppArgs, (* AppArgs *) farangoDb : FarangoDb.Args) =
         target.WithFarangoDb farangoDb
 
-let appArgs = AppArgsBuilder ()
+let app_args = AppArgsBuilder ()
 
 type IApp =
     inherit IPack

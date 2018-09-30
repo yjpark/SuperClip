@@ -87,7 +87,7 @@ let compile segments =
                     G.PackOpens
                     coreOpens
                     G.JsonRecord <@ Credential @>
-                    G.FinalClass (<@ PrefProperties @>, [])
+                    G.FinalClass (<@ PrefProperties @>)
                     PrefContext
                     G.PackInterface <@ ICloudStubPack @>
                     G.PackInterface <@ IClientPack @>

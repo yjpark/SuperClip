@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Forms.Types
 
+open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -20,72 +21,79 @@ module Context = Dap.Platform.Context
  *     IsJson
  *)
 type Credential = {
-    Device : Device
-    Channel : Channel
-    PassHash : string
-    CryptoKey : string
-    Token : string
+    Device : (* Credential *) Device
+    Channel : (* Credential *) Channel
+    PassHash : (* Credential *) string
+    CryptoKey : (* Credential *) string
+    Token : (* Credential *) string
 } with
     static member Create device channel passHash cryptoKey token
             : Credential =
         {
-            Device = device
-            Channel = channel
-            PassHash = passHash
-            CryptoKey = cryptoKey
-            Token = token
+            Device = (* Credential *) device
+            Channel = (* Credential *) channel
+            PassHash = (* Credential *) passHash
+            CryptoKey = (* Credential *) cryptoKey
+            Token = (* Credential *) token
         }
-    static member SetDevice (device : Device) (this : Credential) =
+    static member Default () =
+        Credential.Create
+            (Device.Default ()) (* Credential *) (* device *)
+            (Channel.Default ()) (* Credential *) (* channel *)
+            "" (* Credential *) (* passHash *)
+            "" (* Credential *) (* cryptoKey *)
+            "" (* Credential *) (* token *)
+    static member SetDevice ((* Credential *) device : Device) (this : Credential) =
         {this with Device = device}
-    static member SetChannel (channel : Channel) (this : Credential) =
+    static member SetChannel ((* Credential *) channel : Channel) (this : Credential) =
         {this with Channel = channel}
-    static member SetPassHash (passHash : string) (this : Credential) =
+    static member SetPassHash ((* Credential *) passHash : string) (this : Credential) =
         {this with PassHash = passHash}
-    static member SetCryptoKey (cryptoKey : string) (this : Credential) =
+    static member SetCryptoKey ((* Credential *) cryptoKey : string) (this : Credential) =
         {this with CryptoKey = cryptoKey}
-    static member SetToken (token : string) (this : Credential) =
+    static member SetToken ((* Credential *) token : string) (this : Credential) =
         {this with Token = token}
-    static member UpdateDevice (update : Device -> Device) (this : Credential) =
+    static member UpdateDevice ((* Credential *) update : Device -> Device) (this : Credential) =
         this |> Credential.SetDevice (update this.Device)
-    static member UpdateChannel (update : Channel -> Channel) (this : Credential) =
+    static member UpdateChannel ((* Credential *) update : Channel -> Channel) (this : Credential) =
         this |> Credential.SetChannel (update this.Channel)
-    static member UpdatePassHash (update : string -> string) (this : Credential) =
+    static member UpdatePassHash ((* Credential *) update : string -> string) (this : Credential) =
         this |> Credential.SetPassHash (update this.PassHash)
-    static member UpdateCryptoKey (update : string -> string) (this : Credential) =
+    static member UpdateCryptoKey ((* Credential *) update : string -> string) (this : Credential) =
         this |> Credential.SetCryptoKey (update this.CryptoKey)
-    static member UpdateToken (update : string -> string) (this : Credential) =
+    static member UpdateToken ((* Credential *) update : string -> string) (this : Credential) =
         this |> Credential.SetToken (update this.Token)
     static member JsonEncoder : JsonEncoder<Credential> =
         fun (this : Credential) ->
             E.object [
-                "device", Device.JsonEncoder this.Device
-                "channel", Channel.JsonEncoder this.Channel
-                "pass_hash", E.string this.PassHash
-                "crypto_key", E.string this.CryptoKey
-                "token", E.string this.Token
+                "device", Device.JsonEncoder (* Credential *) this.Device
+                "channel", Channel.JsonEncoder (* Credential *) this.Channel
+                "pass_hash", E.string (* Credential *) this.PassHash
+                "crypto_key", E.string (* Credential *) this.CryptoKey
+                "token", E.string (* Credential *) this.Token
             ]
     static member JsonDecoder : JsonDecoder<Credential> =
         D.decode Credential.Create
-        |> D.required "device" Device.JsonDecoder
-        |> D.required "channel" Channel.JsonDecoder
-        |> D.required "pass_hash" D.string
-        |> D.required "crypto_key" D.string
-        |> D.required "token" D.string
+        |> D.required (* Credential *) "device" Device.JsonDecoder
+        |> D.required (* Credential *) "channel" Channel.JsonDecoder
+        |> D.required (* Credential *) "pass_hash" D.string
+        |> D.required (* Credential *) "crypto_key" D.string
+        |> D.required (* Credential *) "token" D.string
     static member JsonSpec =
         FieldSpec.Create<Credential>
             Credential.JsonEncoder Credential.JsonDecoder
     interface IJson with
         member this.ToJson () = Credential.JsonEncoder this
     interface IObj
-    member this.WithDevice (device : Device) =
+    member this.WithDevice ((* Credential *) device : Device) =
         this |> Credential.SetDevice device
-    member this.WithChannel (channel : Channel) =
+    member this.WithChannel ((* Credential *) channel : Channel) =
         this |> Credential.SetChannel channel
-    member this.WithPassHash (passHash : string) =
+    member this.WithPassHash ((* Credential *) passHash : string) =
         this |> Credential.SetPassHash passHash
-    member this.WithCryptoKey (cryptoKey : string) =
+    member this.WithCryptoKey ((* Credential *) cryptoKey : string) =
         this |> Credential.SetCryptoKey cryptoKey
-    member this.WithToken (token : string) =
+    member this.WithToken ((* Credential *) token : string) =
         this |> Credential.SetToken token
 
 (*
@@ -95,7 +103,7 @@ type Credential = {
 type PrefProperties (owner : IOwner, key : Key) =
     inherit WrapProperties<PrefProperties, IComboProperty> ()
     let target = Properties.combo owner key
-    let credential = target.AddVar<Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None, None)
+    let credential = target.AddVar<(* PrefProperties *) Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None, None)
     do (
         target.SealCombo ()
         base.Setup (target)
@@ -107,7 +115,7 @@ type PrefProperties (owner : IOwner, key : Key) =
     override this.Self = this
     override __.Spawn o k = PrefProperties.Create o k
     override __.SyncTo t = target.SyncTo t.Target
-    member __.Credential : IVarProperty<Credential option> = credential
+    member __.Credential (* PrefProperties *) : IVarProperty<Credential option> = credential
 
 type PrefContext = CustomContext<PrefProperties>
 

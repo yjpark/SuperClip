@@ -1,5 +1,6 @@
 module SuperClip.Core.CoreApp
 
+open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -16,68 +17,68 @@ module HistoryTypes = SuperClip.Core.History.Types
  *     IsJson, IsLoose
  *)
 type CoreAppArgs = {
-    Ticker : (* IServicesPack *) TickerTypes.Args
-    PrimaryClipboard : (* ICorePack *) PrimaryTypes.Args
-    LocalHistory : (* ICorePack *) HistoryTypes.Args
-    History : (* ICorePack *) HistoryTypes.Args
+    Ticker : (* CoreAppArgs *) TickerTypes.Args
+    PrimaryClipboard : (* CoreAppArgs *) PrimaryTypes.Args
+    LocalHistory : (* CoreAppArgs *) HistoryTypes.Args
+    History : (* CoreAppArgs *) HistoryTypes.Args
 } with
     static member Create ticker primaryClipboard localHistory history
             : CoreAppArgs =
         {
-            Ticker = ticker
-            PrimaryClipboard = primaryClipboard
-            LocalHistory = localHistory
-            History = history
+            Ticker = (* CoreAppArgs *) ticker
+            PrimaryClipboard = (* CoreAppArgs *) primaryClipboard
+            LocalHistory = (* CoreAppArgs *) localHistory
+            History = (* CoreAppArgs *) history
         }
     static member Default () =
         CoreAppArgs.Create
-            (TickerTypes.Args.Default ())
-            (PrimaryTypes.Args.Default ())
-            (HistoryTypes.Args.Default ())
-            (HistoryTypes.Args.Default ())
-    static member SetTicker ((* IServicesPack *) ticker : TickerTypes.Args) (this : CoreAppArgs) =
+            (TickerTypes.Args.Default ()) (* CoreAppArgs *) (* ticker *)
+            (PrimaryTypes.Args.Default ()) (* CoreAppArgs *) (* primaryClipboard *)
+            (HistoryTypes.Args.Default ()) (* CoreAppArgs *) (* localHistory *)
+            (HistoryTypes.Args.Default ()) (* CoreAppArgs *) (* history *)
+    static member SetTicker ((* CoreAppArgs *) ticker : TickerTypes.Args) (this : CoreAppArgs) =
         {this with Ticker = ticker}
-    static member SetPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) (this : CoreAppArgs) =
+    static member SetPrimaryClipboard ((* CoreAppArgs *) primaryClipboard : PrimaryTypes.Args) (this : CoreAppArgs) =
         {this with PrimaryClipboard = primaryClipboard}
-    static member SetLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) (this : CoreAppArgs) =
+    static member SetLocalHistory ((* CoreAppArgs *) localHistory : HistoryTypes.Args) (this : CoreAppArgs) =
         {this with LocalHistory = localHistory}
-    static member SetHistory ((* ICorePack *) history : HistoryTypes.Args) (this : CoreAppArgs) =
+    static member SetHistory ((* CoreAppArgs *) history : HistoryTypes.Args) (this : CoreAppArgs) =
         {this with History = history}
-    static member UpdateTicker ((* IServicesPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : CoreAppArgs) =
+    static member UpdateTicker ((* CoreAppArgs *) update : TickerTypes.Args -> TickerTypes.Args) (this : CoreAppArgs) =
         this |> CoreAppArgs.SetTicker (update this.Ticker)
-    static member UpdatePrimaryClipboard ((* ICorePack *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : CoreAppArgs) =
+    static member UpdatePrimaryClipboard ((* CoreAppArgs *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : CoreAppArgs) =
         this |> CoreAppArgs.SetPrimaryClipboard (update this.PrimaryClipboard)
-    static member UpdateLocalHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : CoreAppArgs) =
+    static member UpdateLocalHistory ((* CoreAppArgs *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : CoreAppArgs) =
         this |> CoreAppArgs.SetLocalHistory (update this.LocalHistory)
-    static member UpdateHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : CoreAppArgs) =
+    static member UpdateHistory ((* CoreAppArgs *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : CoreAppArgs) =
         this |> CoreAppArgs.SetHistory (update this.History)
     static member JsonEncoder : JsonEncoder<CoreAppArgs> =
         fun (this : CoreAppArgs) ->
             E.object [
-                "ticker", TickerTypes.Args.JsonEncoder this.Ticker
-                "primary_clipboard", PrimaryTypes.Args.JsonEncoder this.PrimaryClipboard
-                "local_history", HistoryTypes.Args.JsonEncoder this.LocalHistory
-                "history", HistoryTypes.Args.JsonEncoder this.History
+                "ticker", TickerTypes.Args.JsonEncoder (* CoreAppArgs *) this.Ticker
+                "primary_clipboard", PrimaryTypes.Args.JsonEncoder (* CoreAppArgs *) this.PrimaryClipboard
+                "local_history", HistoryTypes.Args.JsonEncoder (* CoreAppArgs *) this.LocalHistory
+                "history", HistoryTypes.Args.JsonEncoder (* CoreAppArgs *) this.History
             ]
     static member JsonDecoder : JsonDecoder<CoreAppArgs> =
         D.decode CoreAppArgs.Create
-        |> D.optional "ticker" TickerTypes.Args.JsonDecoder (TickerTypes.Args.Default ())
-        |> D.optional "primary_clipboard" PrimaryTypes.Args.JsonDecoder (PrimaryTypes.Args.Default ())
-        |> D.optional "local_history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
-        |> D.optional "history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
+        |> D.optional (* CoreAppArgs *) "ticker" TickerTypes.Args.JsonDecoder (TickerTypes.Args.Default ())
+        |> D.optional (* CoreAppArgs *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder (PrimaryTypes.Args.Default ())
+        |> D.optional (* CoreAppArgs *) "local_history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
+        |> D.optional (* CoreAppArgs *) "history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
     static member JsonSpec =
         FieldSpec.Create<CoreAppArgs>
             CoreAppArgs.JsonEncoder CoreAppArgs.JsonDecoder
     interface IJson with
         member this.ToJson () = CoreAppArgs.JsonEncoder this
     interface IObj
-    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) =
+    member this.WithTicker ((* CoreAppArgs *) ticker : TickerTypes.Args) =
         this |> CoreAppArgs.SetTicker ticker
-    member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
+    member this.WithPrimaryClipboard ((* CoreAppArgs *) primaryClipboard : PrimaryTypes.Args) =
         this |> CoreAppArgs.SetPrimaryClipboard primaryClipboard
-    member this.WithLocalHistory ((* ICorePack *) localHistory : HistoryTypes.Args) =
+    member this.WithLocalHistory ((* CoreAppArgs *) localHistory : HistoryTypes.Args) =
         this |> CoreAppArgs.SetLocalHistory localHistory
-    member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) =
+    member this.WithHistory ((* CoreAppArgs *) history : HistoryTypes.Args) =
         this |> CoreAppArgs.SetHistory history
     interface IServicesPackArgs with
         member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
@@ -96,19 +97,19 @@ type CoreAppArgsBuilder () =
     inherit ObjBuilder<CoreAppArgs> ()
     override __.Zero () = CoreAppArgs.Default ()
     [<CustomOperation("ticker")>]
-    member __.Ticker (target : CoreAppArgs, (* IServicesPack *) ticker : TickerTypes.Args) =
+    member __.Ticker (target : CoreAppArgs, (* CoreAppArgs *) ticker : TickerTypes.Args) =
         target.WithTicker ticker
     [<CustomOperation("primary_clipboard")>]
-    member __.PrimaryClipboard (target : CoreAppArgs, (* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
+    member __.PrimaryClipboard (target : CoreAppArgs, (* CoreAppArgs *) primaryClipboard : PrimaryTypes.Args) =
         target.WithPrimaryClipboard primaryClipboard
     [<CustomOperation("local_history")>]
-    member __.LocalHistory (target : CoreAppArgs, (* ICorePack *) localHistory : HistoryTypes.Args) =
+    member __.LocalHistory (target : CoreAppArgs, (* CoreAppArgs *) localHistory : HistoryTypes.Args) =
         target.WithLocalHistory localHistory
     [<CustomOperation("history")>]
-    member __.History (target : CoreAppArgs, (* ICorePack *) history : HistoryTypes.Args) =
+    member __.History (target : CoreAppArgs, (* CoreAppArgs *) history : HistoryTypes.Args) =
         target.WithHistory history
 
-let coreAppArgs = CoreAppArgsBuilder ()
+let core_app_args = CoreAppArgsBuilder ()
 
 type ICoreApp =
     inherit IPack
