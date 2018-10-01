@@ -1,6 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/pettyfun/SuperClip</PackageProjectUrl>
+    <PackageTags>fsharp;</PackageTags>
+    <Authors>YJ Park</Authors>
+    <Version>0.6.0</Version>
+    <Description>SuperClip.Core</Description>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Dsl.fs" />
@@ -8,10 +17,10 @@
     <Compile Include="Extensions.fs" />
     <Compile Include="Pref.fs" />
     <Compile Include="Session/Types.fs" />
-    <Compile Include="_Gen/Packs.fs" />
-    <Compile Include="View/Types.fs" />
     <Compile Include="Session/Tasks.fs" />
     <Compile Include="Session/Logic.fs" />
+    <Compile Include="_Gen/Packs.fs" />
+    <Compile Include="View/Types.fs" />
     <Compile Include="View/Widget/Item.fs" />
     <Compile Include="View/Widget/Items.fs" />
     <Compile Include="View/Widget/Link.fs" />
@@ -24,6 +33,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02" PrivateAssets="All" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

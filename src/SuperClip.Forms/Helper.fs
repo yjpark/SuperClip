@@ -20,21 +20,22 @@ type IAppPack with
 let private setSecret () =
     Dap.Forms.Provider.SecureStorage.setSecret <| Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
 
-type App with
-    static member CreateAsync (logFile, consoleLogLevel, onAppStarted : IApp -> unit) = task {
+type FormsApp (loggingArgs : LoggingArgs, args : AppArgs) =
+    inherit App (loggingArgs, args)
+    static member Create (logFile, consoleLogLevel, onAppStarted : IApp -> Unit) =
         setSecret ()
         let loggingArgs = LoggingArgs.FormsCreate (logFile, consoleLogLevel)
-        let app = new App (loggingArgs, Scope)
-        do! app.SetupAsync AppArgs.Default
-        let app = app.AsApp
-        do! app.FormsView.StartAsync ()
-        onAppStarted app
-        return app
+        let args =
+            AppArgs.Default ()
+            |> AppArgs.SetScope Scope
+            |> AppArgs.SetSetup onAppStarted
+        new FormsApp (loggingArgs, args)
+    static member Create (onAppStarted : IApp -> Unit) =
+        FormsApp.Create ("super-clip-.log", LogLevelWarning, onAppStarted)
+    override this.SetupAsync' () = task {
+        do this.AsApp.FormsView.StartAsync ()
     }
-    static member Create onAppStarted =
-        App.CreateAsync ("super-clip-.log", LogLevelWarning, onAppStarted)
-        |> runTask
 
 let createApplication () =
-    App.Create ignore
+    FormsApp.Create ignore
     |> fun app -> app.Args.FormsView.Application

@@ -14,17 +14,11 @@ let Scope = "SuperClipServer"
 let DbUri = "http://superclip_dev:Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5@localhost:8529/superclip_dev"
 
 type App with
-    static member CreateAsync (logFile, consoleLogLevel) = task {
+    static member Create (logFile, consoleLogLevel) =
         let loggingArgs = LoggingArgs.LocalCreate (logFile, consoleLogLevel)
-        let app = new App (loggingArgs, Scope)
         let args =
             AppArgs.Default ()
             |> fun a -> a.WithFarangoDb (DbArgs.Create DbUri)
-        do! app.SetupAsync args
-        return app.AsApp
-    }
-    static member Create (logFile, consoleLogLevel) =
-        App.CreateAsync (logFile, consoleLogLevel)
-        |> runTask
+        new App (loggingArgs, args)
     static member Create logFile =
         App.Create (logFile, LogLevelWarning)

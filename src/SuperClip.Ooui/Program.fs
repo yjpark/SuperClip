@@ -47,6 +47,6 @@ let main argv =
     Ooui.UI.Port <- 6060
     Xamarin.Forms.Forms.Init ();
     CrossClipboard.Current <- new ClipboardImplementation ()
-    let app = App.Create onAppStarted
+    let app = FormsApp.Create onAppStarted
     waitForExit app
     0 // return an integer exit code

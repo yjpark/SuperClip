@@ -16,15 +16,23 @@ open Dap.Build
 [<Literal>]
 let Dist = "Dist"
 
-let allProjects =
+let feed : NuGet.Feed = {
+    NuGet.Source = "https://nuget.yjpark.org/nuget/dap"
+    NuGet.ApiKey = NuGet.Plain "wnHZEG9N_OrmO3XKoAGT"
+}
+
+let libProjects =
     !! "src/SuperClip.Core/*.fsproj"
     ++ "src/SuperClip.Forms/*.fsproj"
+
+let allProjects =
+    libProjects
     ++ "src/SuperClip.Ooui/*.fsproj"
     ++ "src/SuperClip.Server/*.fsproj"
     ++ "src/SuperClip.Web/*.fsproj"
     ++ "src/SuperClip.Tools/*.fsproj"
 
-DotNet.create DotNet.debug allProjects
+DotNet.create DotNet.release allProjects
 
 DotNet.createPrepares [
     ["SuperClip.Core"], fun _ ->
@@ -37,6 +45,8 @@ DotNet.createPrepares [
         SuperClip.Server.Dsl.compile ["src" ; "SuperClip.Server"]
         |> List.iter traceSuccess
 ]
+
+NuGet.extend NuGet.release feed libProjects
 
 Target.runOrDefault DotNet.Build
 

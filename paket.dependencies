@@ -3,7 +3,7 @@ version 5.181.1
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
 storage: none
-#framework: auto-detect
+framework: auto-detect
 
 nuget FSharp.Core
 
@@ -17,20 +17,10 @@ nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4
 nuget Dap.Remote.FSharpData
 
-nuget Xamarin.Forms framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471,netcoreapp
-nuget Xamarin.Essentials framework: uap10.0,monoandroid8.1,xamarinmac,xamarinios,net471,netcoreapp
+nuget Xamarin.Forms 3.1.0.637273
+nuget Xamarin.Essentials
 
 nuget Xamarin.Plugins.Clipboard
-
-# UWP
-nuget Microsoft.NETCore.UniversalWindowsPlatform framework: uap10.0
-
-# Droid
-nuget Xamarin.Android.FSharp.ResourceProvider framework: monoandroid8.1
-
-# GTK
-nuget Xamarin.Forms.Platform.GTK framework: net471
-# nuget GtkSharp framework: net471
 
 # Ooui
 nuget Ooui.Forms
