@@ -12,7 +12,7 @@ open Android.Widget
 open Android.OS
 open Xamarin.Forms.Platform.Android
 
-module App = SuperClip.Forms.App
+module Helper = SuperClip.Forms.Helper
 
 [<Activity (Label = "SuperClip.Droid", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
@@ -26,7 +26,7 @@ type MainActivity() =
 
         Xamarin.Forms.Forms.Init (this, bundle)
 
-        let appcore  = App.createApplication ()
+        let appcore  = Helper.createApplication ()
         this.LoadApplication (appcore)
 
     override this.OnRequestPermissionsResult(requestCode: int, permissions: string[], [<GeneratedEnum>] grantResults: Android.Content.PM.Permission[]) =
