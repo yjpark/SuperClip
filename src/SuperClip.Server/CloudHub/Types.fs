@@ -10,7 +10,6 @@ open Dap.Remote.Server.Auth
 open SuperClip.Core
 open SuperClip.Server
 
-module CloudTypes = SuperClip.Core.Cloud.Types
 module ChannelTypes = SuperClip.Core.Channel.Types
 
 [<Literal>]
@@ -19,8 +18,8 @@ let Kind = "CloudHub"
 [<Literal>]
 let GatewayKind = "CloudHubGateway"
 
-type Req = CloudTypes.ServerReq
-type Evt = CloudTypes.Evt
+type Req = Cloud.ServerReq
+type Evt = Cloud.Evt
 
 type ChannelService = SuperClip.Core.Channel.Service.Service
 type ChannelAuth = SuperClip.Server.Service.ChannelAuth.Record
@@ -58,4 +57,4 @@ let setGateway (gateway : IGateway) : Func<Agent, unit> =
         gateway.OnStatus.AddWatcher runner "OnStatus" (runner.Deliver << InternalEvt << OnStatusChanged)
 
 let HubSpec =
-    Hub.getHubSpec<Agent, Req, Evt> Kind CloudTypes.ServerReq.HubSpec setGateway
+    Hub.getHubSpec<Agent, Req, Evt> Kind Cloud.ServerReq.HubSpec setGateway

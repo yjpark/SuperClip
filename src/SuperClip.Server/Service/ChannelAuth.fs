@@ -28,10 +28,14 @@ type Record = {
         Tokens = tokens
     }
     static member JsonDecoder =
-        D.decode Record.Create
-        |> D.required "channel" Channel.JsonDecoder
-        |> D.required "pass_hash" D.string
-        |> D.optional "tokens" Tokens.JsonDecoder []
+        D.object (fun get ->
+            {
+                Channel = get.Required.Field "channel" Channel.JsonDecoder
+                PassHash =  get.Required.Field "pass_hash" D.string
+                Tokens = get.Optional.Field "tokens" Tokens.JsonDecoder
+                    |> Option.defaultValue []
+            }
+        )
     static member JsonEncoder (this : Record) =
         E.object [
             "_key", E.string this.Key
@@ -50,7 +54,7 @@ let getByChannelKeyAsync (key : string) (db : IDbPack) : Task<Result<Record, str
         |> Async.StartAsTask
     return
         doc
-        |> Result.bind (D.decodeString Record.JsonDecoder)
+        |> Result.bind (D.fromString Record.JsonDecoder)
 }
 
 let createAsync (record : Record) (db : IDbPack) = task {

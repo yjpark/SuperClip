@@ -11,7 +11,7 @@ open Dap.Platform
 open SuperClip.Core
 
 module Proxy = Dap.Remote.WebSocketProxy.Proxy
-module CloudTypes = SuperClip.Core.Cloud.Types
+module Cloud = SuperClip.Core.Cloud
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module SecureStorage = Dap.Forms.Provider.SecureStorage
 module Context = Dap.Platform.Context
@@ -73,15 +73,17 @@ type Credential = {
                 "token", E.string (* Credential *) this.Token
             ]
     static member JsonDecoder : JsonDecoder<Credential> =
-        D.decode Credential.Create
-        |> D.required (* Credential *) "device" Device.JsonDecoder
-        |> D.required (* Credential *) "channel" Channel.JsonDecoder
-        |> D.required (* Credential *) "pass_hash" D.string
-        |> D.required (* Credential *) "crypto_key" D.string
-        |> D.required (* Credential *) "token" D.string
+        D.object (fun get ->
+            {
+                Device = get.Required.Field (* Credential *) "device" Device.JsonDecoder
+                Channel = get.Required.Field (* Credential *) "channel" Channel.JsonDecoder
+                PassHash = get.Required.Field (* Credential *) "pass_hash" D.string
+                CryptoKey = get.Required.Field (* Credential *) "crypto_key" D.string
+                Token = get.Required.Field (* Credential *) "token" D.string
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<Credential>
-            Credential.JsonEncoder Credential.JsonDecoder
+        FieldSpec.Create<Credential> (Credential.JsonEncoder, Credential.JsonDecoder)
     interface IJson with
         member this.ToJson () = Credential.JsonEncoder this
     interface IObj
@@ -123,13 +125,13 @@ let spawnPrefContext (runner : IAgent) =
     CustomContext<PrefProperties> (runner.Env.Logging, runner.Ident.Kind, PrefProperties.Create)
 
 type ICloudStubPackArgs =
-    abstract CloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> with get
+    abstract CloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt> with get
     abstract PacketClient : PacketClient.Args with get
 
 type ICloudStubPack =
     inherit IPack
     abstract Args : ICloudStubPackArgs with get
-    abstract CloudStub : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> with get
+    abstract CloudStub : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> with get
     abstract GetPacketClientAsync : Key -> Task<PacketClient.Agent * bool>
 
 type IClientPackArgs =

@@ -33,7 +33,7 @@ type FormsApp (loggingArgs : LoggingArgs, args : AppArgs) =
     static member Create (onAppStarted : IApp -> Unit) =
         FormsApp.Create ("super-clip-.log", LogLevelWarning, onAppStarted)
     override this.SetupAsync' () = task {
-        do this.AsApp.FormsView.StartAsync ()
+        do! this.AsApp.FormsView.StartAsync ()
     }
 
 let createApplication () =

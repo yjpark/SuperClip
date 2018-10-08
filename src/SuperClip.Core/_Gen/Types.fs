@@ -25,18 +25,17 @@ with
         Asset (url)
     static member JsonSpec' : CaseSpec<Content> list =
         [
-            CaseSpec<Content>.Create "Text" [
+            CaseSpec<Content>.Create ("Text", [
                 S.string
-            ]
-            CaseSpec<Content>.Create "Asset" [
+            ])
+            CaseSpec<Content>.Create ("Asset", [
                 S.string
-            ]
+            ])
         ]
     static member JsonEncoder = E.union Content.JsonSpec'
     static member JsonDecoder = D.union Content.JsonSpec'
     static member JsonSpec =
-        FieldSpec.Create<Content>
-            Content.JsonEncoder Content.JsonDecoder
+        FieldSpec.Create<Content> (Content.JsonEncoder, Content.JsonDecoder)
     interface IJson with
         member this.ToJson () = Content.JsonEncoder this
 
@@ -73,12 +72,14 @@ type Device = {
                 "name", E.string (* Device *) this.Name
             ]
     static member JsonDecoder : JsonDecoder<Device> =
-        D.decode Device.Create
-        |> D.required (* Device *) "guid" D.string
-        |> D.required (* Device *) "name" D.string
+        D.object (fun get ->
+            {
+                Guid = get.Required.Field (* Device *) "guid" D.string
+                Name = get.Required.Field (* Device *) "name" D.string
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<Device>
-            Device.JsonEncoder Device.JsonDecoder
+        FieldSpec.Create<Device> (Device.JsonEncoder, Device.JsonDecoder)
     interface IJson with
         member this.ToJson () = Device.JsonEncoder this
     interface IObj
@@ -120,12 +121,14 @@ type Channel = {
                 "name", E.string (* Channel *) this.Name
             ]
     static member JsonDecoder : JsonDecoder<Channel> =
-        D.decode Channel.Create
-        |> D.required (* Channel *) "guid" D.string
-        |> D.required (* Channel *) "name" D.string
+        D.object (fun get ->
+            {
+                Guid = get.Required.Field (* Channel *) "guid" D.string
+                Name = get.Required.Field (* Channel *) "name" D.string
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<Channel>
-            Channel.JsonEncoder Channel.JsonDecoder
+        FieldSpec.Create<Channel> (Channel.JsonEncoder, Channel.JsonDecoder)
     interface IJson with
         member this.ToJson () = Channel.JsonEncoder this
     interface IObj
@@ -167,12 +170,14 @@ type Peer = {
                 "device", Device.JsonEncoder (* Peer *) this.Device
             ]
     static member JsonDecoder : JsonDecoder<Peer> =
-        D.decode Peer.Create
-        |> D.required (* Peer *) "channel" Channel.JsonDecoder
-        |> D.required (* Peer *) "device" Device.JsonDecoder
+        D.object (fun get ->
+            {
+                Channel = get.Required.Field (* Peer *) "channel" Channel.JsonDecoder
+                Device = get.Required.Field (* Peer *) "device" Device.JsonDecoder
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<Peer>
-            Peer.JsonEncoder Peer.JsonDecoder
+        FieldSpec.Create<Peer> (Peer.JsonEncoder, Peer.JsonDecoder)
     interface IJson with
         member this.ToJson () = Peer.JsonEncoder this
     interface IObj
@@ -214,12 +219,14 @@ type Peers = {
                 "devices", (E.list Device.JsonEncoder) (* Peers *) this.Devices
             ]
     static member JsonDecoder : JsonDecoder<Peers> =
-        D.decode Peers.Create
-        |> D.required (* Peers *) "channel" Channel.JsonDecoder
-        |> D.required (* Peers *) "devices" (D.list Device.JsonDecoder)
+        D.object (fun get ->
+            {
+                Channel = get.Required.Field (* Peers *) "channel" Channel.JsonDecoder
+                Devices = get.Required.Field (* Peers *) "devices" (D.list Device.JsonDecoder)
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<Peers>
-            Peers.JsonEncoder Peers.JsonDecoder
+        FieldSpec.Create<Peers> (Peers.JsonEncoder, Peers.JsonDecoder)
     interface IJson with
         member this.ToJson () = Peers.JsonEncoder this
     interface IObj
@@ -242,16 +249,15 @@ with
         Cloud (sender)
     static member JsonSpec' : CaseSpec<Source> list =
         [
-            CaseSpec<Source>.Create "Local" []
-            CaseSpec<Source>.Create "Cloud" [
+            CaseSpec<Source>.Create ("Local", [])
+            CaseSpec<Source>.Create ("Cloud", [
                 Peer.JsonSpec
-            ]
+            ])
         ]
     static member JsonEncoder = E.union Source.JsonSpec'
     static member JsonDecoder = D.union Source.JsonSpec'
     static member JsonSpec =
-        FieldSpec.Create<Source>
-            Source.JsonEncoder Source.JsonDecoder
+        FieldSpec.Create<Source> (Source.JsonEncoder, Source.JsonDecoder)
     interface IJson with
         member this.ToJson () = Source.JsonEncoder this
 
@@ -291,13 +297,15 @@ type Item = {
                 "content", Content.JsonEncoder this.Content
             ]
     static member JsonDecoder : JsonDecoder<Item> =
-        D.decode Item.Create
-        |> D.required (* Item *) "time" D.instant
-        |> D.required "source" Source.JsonDecoder
-        |> D.required "content" Content.JsonDecoder
+        D.object (fun get ->
+            {
+                Time = get.Required.Field (* Item *) "time" D.instant
+                Source = get.Required.Field "source" Source.JsonDecoder
+                Content = get.Required.Field "content" Content.JsonDecoder
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<Item>
-            Item.JsonEncoder Item.JsonDecoder
+        FieldSpec.Create<Item> (Item.JsonEncoder, Item.JsonDecoder)
     interface IJson with
         member this.ToJson () = Item.JsonEncoder this
     interface IObj
@@ -341,12 +349,14 @@ type PrimaryClipboardArgs = {
                 "timeout_duration", DurationFormat.Second.JsonEncoder (* PrimaryClipboardArgs *) this.TimeoutDuration
             ]
     static member JsonDecoder : JsonDecoder<PrimaryClipboardArgs> =
-        D.decode PrimaryClipboardArgs.Create
-        |> D.required (* PrimaryClipboardArgs *) "check_interval" DurationFormat.Second.JsonDecoder
-        |> D.required (* PrimaryClipboardArgs *) "timeout_duration" DurationFormat.Second.JsonDecoder
+        D.object (fun get ->
+            {
+                CheckInterval = get.Required.Field (* PrimaryClipboardArgs *) "check_interval" DurationFormat.Second.JsonDecoder
+                TimeoutDuration = get.Required.Field (* PrimaryClipboardArgs *) "timeout_duration" DurationFormat.Second.JsonDecoder
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<PrimaryClipboardArgs>
-            PrimaryClipboardArgs.JsonEncoder PrimaryClipboardArgs.JsonDecoder
+        FieldSpec.Create<PrimaryClipboardArgs> (PrimaryClipboardArgs.JsonEncoder, PrimaryClipboardArgs.JsonDecoder)
     interface IJson with
         member this.ToJson () = PrimaryClipboardArgs.JsonEncoder this
     interface IObj
@@ -388,12 +398,14 @@ type HistoryArgs = {
                 "recent_size", E.int (* HistoryArgs *) this.RecentSize
             ]
     static member JsonDecoder : JsonDecoder<HistoryArgs> =
-        D.decode HistoryArgs.Create
-        |> D.required (* HistoryArgs *) "max_size" D.int
-        |> D.required (* HistoryArgs *) "recent_size" D.int
+        D.object (fun get ->
+            {
+                MaxSize = get.Required.Field (* HistoryArgs *) "max_size" D.int
+                RecentSize = get.Required.Field (* HistoryArgs *) "recent_size" D.int
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<HistoryArgs>
-            HistoryArgs.JsonEncoder HistoryArgs.JsonDecoder
+        FieldSpec.Create<HistoryArgs> (HistoryArgs.JsonEncoder, HistoryArgs.JsonDecoder)
     interface IJson with
         member this.ToJson () = HistoryArgs.JsonEncoder this
     interface IObj

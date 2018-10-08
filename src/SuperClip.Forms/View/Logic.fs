@@ -12,11 +12,9 @@ open Dap.Platform
 open Dap.Remote
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
 open SuperClip.Forms
 open SuperClip.Forms.View.Types
 module HistoryTypes = SuperClip.Core.History.Types
-module CloudTypes = SuperClip.Core.Cloud.Types
 module SessionTypes = SuperClip.Forms.Session.Types
 
 type LayoutOptions = Xamarin.Forms.LayoutOptions
@@ -37,7 +35,7 @@ let private update : Update<View, Model, Msg> =
         let model = {model with Ver = model.Ver + 1}
         match msg with
         | SetPrimary content ->
-            runner.Pack.Primary.Actor.Handle <| Clipboard.DoSet content None
+            runner.Pack.Primary.Actor2.Handle <| Clipboard.DoSet content None
             (model, noCmd)
         | HistoryEvt _evt ->
             (model, noCmd)

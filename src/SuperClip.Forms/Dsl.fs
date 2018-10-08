@@ -10,7 +10,8 @@ open Dap.WebSocket.Meta
 open Dap.Remote.Meta
 open Dap.Forms.Meta
 
-open SuperClip.Core.Dsl
+open SuperClip.Core.Dsl.Types
+open SuperClip.Core.Dsl.Packs
 
 let Credential =
     combo {
@@ -38,8 +39,8 @@ let ICloudStubPack =
     pack [] {
         register (M.packetClientSpawner (true))
         add (M.proxyService (
-                [("CloudTypes", "SuperClip.Core.Cloud.Types")],
-                "CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt", "CloudTypes.StubSpec",
+                [("Cloud", "SuperClip.Core.Cloud")],
+                "Cloud.Req, Cloud.ClientRes, Cloud.Evt", "Cloud.StubSpec",
                 "(getCloudServerUri ())", Some 5.0<second>, true,
                 "CloudStub", NoKey
             ))

@@ -16,7 +16,7 @@ open SuperClip.Core
 let CredentialLuid = "credential"
 
 let setup (storage : SecureStorage.Service<Credential>) (runner : Context.Agent<PrefContext>) =
-    runner.Context.Properties.Credential.OnValueChanged.AddWatcher runner "DoSave" (fun c ->
+    runner.Context.Properties.Credential.OnChanged.AddWatcher runner "DoSave" (fun c ->
         match c.New with
         | None ->
             logWarn runner "DoSave" "Remove_Credential" ()

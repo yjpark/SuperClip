@@ -9,7 +9,6 @@ open Dap.Remote
 open Dap.Remote.Server.Auth
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
 open SuperClip.Server.CloudHub.Types
 
 module ChannelAuth = SuperClip.Server.Service.ChannelAuth
@@ -40,13 +39,13 @@ let getTokenAndChannelAuthAsync (token : string) : GetTask<Agent, Result<Token *
             )
     }
 
-let private createToken runner (channelKey : string) (req : Join.Req) =
+let private createToken runner (channelKey : string) (req : Cloud.JoinReq) =
     let token = Token.create runner channelKey "" (E.json req.Peer.Device) (Duration.FromDays(1))
     let jwt = JsonString <| Token.toJwt token
     (token, jwt)
     //reply runner callback <| ack req ^<| Ok jwt
 
-let doJoinAsync (join : Join.Req) : GetReplyTask<Agent, Result<Join.Res, Join.Err>> =
+let doJoinAsync (join : Cloud.JoinReq) : GetReplyTask<Agent, Result<Cloud.JoinRes, Cloud.JoinErr>> =
     fun req callback runner -> task {
         let! auth = runner.Pack |> ChannelAuth.getByChannelKeyAsync join.Peer.Channel.Key
         match auth with
@@ -59,14 +58,14 @@ let doJoinAsync (join : Join.Req) : GetReplyTask<Agent, Result<Join.Res, Join.Er
                     reply runner callback <| ack req ^<| Ok jwt
                 | Error err ->
                     logWarn runner "doJoinAsync" "AddToken_Failed" (token, auth)
-                    reply runner callback <| ack req ^<| Error Join.JoinChannelFailed
+                    reply runner callback <| ack req ^<| Error Cloud.JoinErr.JoinChannelFailed
             else
                 logWarn runner "doJoinAsync" "PassHashNotMatched" (join, auth.PassHash)
-                reply runner callback <| ack req ^<| Error Join.PassHashNotMatched
+                reply runner callback <| ack req ^<| Error Cloud.JoinErr.PassHashNotMatched
         | Error err ->
             logWarn runner "doJoinAsync" "getByChannelKeyAsync" (join, err)
             if join.Peer.Channel.Name = "" then
-                reply runner callback <| ack req ^<| Error Join.InvalidChannelName
+                reply runner callback <| ack req ^<| Error Cloud.JoinErr.InvalidChannelName
             else
                 let channel = Channel.CreateWithName join.Peer.Channel.Name
                 let (token, jwt) = createToken runner channel.Key join
@@ -77,7 +76,7 @@ let doJoinAsync (join : Join.Req) : GetReplyTask<Agent, Result<Join.Res, Join.Er
                     reply runner callback <| ack req ^<| Ok jwt
                 | Error err ->
                     logWarn runner "doJoinAsync" "Create_ChannelAuth_Failed" (token, E.encodeJson 4 auth, err)
-                    reply runner callback <| ack req ^<| Error Join.JoinChannelFailed
+                    reply runner callback <| ack req ^<| Error Cloud.JoinErr.JoinChannelFailed
     }
 
 let getOrAddChannelAsync (channel : Channel) (device : Device) : GetTask<Agent, ChannelService.Service> =
@@ -96,7 +95,7 @@ let getOrAddChannelAsync (channel : Channel) (device : Device) : GetTask<Agent, 
             return service
     }
 
-let doAuthAsync (auth : Auth.Req) : GetReplyTask<Agent, Result<Auth.Res, Auth.Err>> =
+let doAuthAsync (auth : Cloud.AuthReq) : GetReplyTask<Agent, Result<Cloud.AuthRes, Cloud.AuthErr>> =
     fun req callback runner -> task {
         let! result = runner |> getTokenAndChannelAuthAsync auth.Value
         match result with
@@ -108,12 +107,12 @@ let doAuthAsync (auth : Auth.Req) : GetReplyTask<Agent, Result<Auth.Res, Auth.Er
                 reply runner callback <| ack req ^<| Ok peers
             | Error err ->
                 logWarn runner "doAuthAsync" "CheckToken_Failed" (token, auth)
-                reply runner callback <| ack req ^<| Error Auth.InvalidToken
+                reply runner callback <| ack req ^<| Error Cloud.AuthErr.InvalidToken
         | Error err ->
-            reply runner callback <| ack req ^<| Error Auth.InvalidToken
+            reply runner callback <| ack req ^<| Error Cloud.AuthErr.InvalidToken
     }
 
-let doLeaveAsync (auth : Leave.Req) : GetReplyTask<Agent, Result<Leave.Res, Leave.Err>> =
+let doLeaveAsync (auth : Cloud.LeaveReq) : GetReplyTask<Agent, Result<Cloud.LeaveRes, Cloud.LeaveErr>> =
     fun req callback runner -> task {
         let! result = runner |> getTokenAndChannelAuthAsync auth.Value
         match result with
@@ -127,5 +126,5 @@ let doLeaveAsync (auth : Leave.Req) : GetReplyTask<Agent, Result<Leave.Res, Leav
                 logWarn runner "doLeaveAsync" "RemoveToken_Failed" (token, auth)
                 failWith "RemoveToken_Failed" err
         | Error err ->
-            reply runner callback <| ack req ^<| Error Auth.InvalidToken
+            reply runner callback <| ack req ^<| Error Cloud.AuthErr.InvalidToken
     }

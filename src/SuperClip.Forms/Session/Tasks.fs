@@ -7,7 +7,6 @@ open Dap.Platform
 open Dap.Remote
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
 open SuperClip.Forms.Session.Types
 
 module ChannelTypes = SuperClip.Core.Channel.Types

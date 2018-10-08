@@ -10,7 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Const.fs" />
-    <Compile Include="Dsl.fs" />
+    <Compile Include="Dsl/Types.fs" />
+    <Compile Include="Dsl/Cloud.fs" />
+    <Compile Include="Dsl/Packs.fs" />
+    <Compile Include="Dsl/Compiler.fs" />
     <Compile Include="_Gen/Types.fs" />
     <Compile Include="_Gen/Builder.fs" />
     <Compile Include="Extensions.fs" />
@@ -24,13 +27,8 @@
     <Compile Include="History/Types.fs" />
     <Compile Include="History/Logic.fs" />
     <Compile Include="History/Agent.fs" />
-    <Compile Include="Cloud/Join.fs" />
-    <Compile Include="Cloud/Auth.fs" />
-    <Compile Include="Cloud/Leave.fs" />
-    <Compile Include="Cloud/SetItem.fs" />
-    <Compile Include="Cloud/Types.fs" />
+    <Compile Include="_Gen/Cloud.fs" />
     <Compile Include="_Gen/Packs.fs" />
-    <Compile Include="_Gen/CoreApp.fs" />
     <Compile Include="Helper.fs" />
   </ItemGroup>
   <ItemGroup>

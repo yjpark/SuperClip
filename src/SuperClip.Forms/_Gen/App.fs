@@ -16,7 +16,7 @@ module TickerTypes = Dap.Platform.Ticker.Types
 module PrimaryTypes = SuperClip.Core.Primary.Types
 module HistoryTypes = SuperClip.Core.History.Types
 module Proxy = Dap.Remote.WebSocketProxy.Proxy
-module CloudTypes = SuperClip.Core.Cloud.Types
+module Cloud = SuperClip.Core.Cloud
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module SecureStorage = Dap.Forms.Provider.SecureStorage
 module Context = Dap.Platform.Context
@@ -73,7 +73,7 @@ and AppArgs = {
     PrimaryClipboard : (* ICorePack *) PrimaryTypes.Args
     LocalHistory : (* ICorePack *) HistoryTypes.Args
     History : (* ICorePack *) HistoryTypes.Args
-    CloudStub : (* ICloudStubPack *) Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
+    CloudStub : (* ICloudStubPack *) Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>
     PacketClient : (* ICloudStubPack *) PacketClient.Args
     CredentialSecureStorage : (* IClientPack *) SecureStorage.Args<Credential>
     Preferences : (* IClientPack *) Context.Args<PrefContext>
@@ -104,7 +104,7 @@ and AppArgs = {
             (PrimaryTypes.Args.Default ()) (* ICorePack *) (* primaryClipboard *)
             (HistoryTypes.Args.Default ()) (* ICorePack *) (* localHistory *)
             (HistoryTypes.Args.Default ()) (* ICorePack *) (* history *)
-            (Proxy.args CloudTypes.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true) (* ICloudStubPack *) (* cloudStub *)
+            (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true) (* ICloudStubPack *) (* cloudStub *)
             (PacketClient.args true 1048576) (* ICloudStubPack *) (* packetClient *)
             (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder) (* IClientPack *) (* credentialSecureStorage *)
             spawnPrefContext (* IClientPack *) (* preferences *)
@@ -122,7 +122,7 @@ and AppArgs = {
         {this with LocalHistory = localHistory}
     static member SetHistory ((* ICorePack *) history : HistoryTypes.Args) (this : AppArgs) =
         {this with History = history}
-    static member SetCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
+    static member SetCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>) (this : AppArgs) =
         {this with CloudStub = cloudStub}
     static member SetPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) (this : AppArgs) =
         {this with PacketClient = packetClient}
@@ -144,7 +144,7 @@ and AppArgs = {
         this |> AppArgs.SetLocalHistory (update this.LocalHistory)
     static member UpdateHistory ((* ICorePack *) update : HistoryTypes.Args -> HistoryTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetHistory (update this.History)
-    static member UpdateCloudStub ((* ICloudStubPack *) update : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> -> Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) (this : AppArgs) =
+    static member UpdateCloudStub ((* ICloudStubPack *) update : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt> -> Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>) (this : AppArgs) =
         this |> AppArgs.SetCloudStub (update this.CloudStub)
     static member UpdatePacketClient ((* ICloudStubPack *) update : PacketClient.Args -> PacketClient.Args) (this : AppArgs) =
         this |> AppArgs.SetPacketClient (update this.PacketClient)
@@ -166,22 +166,29 @@ and AppArgs = {
                 "history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.History
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
-        D.decode AppArgs.Create
-        |> D.optional (* AppArgs *) "scope" Scope.JsonDecoder NoScope
-        |> D.hardcoded (* AppArgs *) (* Setup *) ignore
-        |> D.optional (* IServicesPack *) "ticker" TickerTypes.Args.JsonDecoder (TickerTypes.Args.Default ())
-        |> D.optional (* ICorePack *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder (PrimaryTypes.Args.Default ())
-        |> D.optional (* ICorePack *) "local_history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
-        |> D.optional (* ICorePack *) "history" HistoryTypes.Args.JsonDecoder (HistoryTypes.Args.Default ())
-        |> D.hardcoded (* ICloudStubPack *) (* cloud_stub *) (Proxy.args CloudTypes.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
-        |> D.hardcoded (* ICloudStubPack *) (* packet_client *) (PacketClient.args true 1048576)
-        |> D.hardcoded (* IClientPack *) (* credential_secure_storage *) (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder)
-        |> D.hardcoded (* IClientPack *) (* preferences *) spawnPrefContext
-        |> D.hardcoded (* ISessionPack *) (* session *) NoArgs
-        |> D.hardcoded (* IAppPack *) (* forms_view *) (SuperClip.Forms.View.Logic.newArgs ())
+        D.object (fun get ->
+            {
+                Scope = get.Optional.Field (* AppArgs *) "scope" Scope.JsonDecoder
+                    |> Option.defaultValue NoScope
+                Setup = (* (* AppArgs *)  *) ignore
+                Ticker = get.Optional.Field (* IServicesPack *) "ticker" TickerTypes.Args.JsonDecoder
+                    |> Option.defaultValue (TickerTypes.Args.Default ())
+                PrimaryClipboard = get.Optional.Field (* ICorePack *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder
+                    |> Option.defaultValue (PrimaryTypes.Args.Default ())
+                LocalHistory = get.Optional.Field (* ICorePack *) "local_history" HistoryTypes.Args.JsonDecoder
+                    |> Option.defaultValue (HistoryTypes.Args.Default ())
+                History = get.Optional.Field (* ICorePack *) "history" HistoryTypes.Args.JsonDecoder
+                    |> Option.defaultValue (HistoryTypes.Args.Default ())
+                CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
+                PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576)
+                CredentialSecureStorage = (* (* IClientPack *)  *) (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder)
+                Preferences = (* (* IClientPack *)  *) spawnPrefContext
+                Session = (* (* ISessionPack *)  *) NoArgs
+                FormsView = (* (* IAppPack *)  *) (SuperClip.Forms.View.Logic.newArgs ())
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<AppArgs>
-            AppArgs.JsonEncoder AppArgs.JsonDecoder
+        FieldSpec.Create<AppArgs> (AppArgs.JsonEncoder, AppArgs.JsonDecoder)
     interface IJson with
         member this.ToJson () = AppArgs.JsonEncoder this
     interface IObj
@@ -197,7 +204,7 @@ and AppArgs = {
         this |> AppArgs.SetLocalHistory localHistory
     member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) =
         this |> AppArgs.SetHistory history
-    member this.WithCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>) =
+    member this.WithCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>) =
         this |> AppArgs.SetCloudStub cloudStub
     member this.WithPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) =
         this |> AppArgs.SetPacketClient packetClient
@@ -219,7 +226,7 @@ and AppArgs = {
         member this.AsServicesPackArgs = this.AsServicesPackArgs
     member this.AsCorePackArgs = this :> ICorePackArgs
     interface ICloudStubPackArgs with
-        member this.CloudStub (* ICloudStubPack *) : Proxy.Args<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> = this.CloudStub
+        member this.CloudStub (* ICloudStubPack *) : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt> = this.CloudStub
         member this.PacketClient (* ICloudStubPack *) : PacketClient.Args = this.PacketClient
     member this.AsCloudStubPackArgs = this :> ICloudStubPackArgs
     interface IClientPackArgs with
@@ -267,7 +274,7 @@ type App (logging : ILogging, args : AppArgs) as this =
     let mutable (* IServicesPack *) ticker : TickerTypes.Agent option = None
     let mutable (* ICorePack *) primaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> option = None
     let mutable (* ICorePack *) localHistory : HistoryTypes.Agent option = None
-    let mutable (* ICloudStubPack *) cloudStub : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> option = None
+    let mutable (* ICloudStubPack *) cloudStub : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> option = None
     let mutable (* IClientPack *) credentialSecureStorage : SecureStorage.Service<Credential> option = None
     let mutable (* IClientPack *) preferences : Context.Agent<PrefContext> option = None
     let mutable (* ISessionPack *) session : SessionTypes.Agent option = None
@@ -281,7 +288,7 @@ type App (logging : ILogging, args : AppArgs) as this =
             let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args.LocalHistory) AppKinds.LocalHistory AppKeys.LocalHistory
             localHistory <- Some localHistory'
             do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args.History) AppKinds.History
-            let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.spec args.CloudStub) AppKinds.CloudStub AppKeys.CloudStub
+            let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.Logic.spec args.CloudStub) AppKinds.CloudStub AppKeys.CloudStub
             cloudStub <- Some cloudStub'
             do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) args.PacketClient) AppKinds.PacketClient
             let! (* IClientPack *) credentialSecureStorage' = env |> Env.addServiceAsync (Dap.Local.Storage.Base.Logic.spec args.CredentialSecureStorage) AppKinds.CredentialSecureStorage AppKeys.CredentialSecureStorage
@@ -303,10 +310,8 @@ type App (logging : ILogging, args : AppArgs) as this =
     do (
         env.RunTask0 raiseOnFailed setupAsync
     )
-    new (loggingArgs : LoggingArgs, a : AppArgs) =
-        App (loggingArgs.CreateLogging (), a)
-    new (a : AppArgs) =
-        App (getLogging (), a)
+    new (loggingArgs : LoggingArgs, a : AppArgs) = new App (loggingArgs.CreateLogging (), a)
+    new (a : AppArgs) = new App (getLogging (), a)
     abstract member SetupAsync' : unit -> Task<unit>
     default __.SetupAsync' () = task {
         return ()
@@ -334,7 +339,7 @@ type App (logging : ILogging, args : AppArgs) as this =
     member __.AsCorePack = this :> ICorePack
     interface ICloudStubPack with
         member __.Args = this.Args.AsCloudStubPackArgs
-        member __.CloudStub (* ICloudStubPack *) : Proxy.Proxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt> = cloudStub |> Option.get
+        member __.CloudStub (* ICloudStubPack *) : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> = cloudStub |> Option.get
         member __.GetPacketClientAsync (key : Key) (* ICloudStubPack *) : Task<PacketClient.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketClient" key
             return (agent :?> PacketClient.Agent, isNew)

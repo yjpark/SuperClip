@@ -17,12 +17,10 @@ module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module WebSocketProxy = Dap.Remote.WebSocketProxy.Proxy
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
 open SuperClip.Forms
 open SuperClip.Forms.Session.Types
 open SuperClip.Forms.Session.Tasks
 module HistoryTypes = SuperClip.Core.History.Types
-module CloudTypes = SuperClip.Core.Cloud.Types
 
 type ActorOperate = Operate<Agent, Model, Msg>
 
@@ -46,7 +44,7 @@ let private doSetItemToCloud (item : Item) : ActorOperate =
             (model.Auth, model.Channel)
             ||> Option.iter2 (fun auth channel ->
                 let item = item.ForCloud auth.Self auth.CryptoKey
-                runner.Pack.Stub.Post <| CloudTypes.DoSetItem item
+                runner.Pack.Stub.Post <| Cloud.DoSetItem item
             )
         (model, cmd)
 
@@ -67,12 +65,12 @@ let private onPrimaryEvt (evt : Clipboard.Evt) : ActorOperate =
         |> doSetItemToCloud
         <| runner <| (model, cmd)
 
-let private onStubEvt (evt : CloudTypes.Evt) : ActorOperate =
+let private onStubEvt (evt : Cloud.Evt) : ActorOperate =
     fun runner (model, cmd) ->
         logWarn runner "Session" "CloudEvt" evt
         if model.Auth.IsSome && model.Syncing then
             match evt with
-            | CloudTypes.OnItemChanged item ->
+            | Cloud.OnItemChanged item ->
                 let auth = model.Auth |> Option.get
                 item.Decrypt runner auth.CryptoKey
                 |> doAddHistory runner
@@ -83,12 +81,12 @@ let private onStubEvt (evt : CloudTypes.Evt) : ActorOperate =
             | _ -> ()
         (model, cmd)
 
-let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
+let private onStubRes (res : Cloud.ClientRes) : ActorOperate =
     fun runner (model, cmd) ->
         logWarn runner "Session" "CloudRes" res
         match res with
-        | CloudTypes.OnJoin (_req, (Ok token)) ->
-            runner.Pack.Stub.Post <| CloudTypes.DoAuth token
+        | Cloud.OnJoin (_req, (Ok token)) ->
+            runner.Pack.Stub.Post <| Cloud.DoAuth token
             let auth =
                 model.Auth
                 |> Option.map (fun auth ->
@@ -100,13 +98,13 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
             updateModel (fun m -> {m with Auth = auth})
             |-|- addSubCmd Evt ^<| OnAuthChanged auth
             |-|- addSubCmd Evt ^<| OnJoinSucceed token
-        | CloudTypes.OnJoin (_req, (Error err)) ->
+        | Cloud.OnJoin (_req, (Error err)) ->
             updateModel (fun m -> {m with Auth = None})
             |-|- addSubCmd Evt ^<| OnJoinFailed err
-        | CloudTypes.OnAuth (_req, (Ok peers)) ->
+        | Cloud.OnAuth (_req, (Ok peers)) ->
             runner.AddTask ignoreOnFailed <| doSetChannelAsync peers
             noOperation
-        | CloudTypes.OnAuth (_req, (Error err)) ->
+        | Cloud.OnAuth (_req, (Error err)) ->
             addSubCmd Evt ^<| OnAuthFailed err
         | _ ->
             noOperation
@@ -114,8 +112,8 @@ let private onStubRes (res : CloudTypes.ClientRes) : ActorOperate =
 
 let private doSetAuth req ((auth, callback) : Credential * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
-        let joinReq = Join.Req.Create auth.Self auth.PassHash
-        runner.Pack.Stub.Post <| CloudTypes.DoJoin joinReq
+        let joinReq = Cloud.JoinReq.Create auth.Self auth.PassHash
+        runner.Pack.Stub.Post <| Cloud.DoJoin joinReq
         reply runner callback <| ack req ()
         (runner, model, cmd)
         |=|> updateModel (fun m -> {m with Auth = Some auth})
@@ -125,7 +123,7 @@ let private doResetAuth req (callback : Callback<unit>) : ActorOperate =
         model.Auth
         |> Option.bind (fun a -> if a.Token <> "" then Some a.Token else None)
         |> Option.iter (fun token ->
-            runner.Pack.Stub.Post <| CloudTypes.DoLeave (JsonString token)
+            runner.Pack.Stub.Post <| Cloud.DoLeave (JsonString token)
             reply runner callback <| ack req ()
         )
         runner.Pack.Pref.Properties.Credential.SetValue None
@@ -187,7 +185,7 @@ let private update : Update<Agent, Model, Msg> =
 let private subscribe : Subscribe<Agent, Model, Msg> =
     fun runner model ->
         Cmd.batch [
-            subscribeBus runner model PrimaryEvt runner.Pack.Primary.Actor.OnEvent
+            subscribeBus runner model PrimaryEvt runner.Pack.Primary.Actor2.OnEvent
             subscribeBus runner model StubRes runner.Pack.Stub.OnResponse
             subscribeBus runner model StubEvt runner.Pack.Stub.Actor.OnEvent
             subscribeBus runner model StubStatus runner.Pack.Stub.OnStatus

@@ -92,16 +92,20 @@ and AppArgs = {
                 "farango_db", FarangoDb.Args.JsonEncoder (* IDbPack *) this.FarangoDb
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
-        D.decode AppArgs.Create
-        |> D.optional (* AppArgs *) "scope" Scope.JsonDecoder NoScope
-        |> D.hardcoded (* AppArgs *) (* Setup *) ignore
-        |> D.optional (* IDbPack *) "farango_db" FarangoDb.Args.JsonDecoder (FarangoDb.Args.Default ())
-        |> D.hardcoded (* ICloudHubPack *) (* packet_conn *) (PacketConn.args true 1048576)
-        |> D.hardcoded (* ICloudHubPack *) (* cloud_hub *) NoArgs
-        |> D.hardcoded (* ICloudHubPack *) (* cloud_hub_gateway *) (Gateway.args CloudHubTypes.HubSpec true)
+        D.object (fun get ->
+            {
+                Scope = get.Optional.Field (* AppArgs *) "scope" Scope.JsonDecoder
+                    |> Option.defaultValue NoScope
+                Setup = (* (* AppArgs *)  *) ignore
+                FarangoDb = get.Optional.Field (* IDbPack *) "farango_db" FarangoDb.Args.JsonDecoder
+                    |> Option.defaultValue (FarangoDb.Args.Default ())
+                PacketConn = (* (* ICloudHubPack *)  *) (PacketConn.args true 1048576)
+                CloudHub = (* (* ICloudHubPack *)  *) NoArgs
+                CloudHubGateway = (* (* ICloudHubPack *)  *) (Gateway.args CloudHubTypes.HubSpec true)
+            }
+        )
     static member JsonSpec =
-        FieldSpec.Create<AppArgs>
-            AppArgs.JsonEncoder AppArgs.JsonDecoder
+        FieldSpec.Create<AppArgs> (AppArgs.JsonEncoder, AppArgs.JsonDecoder)
     interface IJson with
         member this.ToJson () = AppArgs.JsonEncoder this
     interface IObj
@@ -163,10 +167,8 @@ type App (logging : ILogging, args : AppArgs) as this =
     do (
         env.RunTask0 raiseOnFailed setupAsync
     )
-    new (loggingArgs : LoggingArgs, a : AppArgs) =
-        App (loggingArgs.CreateLogging (), a)
-    new (a : AppArgs) =
-        App (getLogging (), a)
+    new (loggingArgs : LoggingArgs, a : AppArgs) = new App (loggingArgs.CreateLogging (), a)
+    new (a : AppArgs) = new App (getLogging (), a)
     abstract member SetupAsync' : unit -> Task<unit>
     default __.SetupAsync' () = task {
         return ()

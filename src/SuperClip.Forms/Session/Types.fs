@@ -5,13 +5,11 @@ open Dap.Platform
 open Dap.Remote
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
 open SuperClip.Forms
 module History = SuperClip.Core.History.Agent
-module CloudTypes = SuperClip.Core.Cloud.Types
 
 type ChannelService = SuperClip.Core.Channel.Service.Service
-type CloudStub = IProxy<CloudTypes.Req, CloudTypes.ClientRes, CloudTypes.Evt>
+type CloudStub = IProxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt>
 
 type Args = NoArgs
 
@@ -36,23 +34,23 @@ and Req =
 with interface IReq
 
 and Evt =
-    | OnJoinSucceed of Join.Res
-    | OnJoinFailed of Reason<Join.Err>
-    | OnAuthSucceed of Auth.Res
-    | OnAuthFailed of Reason<Auth.Err>
+    | OnJoinSucceed of Cloud.JoinRes
+    | OnJoinFailed of Reason<Cloud.JoinErr>
+    | OnAuthSucceed of Cloud.AuthRes
+    | OnAuthFailed of Reason<Cloud.AuthErr>
     | OnAuthChanged of Credential option
     | OnSyncingChanged of bool
 with interface IEvt
 
 and InternalEvt =
-    | SetChannel of Auth.Res * ChannelService
+    | SetChannel of Cloud.AuthRes * ChannelService
 
 and Msg =
     | Req of Req
     | Evt of Evt
     | PrimaryEvt of Clipboard.Evt
-    | StubRes of CloudTypes.ClientRes
-    | StubEvt of CloudTypes.Evt
+    | StubRes of Cloud.ClientRes
+    | StubEvt of Cloud.Evt
     | StubStatus of LinkStatus
     | InternalEvt of InternalEvt
 with interface IMsg

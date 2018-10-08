@@ -10,12 +10,10 @@ open Dap.Platform
 open Dap.Remote
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
 open SuperClip.Forms
 open SuperClip.Forms.View.Types
 open SuperClip.Forms.View.Widget
 module HistoryTypes = SuperClip.Core.History.Types
-module CloudTypes = SuperClip.Core.Cloud.Types
 module SessionTypes = SuperClip.Forms.Session.Types
 
 let doAuth (runner : View) (model : Model) : unit =

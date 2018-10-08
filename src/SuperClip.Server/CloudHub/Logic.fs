@@ -8,8 +8,6 @@ open Dap.Remote
 open Dap.Remote.Server.Auth
 
 open SuperClip.Core
-open SuperClip.Core.Cloud
-module CloudTypes = SuperClip.Core.Cloud.Types
 module ChannelTypes = SuperClip.Core.Channel.Types
 
 open SuperClip.Server.CloudHub.Types
@@ -20,18 +18,18 @@ type ChannelService = SuperClip.Core.Channel.Service.Service
 
 type ActorOperate = ActorOperate<Agent, Args, Model, Msg, Req, Evt>
 
-let private doSetItem req ((item, callback) : Item * Callback<Result<SetItem.Res, SetItem.Err>>) : ActorOperate =
+let private doSetItem req ((item, callback) : Item * Callback<Result<Cloud.SetItemRes, Cloud.SetItemErr>>) : ActorOperate =
     fun runner (model, cmd) ->
         match item.Source with
         | Local ->
-            reply runner callback <| ack req ^<| Error SetItem.InvalidSource
+            reply runner callback <| ack req ^<| Error Cloud.SetItemErr.InvalidSource
         | Cloud peer ->
             match Map.tryFind peer.Channel.Key model.Devices with
             | None ->
-                reply runner callback <| ack req ^<| Error SetItem.InvalidChannel
+                reply runner callback <| ack req ^<| Error Cloud.SetItemErr.InvalidChannel
             | Some (channel, device) ->
                 if peer.Device.Guid <> device.Guid then
-                    reply runner callback <| ack req ^<| Error SetItem.InvalidSource
+                    reply runner callback <| ack req ^<| Error Cloud.SetItemErr.InvalidSource
                 else
                     channel.Post <| ChannelTypes.DoSet item None
                     reply runner callback <| ack req ^<| Ok JsonNil
@@ -40,16 +38,16 @@ let private doSetItem req ((item, callback) : Item * Callback<Result<SetItem.Res
 let private handleReq (req : Req) : ActorOperate =
     fun runner (model, cmd) ->
         match req with
-        | CloudTypes.ServerReq.DoJoin (r, callback) ->
+        | Cloud.ServerReq.DoJoin (r, callback) ->
             replyAsync runner req callback nakOnFailed <| doJoinAsync r
             (model, cmd)
-        | CloudTypes.ServerReq.DoAuth (r, callback) ->
+        | Cloud.ServerReq.DoAuth (r, callback) ->
             replyAsync runner req callback nakOnFailed <| doAuthAsync r
             (model, cmd)
-        | CloudTypes.ServerReq.DoLeave (r, callback) ->
+        | Cloud.ServerReq.DoLeave (r, callback) ->
             replyAsync runner req callback nakOnFailed <| doLeaveAsync r
             (model, cmd)
-        | CloudTypes.ServerReq.DoSetItem (r, callback) ->
+        | Cloud.ServerReq.DoSetItem (r, callback) ->
             (runner, model, cmd)
             |=|> doSetItem req (r, callback)
 
@@ -120,11 +118,11 @@ let private handleInternalEvt (evt : InternalEvt) : ActorOperate =
 let private handleChannelEvt (channel : ChannelService) (evt : ChannelTypes.Evt) : ActorOperate =
     match evt with
     | ChannelTypes.OnChanged item ->
-        addSubCmd HubEvt <| CloudTypes.OnItemChanged item
+        addSubCmd HubEvt <| Cloud.OnItemChanged item
     | ChannelTypes.OnDeviceAdded device ->
-        addSubCmd HubEvt <| CloudTypes.OnPeerJoin ^<| Peer.Create channel.Channel device
+        addSubCmd HubEvt <| Cloud.OnPeerJoin ^<| Peer.Create channel.Channel device
     | ChannelTypes.OnDeviceRemoved device ->
-        addSubCmd HubEvt <| CloudTypes.OnPeerLeft ^<| Peer.Create channel.Channel device
+        addSubCmd HubEvt <| Cloud.OnPeerLeft ^<| Peer.Create channel.Channel device
 
 let private update : ActorUpdate<Agent, Args, Model, Msg, Req, Evt> =
     fun runner msg model ->

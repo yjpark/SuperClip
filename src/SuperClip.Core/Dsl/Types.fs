@@ -1,4 +1,4 @@
-module SuperClip.Core.Dsl
+module SuperClip.Core.Dsl.Types
 
 open Dap.Context.Meta
 open Dap.Context.Generator
@@ -89,19 +89,6 @@ let IServicesPack =
         add (M.tickerService ())
     }
 
-let ICorePack =
-    pack [ <@ IServicesPack @> ] {
-        add_pack <@ IServicesPack @> (M.primaryClipboardService ())
-        add (M.historyService ("Local"))
-        register (M.historySpawner ())
-    }
-
-//Not actually used, create for make sure the packs compiled properly
-let CoreApp =
-    live {
-        has <@ ICorePack @>
-    }
-
 let compile segments =
     [
         G.File (segments, ["_Gen" ; "Types.fs"],
@@ -127,22 +114,6 @@ let compile segments =
                     G.PlatformOpens
                     G.ValueBuilder <@ PrimaryClipboardArgs @>
                     G.ValueBuilder <@ HistoryArgs @>
-                ]
-            )
-        )
-        G.File (segments, ["_Gen" ; "Packs.fs"],
-            G.AutoOpenModule ("SuperClip.Core.Packs",
-                [
-                    G.PackOpens
-                    G.PackInterface <@ ICorePack @>
-                ]
-            )
-        )
-        G.File (segments, ["_Gen" ; "CoreApp.fs"],
-            G.Module ("SuperClip.Core.CoreApp",
-                [
-                    G.PackOpens
-                    G.App <@ CoreApp @>
                 ]
             )
         )
