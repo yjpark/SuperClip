@@ -5,12 +5,13 @@ open Dap.Context.Generator
 open Dap.Platform
 open Dap.Platform.Meta
 open Dap.Platform.Generator
+open Dap.Platform.Dsl.Packs
 
 open SuperClip.Core.Dsl.Types
 
 let ICorePack =
-    pack [ <@ IServicesPack @> ] {
-        add_pack <@ IServicesPack @> (M.primaryClipboardService ())
+    pack [ <@ ITickingPack @> ] {
+        add_pack <@ ITickingPack @> (M.primaryClipboardService ())
         add (M.historyService ("Local"))
         register (M.historySpawner ())
     }

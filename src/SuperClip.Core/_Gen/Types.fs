@@ -1,15 +1,12 @@
 [<AutoOpen>]
 module SuperClip.Core.Types
 
-open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
 open Dap.Context
 open Dap.Context.Builder
 open Dap.Platform
-
-module TickerTypes = Dap.Platform.Ticker.Types
 
 (*
  * Generated: <Union>
@@ -413,11 +410,3 @@ type HistoryArgs = {
         this |> HistoryArgs.SetMaxSize maxSize
     member this.WithRecentSize ((* HistoryArgs *) recentSize : int) =
         this |> HistoryArgs.SetRecentSize recentSize
-
-type IServicesPackArgs =
-    abstract Ticker : TickerTypes.Args with get
-
-type IServicesPack =
-    inherit IPack
-    abstract Args : IServicesPackArgs with get
-    abstract Ticker : TickerTypes.Agent with get

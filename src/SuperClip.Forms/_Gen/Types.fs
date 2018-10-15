@@ -1,7 +1,6 @@
 [<AutoOpen>]
 module SuperClip.Forms.Types
 
-open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -113,7 +112,7 @@ type PrefProperties (owner : IOwner, key : Key) =
     static member Create o k = new PrefProperties (o, k)
     static member Default () = PrefProperties.Create noOwner NoKey
     static member AddToCombo key (combo : IComboProperty) =
-        combo.AddCustom<PrefProperties>(PrefProperties.Create, key)
+        combo.AddCustom<PrefProperties> (PrefProperties.Create, key)
     override this.Self = this
     override __.Spawn o k = PrefProperties.Create o k
     override __.SyncTo t = target.SyncTo t.Target
@@ -125,14 +124,18 @@ let spawnPrefContext (runner : IAgent) =
     CustomContext<PrefProperties> (runner.Env.Logging, runner.Ident.Kind, PrefProperties.Create)
 
 type ICloudStubPackArgs =
+    inherit ITickingPackArgs
     abstract CloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt> with get
     abstract PacketClient : PacketClient.Args with get
+    abstract AsTickingPackArgs : ITickingPackArgs with get
 
 type ICloudStubPack =
     inherit IPack
+    inherit ITickingPack
     abstract Args : ICloudStubPackArgs with get
     abstract CloudStub : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> with get
     abstract GetPacketClientAsync : Key -> Task<PacketClient.Agent * bool>
+    abstract AsTickingPack : ITickingPack with get
 
 type IClientPackArgs =
     inherit ICorePackArgs

@@ -1,6 +1,5 @@
 module SuperClip.Core.Builder
 
-open Dap.Context.Helper
 open Dap.Context.Builder
 open Dap.Prelude
 open Dap.Context

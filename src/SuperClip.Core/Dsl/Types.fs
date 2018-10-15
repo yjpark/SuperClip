@@ -84,11 +84,6 @@ type M with
         M.historySpawner ()
         |> fun s -> s.ToService key
 
-let IServicesPack =
-    pack [] {
-        add (M.tickerService ())
-    }
-
 let compile segments =
     [
         G.File (segments, ["_Gen" ; "Types.fs"],
@@ -104,7 +99,6 @@ let compile segments =
                     G.JsonRecord <@ Item @>
                     G.JsonRecord <@ PrimaryClipboardArgs @>
                     G.JsonRecord <@ HistoryArgs @>
-                    G.PackInterface <@ IServicesPack @>
                 ]
             )
         )

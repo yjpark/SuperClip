@@ -5,6 +5,7 @@ open Dap.Context.Generator
 open Dap.Platform
 open Dap.Platform.Meta
 open Dap.Platform.Generator
+open Dap.Platform.Dsl.Packs
 open Dap.WebSocket.Meta
 open Dap.Remote.Meta
 open Dap.Local.Farango.Dsl
@@ -13,8 +14,8 @@ open SuperClip.Core.Dsl
 open SuperClip.Server.Meta
 
 let ICloudHubPack =
-    pack [] {
-        register (M.packetConnSpawner (true))
+    pack [ <@ ITickingPack @> ] {
+        register_pack <@ ITickingPack @> (M.packetConnSpawner (true))
         register_pack <@ IDbPack @> (M.cloudHubSpawner ())
         register (M.cloudHubGatewaySpawner ())
     }

@@ -1,7 +1,6 @@
 [<AutoOpen>]
 module SuperClip.Forms.App
 
-open Dap.Context.Helper
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -35,7 +34,7 @@ type IAppPack =
     abstract AsSessionPack : ISessionPack with get
 
 type AppKinds () =
-    static member Ticker (* IServicesPack *) = "Ticker"
+    static member Ticker (* ITickingPack *) = "Ticker"
     static member PrimaryClipboard (* ICorePack *) = "Clipboard"
     static member LocalHistory (* ICorePack *) = "History"
     static member History (* ICorePack *) = "History"
@@ -47,7 +46,7 @@ type AppKinds () =
     static member FormsView (* IAppPack *) = "FormsView"
 
 type AppKeys () =
-    static member Ticker (* IServicesPack *) = ""
+    static member Ticker (* ITickingPack *) = ""
     static member PrimaryClipboard (* ICorePack *) = "Primary"
     static member LocalHistory (* ICorePack *) = "Local"
     static member CloudStub (* ICloudStubPack *) = ""
@@ -69,7 +68,7 @@ type IApp =
 and AppArgs = {
     Scope : (* AppArgs *) Scope
     Setup : (* AppArgs *) IApp -> unit
-    Ticker : (* IServicesPack *) TickerTypes.Args
+    Ticker : (* ITickingPack *) TickerTypes.Args
     PrimaryClipboard : (* ICorePack *) PrimaryTypes.Args
     LocalHistory : (* ICorePack *) HistoryTypes.Args
     History : (* ICorePack *) HistoryTypes.Args
@@ -85,7 +84,7 @@ and AppArgs = {
         {
             Scope = (* AppArgs *) scope
             Setup = (* AppArgs *) setup
-            Ticker = (* IServicesPack *) ticker
+            Ticker = (* ITickingPack *) ticker
             PrimaryClipboard = (* ICorePack *) primaryClipboard
             LocalHistory = (* ICorePack *) localHistory
             History = (* ICorePack *) history
@@ -100,12 +99,12 @@ and AppArgs = {
         AppArgs.Create
             NoScope (* AppArgs *) (* scope *)
             ignore (* AppArgs *) (* setup *)
-            (TickerTypes.Args.Default ()) (* IServicesPack *) (* ticker *)
+            (TickerTypes.Args.Default ()) (* ITickingPack *) (* ticker *)
             (PrimaryTypes.Args.Default ()) (* ICorePack *) (* primaryClipboard *)
             (HistoryTypes.Args.Default ()) (* ICorePack *) (* localHistory *)
             (HistoryTypes.Args.Default ()) (* ICorePack *) (* history *)
             (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true) (* ICloudStubPack *) (* cloudStub *)
-            (PacketClient.args true 1048576) (* ICloudStubPack *) (* packetClient *)
+            (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")) (* ICloudStubPack *) (* packetClient *)
             (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder) (* IClientPack *) (* credentialSecureStorage *)
             spawnPrefContext (* IClientPack *) (* preferences *)
             NoArgs (* ISessionPack *) (* session *)
@@ -114,7 +113,7 @@ and AppArgs = {
         {this with Scope = scope}
     static member SetSetup ((* AppArgs *) setup : IApp -> unit) (this : AppArgs) =
         {this with Setup = setup}
-    static member SetTicker ((* IServicesPack *) ticker : TickerTypes.Args) (this : AppArgs) =
+    static member SetTicker ((* ITickingPack *) ticker : TickerTypes.Args) (this : AppArgs) =
         {this with Ticker = ticker}
     static member SetPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) (this : AppArgs) =
         {this with PrimaryClipboard = primaryClipboard}
@@ -136,7 +135,7 @@ and AppArgs = {
         {this with FormsView = formsView}
     static member UpdateScope ((* AppArgs *) update : Scope -> Scope) (this : AppArgs) =
         this |> AppArgs.SetScope (update this.Scope)
-    static member UpdateTicker ((* IServicesPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : AppArgs) =
+    static member UpdateTicker ((* ITickingPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetTicker (update this.Ticker)
     static member UpdatePrimaryClipboard ((* ICorePack *) update : PrimaryTypes.Args -> PrimaryTypes.Args) (this : AppArgs) =
         this |> AppArgs.SetPrimaryClipboard (update this.PrimaryClipboard)
@@ -160,7 +159,7 @@ and AppArgs = {
         fun (this : AppArgs) ->
             E.object [
                 "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
-                "ticker", TickerTypes.Args.JsonEncoder (* IServicesPack *) this.Ticker
+                "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
                 "primary_clipboard", PrimaryTypes.Args.JsonEncoder (* ICorePack *) this.PrimaryClipboard
                 "local_history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.LocalHistory
                 "history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.History
@@ -171,7 +170,7 @@ and AppArgs = {
                 Scope = get.Optional.Field (* AppArgs *) "scope" Scope.JsonDecoder
                     |> Option.defaultValue NoScope
                 Setup = (* (* AppArgs *)  *) ignore
-                Ticker = get.Optional.Field (* IServicesPack *) "ticker" TickerTypes.Args.JsonDecoder
+                Ticker = get.Optional.Field (* ITickingPack *) "ticker" TickerTypes.Args.JsonDecoder
                     |> Option.defaultValue (TickerTypes.Args.Default ())
                 PrimaryClipboard = get.Optional.Field (* ICorePack *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder
                     |> Option.defaultValue (PrimaryTypes.Args.Default ())
@@ -180,7 +179,7 @@ and AppArgs = {
                 History = get.Optional.Field (* ICorePack *) "history" HistoryTypes.Args.JsonDecoder
                     |> Option.defaultValue (HistoryTypes.Args.Default ())
                 CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
-                PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576)
+                PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
                 CredentialSecureStorage = (* (* IClientPack *)  *) (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder)
                 Preferences = (* (* IClientPack *)  *) spawnPrefContext
                 Session = (* (* ISessionPack *)  *) NoArgs
@@ -196,7 +195,7 @@ and AppArgs = {
         this |> AppArgs.SetScope scope
     member this.WithSetup ((* AppArgs *) setup : IApp -> unit) =
         this |> AppArgs.SetSetup setup
-    member this.WithTicker ((* IServicesPack *) ticker : TickerTypes.Args) =
+    member this.WithTicker ((* ITickingPack *) ticker : TickerTypes.Args) =
         this |> AppArgs.SetTicker ticker
     member this.WithPrimaryClipboard ((* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
         this |> AppArgs.SetPrimaryClipboard primaryClipboard
@@ -216,18 +215,19 @@ and AppArgs = {
         this |> AppArgs.SetSession session
     member this.WithFormsView ((* IAppPack *) formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>) =
         this |> AppArgs.SetFormsView formsView
-    interface IServicesPackArgs with
-        member this.Ticker (* IServicesPack *) : TickerTypes.Args = this.Ticker
-    member this.AsServicesPackArgs = this :> IServicesPackArgs
+    interface ITickingPackArgs with
+        member this.Ticker (* ITickingPack *) : TickerTypes.Args = this.Ticker
+    member this.AsTickingPackArgs = this :> ITickingPackArgs
     interface ICorePackArgs with
         member this.PrimaryClipboard (* ICorePack *) : PrimaryTypes.Args = this.PrimaryClipboard
         member this.LocalHistory (* ICorePack *) : HistoryTypes.Args = this.LocalHistory
         member this.History (* ICorePack *) : HistoryTypes.Args = this.History
-        member this.AsServicesPackArgs = this.AsServicesPackArgs
+        member this.AsTickingPackArgs = this.AsTickingPackArgs
     member this.AsCorePackArgs = this :> ICorePackArgs
     interface ICloudStubPackArgs with
         member this.CloudStub (* ICloudStubPack *) : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt> = this.CloudStub
         member this.PacketClient (* ICloudStubPack *) : PacketClient.Args = this.PacketClient
+        member this.AsTickingPackArgs = this.AsTickingPackArgs
     member this.AsCloudStubPackArgs = this :> ICloudStubPackArgs
     interface IClientPackArgs with
         member this.CredentialSecureStorage (* IClientPack *) : SecureStorage.Args<Credential> = this.CredentialSecureStorage
@@ -254,7 +254,7 @@ type AppArgsBuilder () =
     member __.Scope (target : AppArgs, (* AppArgs *) scope : Scope) =
         target.WithScope scope
     [<CustomOperation("ticker")>]
-    member __.Ticker (target : AppArgs, (* IServicesPack *) ticker : TickerTypes.Args) =
+    member __.Ticker (target : AppArgs, (* ITickingPack *) ticker : TickerTypes.Args) =
         target.WithTicker ticker
     [<CustomOperation("primary_clipboard")>]
     member __.PrimaryClipboard (target : AppArgs, (* ICorePack *) primaryClipboard : PrimaryTypes.Args) =
@@ -271,7 +271,7 @@ let app_args = AppArgsBuilder ()
 type App (logging : ILogging, args : AppArgs) as this =
     let env = Env.live MailboxPlatform logging args.Scope
     let mutable setupError : exn option = None
-    let mutable (* IServicesPack *) ticker : TickerTypes.Agent option = None
+    let mutable (* ITickingPack *) ticker : TickerTypes.Agent option = None
     let mutable (* ICorePack *) primaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> option = None
     let mutable (* ICorePack *) localHistory : HistoryTypes.Agent option = None
     let mutable (* ICloudStubPack *) cloudStub : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> option = None
@@ -281,16 +281,16 @@ type App (logging : ILogging, args : AppArgs) as this =
     let mutable (* IAppPack *) formsView : FormsViewTypes.View<ISessionPack, ViewTypes.Model, ViewTypes.Msg> option = None
     let setupAsync (_runner : IRunner) : Task<unit> = task {
         try
-            let! (* IServicesPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args.Ticker) AppKinds.Ticker AppKeys.Ticker
+            let! (* ITickingPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args.Ticker) AppKinds.Ticker AppKeys.Ticker
             ticker <- Some ticker'
-            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsServicesPack args.PrimaryClipboard) AppKinds.PrimaryClipboard AppKeys.PrimaryClipboard
+            let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsTickingPack args.PrimaryClipboard) AppKinds.PrimaryClipboard AppKeys.PrimaryClipboard
             primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
             let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args.LocalHistory) AppKinds.LocalHistory AppKeys.LocalHistory
             localHistory <- Some localHistory'
             do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args.History) AppKinds.History
             let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.Logic.spec args.CloudStub) AppKinds.CloudStub AppKeys.CloudStub
             cloudStub <- Some cloudStub'
-            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) args.PacketClient) AppKinds.PacketClient
+            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) this.AsTickingPack args.PacketClient) AppKinds.PacketClient
             let! (* IClientPack *) credentialSecureStorage' = env |> Env.addServiceAsync (Dap.Local.Storage.Base.Logic.spec args.CredentialSecureStorage) AppKinds.CredentialSecureStorage AppKeys.CredentialSecureStorage
             credentialSecureStorage <- Some credentialSecureStorage'
             let! (* IClientPack *) preferences' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.Preferences) AppKinds.Preferences AppKeys.Preferences
@@ -323,10 +323,10 @@ type App (logging : ILogging, args : AppArgs) as this =
         member __.Log m = env.Log m
     interface IPack with
         member __.Env : IEnv = env
-    interface IServicesPack with
-        member __.Args = this.Args.AsServicesPackArgs
-        member __.Ticker (* IServicesPack *) : TickerTypes.Agent = ticker |> Option.get
-    member __.AsServicesPack = this :> IServicesPack
+    interface ITickingPack with
+        member __.Args = this.Args.AsTickingPackArgs
+        member __.Ticker (* ITickingPack *) : TickerTypes.Agent = ticker |> Option.get
+    member __.AsTickingPack = this :> ITickingPack
     interface ICorePack with
         member __.Args = this.Args.AsCorePackArgs
         member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
@@ -335,7 +335,7 @@ type App (logging : ILogging, args : AppArgs) as this =
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "History" key
             return (agent :?> HistoryTypes.Agent, isNew)
         }
-        member __.AsServicesPack = this.AsServicesPack
+        member __.AsTickingPack = this.AsTickingPack
     member __.AsCorePack = this :> ICorePack
     interface ICloudStubPack with
         member __.Args = this.Args.AsCloudStubPackArgs
@@ -344,6 +344,7 @@ type App (logging : ILogging, args : AppArgs) as this =
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketClient" key
             return (agent :?> PacketClient.Agent, isNew)
         }
+        member __.AsTickingPack = this.AsTickingPack
     member __.AsCloudStubPack = this :> ICloudStubPack
     interface IClientPack with
         member __.Args = this.Args.AsClientPackArgs

@@ -29,7 +29,7 @@ and Msg =
 with interface IMsg
 
 and Agent (pack, param) =
-    inherit PackAgent<IServicesPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
+    inherit PackAgent<ITickingPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
     override this.Runner = this
     static member Spawn pack param = new Agent (pack, param)
 

@@ -6,6 +6,7 @@ open Dap.Context.Generator
 open Dap.Platform
 open Dap.Platform.Meta
 open Dap.Platform.Generator
+open Dap.Platform.Dsl.Packs
 open Dap.WebSocket.Meta
 open Dap.Remote.Meta
 open Dap.Forms.Meta
@@ -36,8 +37,8 @@ let PrefContext =
     ]
 
 let ICloudStubPack =
-    pack [] {
-        register (M.packetClientSpawner (true))
+    pack [ <@ ITickingPack @> ] {
+        register_pack <@ ITickingPack @> (M.packetClientSpawner (true))
         add (M.proxyService (
                 [("Cloud", "SuperClip.Core.Cloud")],
                 "Cloud.Req, Cloud.ClientRes, Cloud.Evt", "Cloud.StubSpec",

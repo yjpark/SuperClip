@@ -16,7 +16,7 @@ open SuperClip.Server.CloudHub.Tasks
 module ChannelTypes = SuperClip.Core.Channel.Types
 type ChannelService = SuperClip.Core.Channel.Service.Service
 
-type ActorOperate = ActorOperate<Agent, Args, Model, Msg, Req, Evt>
+type ActorOperate = Operate<Agent, Model, Msg>
 
 let private doSetItem req ((item, callback) : Item * Callback<Result<Cloud.SetItemRes, Cloud.SetItemErr>>) : ActorOperate =
     fun runner (model, cmd) ->
@@ -124,7 +124,7 @@ let private handleChannelEvt (channel : ChannelService) (evt : ChannelTypes.Evt)
     | ChannelTypes.OnDeviceRemoved device ->
         addSubCmd HubEvt <| Cloud.OnPeerLeft ^<| Peer.Create channel.Channel device
 
-let private update : ActorUpdate<Agent, Args, Model, Msg, Req, Evt> =
+let private update : Update<Agent, Model, Msg> =
     fun runner msg model ->
         match msg with
         | HubReq req ->
