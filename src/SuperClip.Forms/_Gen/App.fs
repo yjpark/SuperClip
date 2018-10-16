@@ -79,36 +79,62 @@ and AppArgs = {
     Session : (* ISessionPack *) NoArgs
     FormsView : (* IAppPack *) FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>
 } with
-    static member Create scope setup ticker primaryClipboard localHistory history cloudStub packetClient credentialSecureStorage preferences session formsView
-            : AppArgs =
+    static member Create
+        (
+            ?scope : Scope,
+            ?setup : IApp -> unit,
+            ?ticker : TickerTypes.Args,
+            ?primaryClipboard : PrimaryTypes.Args,
+            ?localHistory : HistoryTypes.Args,
+            ?history : HistoryTypes.Args,
+            ?cloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>,
+            ?packetClient : PacketClient.Args,
+            ?credentialSecureStorage : SecureStorage.Args<Credential>,
+            ?preferences : Context.Args<PrefContext>,
+            ?session : NoArgs,
+            ?formsView : FormsViewTypes.Args<ISessionPack, ViewTypes.Model, ViewTypes.Msg>
+        ) : AppArgs =
         {
             Scope = (* AppArgs *) scope
+                |> Option.defaultWith (fun () -> NoScope)
             Setup = (* AppArgs *) setup
+                |> Option.defaultWith (fun () -> ignore)
             Ticker = (* ITickingPack *) ticker
+                |> Option.defaultWith (fun () -> (TickerTypes.Args.Default ()))
             PrimaryClipboard = (* ICorePack *) primaryClipboard
+                |> Option.defaultWith (fun () -> (PrimaryTypes.Args.Default ()))
             LocalHistory = (* ICorePack *) localHistory
+                |> Option.defaultWith (fun () -> (HistoryTypes.Args.Default ()))
             History = (* ICorePack *) history
+                |> Option.defaultWith (fun () -> (HistoryTypes.Args.Default ()))
             CloudStub = (* ICloudStubPack *) cloudStub
+                |> Option.defaultWith (fun () -> (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true))
             PacketClient = (* ICloudStubPack *) packetClient
+                |> Option.defaultWith (fun () -> (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
             CredentialSecureStorage = (* IClientPack *) credentialSecureStorage
+                |> Option.defaultWith (fun () -> (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder))
             Preferences = (* IClientPack *) preferences
+                |> Option.defaultWith (fun () -> spawnPrefContext)
             Session = (* ISessionPack *) session
+                |> Option.defaultWith (fun () -> NoArgs)
             FormsView = (* IAppPack *) formsView
+                |> Option.defaultWith (fun () -> (SuperClip.Forms.View.Logic.newArgs ()))
         }
     static member Default () =
-        AppArgs.Create
-            NoScope (* AppArgs *) (* scope *)
-            ignore (* AppArgs *) (* setup *)
-            (TickerTypes.Args.Default ()) (* ITickingPack *) (* ticker *)
-            (PrimaryTypes.Args.Default ()) (* ICorePack *) (* primaryClipboard *)
-            (HistoryTypes.Args.Default ()) (* ICorePack *) (* localHistory *)
-            (HistoryTypes.Args.Default ()) (* ICorePack *) (* history *)
-            (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true) (* ICloudStubPack *) (* cloudStub *)
-            (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")) (* ICloudStubPack *) (* packetClient *)
-            (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder) (* IClientPack *) (* credentialSecureStorage *)
-            spawnPrefContext (* IClientPack *) (* preferences *)
-            NoArgs (* ISessionPack *) (* session *)
+        AppArgs.Create (
+            NoScope, (* AppArgs *) (* scope *)
+            ignore, (* AppArgs *) (* setup *)
+            (TickerTypes.Args.Default ()), (* ITickingPack *) (* ticker *)
+            (PrimaryTypes.Args.Default ()), (* ICorePack *) (* primaryClipboard *)
+            (HistoryTypes.Args.Default ()), (* ICorePack *) (* localHistory *)
+            (HistoryTypes.Args.Default ()), (* ICorePack *) (* history *)
+            (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true), (* ICloudStubPack *) (* cloudStub *)
+            (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")), (* ICloudStubPack *) (* packetClient *)
+            (SecureStorage.args Credential.JsonEncoder Credential.JsonDecoder), (* IClientPack *) (* credentialSecureStorage *)
+            spawnPrefContext, (* IClientPack *) (* preferences *)
+            NoArgs, (* ISessionPack *) (* session *)
             (SuperClip.Forms.View.Logic.newArgs ()) (* IAppPack *) (* formsView *)
+        )
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
         {this with Scope = scope}
     static member SetSetup ((* AppArgs *) setup : IApp -> unit) (this : AppArgs) =

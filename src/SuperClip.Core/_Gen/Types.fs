@@ -13,15 +13,19 @@ open Dap.Platform
  *     IsJson
  *)
 type Content =
+    | NoContent
     | Text of content : string
     | Asset of url : string
 with
+    static member CreateNoContent () : Content =
+        NoContent
     static member CreateText content : Content =
         Text (content)
     static member CreateAsset url : Content =
         Asset (url)
     static member JsonSpec' : CaseSpec<Content> list =
         [
+            CaseSpec<Content>.Create ("NoContent", [])
             CaseSpec<Content>.Create ("Text", [
                 S.string
             ])
@@ -35,6 +39,8 @@ with
         FieldSpec.Create<Content> (Content.JsonEncoder, Content.JsonDecoder)
     interface IJson with
         member this.ToJson () = Content.JsonEncoder this
+    static member Default () =
+        Content.NoContent
 
 (*
  * Generated: <Record>
@@ -44,16 +50,22 @@ type Device = {
     Guid : (* Device *) Guid
     Name : (* Device *) string
 } with
-    static member Create guid name
-            : Device =
+    static member Create
+        (
+            ?guid : Guid,
+            ?name : string
+        ) : Device =
         {
             Guid = (* Device *) guid
+                |> Option.defaultWith (fun () -> (System.Guid.NewGuid().ToString()))
             Name = (* Device *) name
+                |> Option.defaultWith (fun () -> "")
         }
     static member Default () =
-        Device.Create
-            (System.Guid.NewGuid().ToString()) (* Device *) (* guid *)
+        Device.Create (
+            (System.Guid.NewGuid().ToString()), (* Device *) (* guid *)
             "" (* Device *) (* name *)
+        )
     static member SetGuid ((* Device *) guid : Guid) (this : Device) =
         {this with Guid = guid}
     static member SetName ((* Device *) name : string) (this : Device) =
@@ -93,16 +105,22 @@ type Channel = {
     Guid : (* Channel *) Guid
     Name : (* Channel *) string
 } with
-    static member Create guid name
-            : Channel =
+    static member Create
+        (
+            ?guid : Guid,
+            ?name : string
+        ) : Channel =
         {
             Guid = (* Channel *) guid
+                |> Option.defaultWith (fun () -> (System.Guid.NewGuid().ToString()))
             Name = (* Channel *) name
+                |> Option.defaultWith (fun () -> "")
         }
     static member Default () =
-        Channel.Create
-            (System.Guid.NewGuid().ToString()) (* Channel *) (* guid *)
+        Channel.Create (
+            (System.Guid.NewGuid().ToString()), (* Channel *) (* guid *)
             "" (* Channel *) (* name *)
+        )
     static member SetGuid ((* Channel *) guid : Guid) (this : Channel) =
         {this with Guid = guid}
     static member SetName ((* Channel *) name : string) (this : Channel) =
@@ -142,16 +160,22 @@ type Peer = {
     Channel : (* Peer *) Channel
     Device : (* Peer *) Device
 } with
-    static member Create channel device
-            : Peer =
+    static member Create
+        (
+            ?channel : Channel,
+            ?device : Device
+        ) : Peer =
         {
             Channel = (* Peer *) channel
+                |> Option.defaultWith (fun () -> (Channel.Default ()))
             Device = (* Peer *) device
+                |> Option.defaultWith (fun () -> (Device.Default ()))
         }
     static member Default () =
-        Peer.Create
-            (Channel.Default ()) (* Peer *) (* channel *)
+        Peer.Create (
+            (Channel.Default ()), (* Peer *) (* channel *)
             (Device.Default ()) (* Peer *) (* device *)
+        )
     static member SetChannel ((* Peer *) channel : Channel) (this : Peer) =
         {this with Channel = channel}
     static member SetDevice ((* Peer *) device : Device) (this : Peer) =
@@ -191,16 +215,22 @@ type Peers = {
     Channel : (* Peers *) Channel
     Devices : (* Peers *) Device list
 } with
-    static member Create channel devices
-            : Peers =
+    static member Create
+        (
+            ?channel : Channel,
+            ?devices : Device list
+        ) : Peers =
         {
             Channel = (* Peers *) channel
+                |> Option.defaultWith (fun () -> (Channel.Default ()))
             Devices = (* Peers *) devices
+                |> Option.defaultWith (fun () -> [])
         }
     static member Default () =
-        Peers.Create
-            (Channel.Default ()) (* Peers *) (* channel *)
+        Peers.Create (
+            (Channel.Default ()), (* Peers *) (* channel *)
             [] (* Peers *) (* devices *)
+        )
     static member SetChannel ((* Peers *) channel : Channel) (this : Peers) =
         {this with Channel = channel}
     static member SetDevices ((* Peers *) devices : Device list) (this : Peers) =
@@ -237,15 +267,19 @@ type Peers = {
  *     IsJson
  *)
 type Source =
+    | NoSource
     | Local
     | Cloud of sender : Peer
 with
+    static member CreateNoSource () : Source =
+        NoSource
     static member CreateLocal () : Source =
         Local
     static member CreateCloud sender : Source =
         Cloud (sender)
     static member JsonSpec' : CaseSpec<Source> list =
         [
+            CaseSpec<Source>.Create ("NoSource", [])
             CaseSpec<Source>.Create ("Local", [])
             CaseSpec<Source>.Create ("Cloud", [
                 Peer.JsonSpec
@@ -257,6 +291,8 @@ with
         FieldSpec.Create<Source> (Source.JsonEncoder, Source.JsonDecoder)
     interface IJson with
         member this.ToJson () = Source.JsonEncoder this
+    static member Default () =
+        Source.NoSource
 
 (*
  * Generated: <Record>
@@ -267,13 +303,26 @@ type Item = {
     Source : Source
     Content : Content
 } with
-    static member Create time source content
-            : Item =
+    static member Create
+        (
+            ?time : Instant,
+            ?source : Source,
+            ?content : Content
+        ) : Item =
         {
             Time = (* Item *) time
+                |> Option.defaultWith (fun () -> (getNow' ()))
             Source = source
+                |> Option.defaultWith (fun () -> NoSource)
             Content = content
+                |> Option.defaultWith (fun () -> NoContent)
         }
+    static member Default () =
+        Item.Create (
+            (getNow' ()), (* Item *) (* time *)
+            NoSource, (* source *)
+            NoContent (* content *)
+        )
     static member SetTime ((* Item *) time : Instant) (this : Item) =
         {this with Time = time}
     static member SetSource (source : Source) (this : Item) =
@@ -321,16 +370,22 @@ type PrimaryClipboardArgs = {
     CheckInterval : (* PrimaryClipboardArgs *) Duration
     TimeoutDuration : (* PrimaryClipboardArgs *) Duration
 } with
-    static member Create checkInterval timeoutDuration
-            : PrimaryClipboardArgs =
+    static member Create
+        (
+            ?checkInterval : Duration,
+            ?timeoutDuration : Duration
+        ) : PrimaryClipboardArgs =
         {
             CheckInterval = (* PrimaryClipboardArgs *) checkInterval
+                |> Option.defaultWith (fun () -> (decodeJsonString Duration.JsonDecoder """0:00:00:00.5"""))
             TimeoutDuration = (* PrimaryClipboardArgs *) timeoutDuration
+                |> Option.defaultWith (fun () -> (decodeJsonString Duration.JsonDecoder """0:00:00:01"""))
         }
     static member Default () =
-        PrimaryClipboardArgs.Create
-            (decodeJsonString Duration.JsonDecoder """0:00:00:00.5""") (* PrimaryClipboardArgs *) (* checkInterval *)
+        PrimaryClipboardArgs.Create (
+            (decodeJsonString Duration.JsonDecoder """0:00:00:00.5"""), (* PrimaryClipboardArgs *) (* checkInterval *)
             (decodeJsonString Duration.JsonDecoder """0:00:00:01""") (* PrimaryClipboardArgs *) (* timeoutDuration *)
+        )
     static member SetCheckInterval ((* PrimaryClipboardArgs *) checkInterval : Duration) (this : PrimaryClipboardArgs) =
         {this with CheckInterval = checkInterval}
     static member SetTimeoutDuration ((* PrimaryClipboardArgs *) timeoutDuration : Duration) (this : PrimaryClipboardArgs) =
@@ -370,16 +425,22 @@ type HistoryArgs = {
     MaxSize : (* HistoryArgs *) int
     RecentSize : (* HistoryArgs *) int
 } with
-    static member Create maxSize recentSize
-            : HistoryArgs =
+    static member Create
+        (
+            ?maxSize : int,
+            ?recentSize : int
+        ) : HistoryArgs =
         {
             MaxSize = (* HistoryArgs *) maxSize
+                |> Option.defaultWith (fun () -> 400)
             RecentSize = (* HistoryArgs *) recentSize
+                |> Option.defaultWith (fun () -> 20)
         }
     static member Default () =
-        HistoryArgs.Create
-            400 (* HistoryArgs *) (* maxSize *)
+        HistoryArgs.Create (
+            400, (* HistoryArgs *) (* maxSize *)
             20 (* HistoryArgs *) (* recentSize *)
+        )
     static member SetMaxSize ((* HistoryArgs *) maxSize : int) (this : HistoryArgs) =
         {this with MaxSize = maxSize}
     static member SetRecentSize ((* HistoryArgs *) recentSize : int) (this : HistoryArgs) =

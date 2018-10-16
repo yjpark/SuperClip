@@ -103,7 +103,7 @@ let doAuthAsync (auth : Cloud.AuthReq) : GetReplyTask<Agent, Result<Cloud.AuthRe
             match runner.Pack |> ChannelAuth.checkToken token auth with
             | Ok (auth, token) ->
                 let! channel = runner |> getOrAddChannelAsync auth.Channel device
-                let peers = Peers.Create auth.Channel channel.Actor.State.Devices
+                let peers = Peers.Create (auth.Channel, channel.Actor.State.Devices)
                 reply runner callback <| ack req ^<| Ok peers
             | Error err ->
                 logWarn runner "doAuthAsync" "CheckToken_Failed" (token, auth)

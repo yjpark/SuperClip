@@ -8,6 +8,7 @@ open Dap.Platform.Generator
 
 let Content =
     union {
+        kind "NoContent"
         case "Text" (fields {
             var (M.string "content")
         })
@@ -42,6 +43,7 @@ let Peers =
 
 let Source =
     union {
+        kind "NoSource"
         kind "Local"
         case "Cloud" (fields {
             var (M.custom (<@ Peer @>, "sender"))
@@ -51,8 +53,8 @@ let Source =
 let Item =
     combo {
         var (M.instant "time")
-        var (M.union (<@ Source @>, "source"))
-        var (M.union (<@ Content @>, "content"))
+        var (M.union (<@ Source @>, "source", "NoSource", ""))
+        var (M.union (<@ Content @>, "content", "NoContent", ""))
     }
 
 let PrimaryClipboardArgs =
@@ -91,11 +93,13 @@ let compile segments =
                 [
                     G.PackOpens
                     G.JsonUnion <@ Content @>
+                    |> G.Default "Content.NoContent"
                     G.JsonRecord <@ Device @>
                     G.JsonRecord <@ Channel @>
                     G.JsonRecord <@ Peer @>
                     G.JsonRecord <@ Peers @>
                     G.JsonUnion <@ Source @>
+                    |> G.Default "Source.NoSource"
                     G.JsonRecord <@ Item @>
                     G.JsonRecord <@ PrimaryClipboardArgs @>
                     G.JsonRecord <@ HistoryArgs @>

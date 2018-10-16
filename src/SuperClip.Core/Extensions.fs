@@ -13,6 +13,7 @@ open SuperClip.Core
 type Content with
     member this.IsEmpty =
         match this with
+        | NoContent -> true
         | Text text ->
             String.IsNullOrWhiteSpace text
         | Asset url ->
@@ -22,10 +23,12 @@ type Content with
             ""
         else
             match this with
+            | NoContent -> ""
             | Text text -> calcSha256Sum text
             | Asset url -> calcSha256Sum url
     member this.Encrypt (cryptoKey : string) =
         match this with
+        | NoContent -> NoContent
         | Text text ->
             Des.encrypt cryptoKey text
             |> Text
@@ -34,6 +37,7 @@ type Content with
             |> Asset
     member this.Decrypt (runner : IRunner) (cryptoKey : string) =
         match this with
+        | NoContent -> NoContent
         | Text text ->
             Des.decrypt runner cryptoKey text
             |> Option.map (fun text ->
@@ -79,7 +83,7 @@ type Channel with
 
 type Item with
     static member Empty =
-        Item.Create Instant.MinValue Local (Text "")
+        Item.Create (Instant.MinValue, Local, Text "")
     member this.IsEmpty = this.Content.IsEmpty
     member this.Hash = this.Content.Hash
     member this.ForCloud (peer : Peer) (cryptoKey : string) =

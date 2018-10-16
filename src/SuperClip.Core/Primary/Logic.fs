@@ -50,7 +50,7 @@ let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOp
             | Asset url ->
                 //TODO
                 ()
-            let current = Item.Create runner.Clock.Now Local content
+            let current = Item.Create (runner.Clock.Now, Local, content)
             runner.Deliver <| Evt ^<| OnSet current
             reply runner callback <| ack req ()
             ({model with Current = current}, cmd)
@@ -83,7 +83,7 @@ let private onGet (res : Result<Content, exn>) : ActorOperate =
                     || content = model.Current.Content then
                     (model.Current, false)
                 else
-                    (Item.Create runner.Clock.Now Local content, true)
+                    (Item.Create (runner.Clock.Now, Local, content), true)
             | Error _err ->
                 (model.Current, false)
         runner.AddTask ignoreOnFailed <| onGetAsync res current model.WaitingCallbacks

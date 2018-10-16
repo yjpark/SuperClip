@@ -26,22 +26,34 @@ type Credential = {
     CryptoKey : (* Credential *) string
     Token : (* Credential *) string
 } with
-    static member Create device channel passHash cryptoKey token
-            : Credential =
+    static member Create
+        (
+            ?device : Device,
+            ?channel : Channel,
+            ?passHash : string,
+            ?cryptoKey : string,
+            ?token : string
+        ) : Credential =
         {
             Device = (* Credential *) device
+                |> Option.defaultWith (fun () -> (Device.Default ()))
             Channel = (* Credential *) channel
+                |> Option.defaultWith (fun () -> (Channel.Default ()))
             PassHash = (* Credential *) passHash
+                |> Option.defaultWith (fun () -> "")
             CryptoKey = (* Credential *) cryptoKey
+                |> Option.defaultWith (fun () -> "")
             Token = (* Credential *) token
+                |> Option.defaultWith (fun () -> "")
         }
     static member Default () =
-        Credential.Create
-            (Device.Default ()) (* Credential *) (* device *)
-            (Channel.Default ()) (* Credential *) (* channel *)
-            "" (* Credential *) (* passHash *)
-            "" (* Credential *) (* cryptoKey *)
+        Credential.Create (
+            (Device.Default ()), (* Credential *) (* device *)
+            (Channel.Default ()), (* Credential *) (* channel *)
+            "", (* Credential *) (* passHash *)
+            "", (* Credential *) (* cryptoKey *)
             "" (* Credential *) (* token *)
+        )
     static member SetDevice ((* Credential *) device : Device) (this : Credential) =
         {this with Device = device}
     static member SetChannel ((* Credential *) channel : Channel) (this : Credential) =
@@ -103,18 +115,18 @@ type Credential = {
  *)
 type PrefProperties (owner : IOwner, key : Key) =
     inherit WrapProperties<PrefProperties, IComboProperty> ()
-    let target = Properties.combo owner key
+    let target = Properties.combo (owner, key)
     let credential = target.AddVar<(* PrefProperties *) Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None, None)
     do (
         target.SealCombo ()
         base.Setup (target)
     )
-    static member Create o k = new PrefProperties (o, k)
-    static member Default () = PrefProperties.Create noOwner NoKey
+    static member Create (o, k) = new PrefProperties (o, k)
+    static member Default () = PrefProperties.Create (noOwner, NoKey)
     static member AddToCombo key (combo : IComboProperty) =
         combo.AddCustom<PrefProperties> (PrefProperties.Create, key)
     override this.Self = this
-    override __.Spawn o k = PrefProperties.Create o k
+    override __.Spawn (o, k) = PrefProperties.Create (o, k)
     override __.SyncTo t = target.SyncTo t.Target
     member __.Credential (* PrefProperties *) : IVarProperty<Credential option> = credential
 

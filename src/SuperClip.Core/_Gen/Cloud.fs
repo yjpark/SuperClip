@@ -15,16 +15,22 @@ type JoinReq = {
     Peer : (* JoinReq *) Peer
     PassHash : (* JoinReq *) string
 } with
-    static member Create peer passHash
-            : JoinReq =
+    static member Create
+        (
+            ?peer : Peer,
+            ?passHash : string
+        ) : JoinReq =
         {
             Peer = (* JoinReq *) peer
+                |> Option.defaultWith (fun () -> (Peer.Default ()))
             PassHash = (* JoinReq *) passHash
+                |> Option.defaultWith (fun () -> "")
         }
     static member Default () =
-        JoinReq.Create
-            (Peer.Default ()) (* JoinReq *) (* peer *)
+        JoinReq.Create (
+            (Peer.Default ()), (* JoinReq *) (* peer *)
             "" (* JoinReq *) (* passHash *)
+        )
     static member SetPeer ((* JoinReq *) peer : Peer) (this : JoinReq) =
         {this with Peer = peer}
     static member SetPassHash ((* JoinReq *) passHash : string) (this : JoinReq) =

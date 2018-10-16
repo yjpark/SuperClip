@@ -48,26 +48,42 @@ and AppArgs = {
     CloudHub : (* ICloudHubPack *) NoArgs
     CloudHubGateway : (* ICloudHubPack *) Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
 } with
-    static member Create scope setup farangoDb ticker packetConn cloudHub cloudHubGateway
-            : AppArgs =
+    static member Create
+        (
+            ?scope : Scope,
+            ?setup : IApp -> unit,
+            ?farangoDb : FarangoDb.Args,
+            ?ticker : TickerTypes.Args,
+            ?packetConn : PacketConn.Args,
+            ?cloudHub : NoArgs,
+            ?cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
+        ) : AppArgs =
         {
             Scope = (* AppArgs *) scope
+                |> Option.defaultWith (fun () -> NoScope)
             Setup = (* AppArgs *) setup
+                |> Option.defaultWith (fun () -> ignore)
             FarangoDb = (* IDbPack *) farangoDb
+                |> Option.defaultWith (fun () -> (FarangoDb.Args.Default ()))
             Ticker = (* ITickingPack *) ticker
+                |> Option.defaultWith (fun () -> (TickerTypes.Args.Default ()))
             PacketConn = (* ICloudHubPack *) packetConn
+                |> Option.defaultWith (fun () -> (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
             CloudHub = (* ICloudHubPack *) cloudHub
+                |> Option.defaultWith (fun () -> NoArgs)
             CloudHubGateway = (* ICloudHubPack *) cloudHubGateway
+                |> Option.defaultWith (fun () -> (Gateway.args CloudHubTypes.HubSpec true))
         }
     static member Default () =
-        AppArgs.Create
-            NoScope (* AppArgs *) (* scope *)
-            ignore (* AppArgs *) (* setup *)
-            (FarangoDb.Args.Default ()) (* IDbPack *) (* farangoDb *)
-            (TickerTypes.Args.Default ()) (* ITickingPack *) (* ticker *)
-            (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")) (* ICloudHubPack *) (* packetConn *)
-            NoArgs (* ICloudHubPack *) (* cloudHub *)
+        AppArgs.Create (
+            NoScope, (* AppArgs *) (* scope *)
+            ignore, (* AppArgs *) (* setup *)
+            (FarangoDb.Args.Default ()), (* IDbPack *) (* farangoDb *)
+            (TickerTypes.Args.Default ()), (* ITickingPack *) (* ticker *)
+            (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")), (* ICloudHubPack *) (* packetConn *)
+            NoArgs, (* ICloudHubPack *) (* cloudHub *)
             (Gateway.args CloudHubTypes.HubSpec true) (* ICloudHubPack *) (* cloudHubGateway *)
+        )
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
         {this with Scope = scope}
     static member SetSetup ((* AppArgs *) setup : IApp -> unit) (this : AppArgs) =

@@ -21,6 +21,7 @@ type ActorOperate = Operate<Agent, Model, Msg>
 let private doSetItem req ((item, callback) : Item * Callback<Result<Cloud.SetItemRes, Cloud.SetItemErr>>) : ActorOperate =
     fun runner (model, cmd) ->
         match item.Source with
+        | NoSource
         | Local ->
             reply runner callback <| ack req ^<| Error Cloud.SetItemErr.InvalidSource
         | Cloud peer ->
@@ -120,9 +121,9 @@ let private handleChannelEvt (channel : ChannelService) (evt : ChannelTypes.Evt)
     | ChannelTypes.OnChanged item ->
         addSubCmd HubEvt <| Cloud.OnItemChanged item
     | ChannelTypes.OnDeviceAdded device ->
-        addSubCmd HubEvt <| Cloud.OnPeerJoin ^<| Peer.Create channel.Channel device
+        addSubCmd HubEvt <| Cloud.OnPeerJoin ^<| Peer.Create (channel.Channel, device)
     | ChannelTypes.OnDeviceRemoved device ->
-        addSubCmd HubEvt <| Cloud.OnPeerLeft ^<| Peer.Create channel.Channel device
+        addSubCmd HubEvt <| Cloud.OnPeerLeft ^<| Peer.Create (channel.Channel, device)
 
 let private update : Update<Agent, Model, Msg> =
     fun runner msg model ->

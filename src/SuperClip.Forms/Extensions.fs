@@ -10,7 +10,7 @@ open SuperClip.Core
 
 type Credential with
     member this.Self =
-        Peer.Create this.Channel this.Device
+        Peer.Create (this.Channel, this.Device)
 
 type ICorePack with
     member this.Primary = this.PrimaryClipboard
