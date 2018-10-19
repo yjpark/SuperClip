@@ -22,6 +22,7 @@ let private capText (limit : int) (str : string) =
 
 let private getText (item : Item) =
     match item.Content with
+    | NoContent -> ""
     | Text text -> text
     | Asset url -> url
     |> capText 128

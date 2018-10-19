@@ -115,11 +115,11 @@ type Credential = {
  *)
 type PrefProperties (owner : IOwner, key : Key) =
     inherit WrapProperties<PrefProperties, IComboProperty> ()
-    let target = Properties.combo (owner, key)
-    let credential = target.AddVar<(* PrefProperties *) Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None, None)
+    let target' = Properties.combo (owner, key)
+    let credential = target'.AddVar<(* PrefProperties *) Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None, None)
     do (
-        target.SealCombo ()
-        base.Setup (target)
+        target'.SealCombo ()
+        base.Setup (target')
     )
     static member Create (o, k) = new PrefProperties (o, k)
     static member Default () = PrefProperties.Create (noOwner, NoKey)
@@ -127,7 +127,7 @@ type PrefProperties (owner : IOwner, key : Key) =
         combo.AddCustom<PrefProperties> (PrefProperties.Create, key)
     override this.Self = this
     override __.Spawn (o, k) = PrefProperties.Create (o, k)
-    override __.SyncTo t = target.SyncTo t.Target
+    override __.SyncTo t = target'.SyncTo t.Target
     member __.Credential (* PrefProperties *) : IVarProperty<Credential option> = credential
 
 type PrefContext = CustomContext<PrefProperties>

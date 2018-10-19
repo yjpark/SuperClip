@@ -44,6 +44,7 @@ let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOp
             (model, cmd)
         else
             match content with
+            | NoContent -> ()
             | Text text ->
                 runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
                 |> ignore
