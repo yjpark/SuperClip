@@ -334,4 +334,5 @@ build
 
 src/*/log
 src/*/doc
-
+bin
+obj

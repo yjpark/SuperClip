@@ -19,10 +19,11 @@ open Dap.Build
 [<Literal>]
 let Dist = "Dist"
 
-let feed : NuGet.Feed = {
-    NuGet.Source = "https://nuget.yjpark.org/nuget/dap"
-    NuGet.ApiKey = NuGet.Plain "wnHZEG9N_OrmO3XKoAGT"
-}
+let feed =
+    NuGet.Feed.Create (
+        server = NuGet.ProGet "https://nuget.yjpark.org/nuget/dap",
+        apiKey = NuGet.Environment "API_KEY_nuget_yjpark_org"
+    )
 
 let libProjects =
     !! "src/SuperClip.Core/*.fsproj"
