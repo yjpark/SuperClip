@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="../SuperClip.Core/SuperClip.Core.props" />
+  <ItemGroup>
+    <Compile Include="../SuperClip.Eto/Feature/Gtk/LocalClipboard.fs" />
+    <Compile Include="../SuperClip.Eto/Feature/Mac/LocalClipboard.fs" />
+  </ItemGroup>
+  <Import Project="../SuperClip.App/SuperClip.App.props" />
+  <Import Project="../SuperClip.Gui/SuperClip.Gui.props" />
+  <ItemGroup>
+    <Compile Include="../SuperClip.Eto/Dsl/Prefabs.fs" />
+    <Compile Include="../SuperClip.Eto/_Gen/Prefab/LinkStatus.fs" />
+    <Compile Include="../SuperClip.Eto/_Gen/Prefab/AuthView.fs" />
+    <Compile Include="../SuperClip.Eto/_Gen/Prefab/HomeView.fs" />
+    <Compile Include="../SuperClip.Eto/Form/Main.fs" />
+    <Compile Include="../SuperClip.Eto/EtoApp.fs" />
+  </ItemGroup>
+</Project>

@@ -4,6 +4,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <DefineConstants>DAP_FORMS_FEATURE;SUPERCLIP_FORMS_FEATURE</DefineConstants>
     <PackageProjectUrl>https://github.com/pettyfun/SuperClip</PackageProjectUrl>
     <PackageTags>fsharp;</PackageTags>
     <Authors>YJ Park</Authors>
@@ -11,15 +12,13 @@
     <Description>SuperClip.Core</Description>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
+  <Import Project="../SuperClip.Core/SuperClip.Core.props" />
   <ItemGroup>
-    <Compile Include="Dsl.fs" />
-    <Compile Include="_Gen/Types.fs" />
-    <Compile Include="Extensions.fs" />
-    <Compile Include="Pref.fs" />
-    <Compile Include="Session/Types.fs" />
-    <Compile Include="Session/Tasks.fs" />
-    <Compile Include="Session/Logic.fs" />
-    <Compile Include="_Gen/Packs.fs" />
+    <Compile Include="Feature/LocalClipboard.fs" />
+  </ItemGroup>
+  <Import Project="../SuperClip.App/SuperClip.App.props" />
+  <Import Project="../SuperClip.Gui/SuperClip.Gui.props" />
+  <ItemGroup>
     <Compile Include="View/Types.fs" />
     <Compile Include="View/Widget/Item.fs" />
     <Compile Include="View/Widget/Items.fs" />
@@ -28,14 +27,7 @@
     <Compile Include="View/Page/Auth.fs" />
     <Compile Include="View/Page/Home.fs" />
     <Compile Include="View/Logic.fs" />
-    <Compile Include="_Gen/App.fs" />
-    <Compile Include="Helper.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02" PrivateAssets="All" />
+    <Compile Include="FormsApp.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

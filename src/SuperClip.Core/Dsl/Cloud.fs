@@ -56,7 +56,7 @@ let Cloud =
 
 let compile segments =
     [
-        G.File (segments, ["_Gen" ; "Cloud.fs"],
+        G.File (segments, ["_Gen1" ; "Cloud.fs"],
             G.QualifiedModule ("SuperClip.Core.Cloud",
                 [
                     G.JsonRecord <@ JoinReq @>

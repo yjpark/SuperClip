@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Server.App
 
+open System.Threading
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -15,6 +16,10 @@ module TickerTypes = Dap.Platform.Ticker.Types
 module PacketConn = Dap.Remote.WebSocketGateway.PacketConn
 module CloudHubTypes = SuperClip.Server.CloudHub.Types
 module Gateway = Dap.Remote.WebSocketGateway.Gateway
+
+(*
+ * Generated: <App>
+ *)
 
 type AppKinds () =
     static member FarangoDb (* IDbPack *) = "FarangoDb"
@@ -50,13 +55,13 @@ and AppArgs = {
 } with
     static member Create
         (
-            ?scope : Scope,
-            ?setup : IApp -> unit,
-            ?farangoDb : FarangoDb.Args,
-            ?ticker : TickerTypes.Args,
-            ?packetConn : PacketConn.Args,
-            ?cloudHub : NoArgs,
-            ?cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
+            ?scope : (* AppArgs *) Scope,
+            ?setup : (* AppArgs *) IApp -> unit,
+            ?farangoDb : (* IDbPack *) FarangoDb.Args,
+            ?ticker : (* ITickingPack *) TickerTypes.Args,
+            ?packetConn : (* ICloudHubPack *) PacketConn.Args,
+            ?cloudHub : (* ICloudHubPack *) NoArgs,
+            ?cloudHubGateway : (* ICloudHubPack *) Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
         ) : AppArgs =
         {
             Scope = (* AppArgs *) scope
@@ -74,16 +79,7 @@ and AppArgs = {
             CloudHubGateway = (* ICloudHubPack *) cloudHubGateway
                 |> Option.defaultWith (fun () -> (Gateway.args CloudHubTypes.HubSpec true))
         }
-    static member Default () =
-        AppArgs.Create (
-            NoScope, (* AppArgs *) (* scope *)
-            ignore, (* AppArgs *) (* setup *)
-            (FarangoDb.Args.Default ()), (* IDbPack *) (* farangoDb *)
-            (TickerTypes.Args.Default ()), (* ITickingPack *) (* ticker *)
-            (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")), (* ICloudHubPack *) (* packetConn *)
-            NoArgs, (* ICloudHubPack *) (* cloudHub *)
-            (Gateway.args CloudHubTypes.HubSpec true) (* ICloudHubPack *) (* cloudHubGateway *)
-        )
+    static member Default () = AppArgs.Create ()
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
         {this with Scope = scope}
     static member SetSetup ((* AppArgs *) setup : IApp -> unit) (this : AppArgs) =
@@ -98,18 +94,6 @@ and AppArgs = {
         {this with CloudHub = cloudHub}
     static member SetCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
         {this with CloudHubGateway = cloudHubGateway}
-    static member UpdateScope ((* AppArgs *) update : Scope -> Scope) (this : AppArgs) =
-        this |> AppArgs.SetScope (update this.Scope)
-    static member UpdateFarangoDb ((* IDbPack *) update : FarangoDb.Args -> FarangoDb.Args) (this : AppArgs) =
-        this |> AppArgs.SetFarangoDb (update this.FarangoDb)
-    static member UpdateTicker ((* ITickingPack *) update : TickerTypes.Args -> TickerTypes.Args) (this : AppArgs) =
-        this |> AppArgs.SetTicker (update this.Ticker)
-    static member UpdatePacketConn ((* ICloudHubPack *) update : PacketConn.Args -> PacketConn.Args) (this : AppArgs) =
-        this |> AppArgs.SetPacketConn (update this.PacketConn)
-    static member UpdateCloudHub ((* ICloudHubPack *) update : NoArgs -> NoArgs) (this : AppArgs) =
-        this |> AppArgs.SetCloudHub (update this.CloudHub)
-    static member UpdateCloudHubGateway ((* ICloudHubPack *) update : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> -> Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
-        this |> AppArgs.SetCloudHubGateway (update this.CloudHubGateway)
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
@@ -173,15 +157,30 @@ type AppArgsBuilder () =
     [<CustomOperation("scope")>]
     member __.Scope (target : AppArgs, (* AppArgs *) scope : Scope) =
         target.WithScope scope
+    [<CustomOperation("Setup")>]
+    member __.Setup (target : AppArgs, (* AppArgs *) setup : IApp -> unit) =
+        target.WithSetup setup
     [<CustomOperation("farango_db")>]
     member __.FarangoDb (target : AppArgs, (* IDbPack *) farangoDb : FarangoDb.Args) =
         target.WithFarangoDb farangoDb
     [<CustomOperation("ticker")>]
     member __.Ticker (target : AppArgs, (* ITickingPack *) ticker : TickerTypes.Args) =
         target.WithTicker ticker
+    [<CustomOperation("packet_conn")>]
+    member __.PacketConn (target : AppArgs, (* ICloudHubPack *) packetConn : PacketConn.Args) =
+        target.WithPacketConn packetConn
+    [<CustomOperation("cloud_hub")>]
+    member __.CloudHub (target : AppArgs, (* ICloudHubPack *) cloudHub : NoArgs) =
+        target.WithCloudHub cloudHub
+    [<CustomOperation("cloud_hub_gateway")>]
+    member __.CloudHubGateway (target : AppArgs, (* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) =
+        target.WithCloudHubGateway cloudHubGateway
 
-let app_args = AppArgsBuilder ()
+let app_args = new AppArgsBuilder ()
 
+(*
+ * Generated: <App>
+ *)
 type App (logging : ILogging, args : AppArgs) as this =
     let env = Env.live MailboxPlatform logging args.Scope
     let mutable setupError : exn option = None
@@ -197,11 +196,11 @@ type App (logging : ILogging, args : AppArgs) as this =
             do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args.CloudHub) AppKinds.CloudHub
             do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args.CloudHubGateway) AppKinds.CloudHubGateway
             do! this.SetupAsync' ()
-            logInfo env "App.setupAsync" "Setup_Succeed" (E.encodeJson 4 args)
+            logInfo env "App.setupAsync" "Setup_Succeed" (encodeJson 4 args)
             args.Setup this.AsApp
         with e ->
             setupError <- Some e
-            logException env "App.setupAsync" "Setup_Failed" (E.encodeJson 4 args) e
+            logException env "App.setupAsync" "Setup_Failed" (encodeJson 4 args) e
             raise e
     }
     do (
@@ -218,6 +217,25 @@ type App (logging : ILogging, args : AppArgs) as this =
     member __.SetupError : exn option = setupError
     interface ILogger with
         member __.Log m = env.Log m
+    interface IRunner<IApp> with
+        member __.Runner = this.AsApp
+        member __.RunFunc func = runFunc' this func
+        member __.AddTask onFailed getTask = addTask' this onFailed getTask
+        member __.RunTask onFailed getTask = runTask' this onFailed getTask
+    interface IRunner with
+        member __.Clock = env.Clock
+        member __.Console0 = env.Console0
+        member __.RunFunc0 func = runFunc' this func
+        member __.AddTask0 onFailed getTask = addTask' this onFailed getTask
+        member __.RunTask0 onFailed getTask = runTask' this onFailed getTask
+    interface ITaskManager with
+        member __.StartTask task = env.StartTask task
+        member __.ScheduleTask task = env.ScheduleTask task
+        member __.PendingTasksCount = env.PendingTasksCount
+        member __.StartPendingTasks () = env.StartPendingTasks ()
+        member __.ClearPendingTasks () = env.ClearPendingTasks ()
+        member __.RunningTasksCount = env.RunningTasksCount
+        member __.CancelRunningTasks () = env.CancelRunningTasks ()
     interface IPack with
         member __.Env : IEnv = env
     interface IDbPack with

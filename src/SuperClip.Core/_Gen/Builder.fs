@@ -18,7 +18,7 @@ type PrimaryClipboardArgsBuilder () =
     member __.TimeoutDuration (target : PrimaryClipboardArgs, (* PrimaryClipboardArgs *) timeoutDuration : Duration) =
         target.WithTimeoutDuration timeoutDuration
 
-let primary_clipboard_args = PrimaryClipboardArgsBuilder ()
+let primary_clipboard_args = new PrimaryClipboardArgsBuilder ()
 
 (*
  * Generated: <ValueBuilder>
@@ -33,4 +33,4 @@ type HistoryArgsBuilder () =
     member __.RecentSize (target : HistoryArgs, (* HistoryArgs *) recentSize : int) =
         target.WithRecentSize recentSize
 
-let history_args = HistoryArgsBuilder ()
+let history_args = new HistoryArgsBuilder ()

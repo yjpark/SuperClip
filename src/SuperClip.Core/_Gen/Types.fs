@@ -1,12 +1,15 @@
 [<AutoOpen>]
 module SuperClip.Core.Types
 
+open System.Threading
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
 open Dap.Context
 open Dap.Context.Builder
 open Dap.Platform
+
+module Context = Dap.Platform.Context
 
 (*
  * Generated: <Union>
@@ -39,8 +42,6 @@ with
         FieldSpec.Create<Content> (Content.JsonEncoder, Content.JsonDecoder)
     interface IJson with
         member this.ToJson () = Content.JsonEncoder this
-    static member Default () =
-        Content.NoContent
 
 (*
  * Generated: <Record>
@@ -52,28 +53,20 @@ type Device = {
 } with
     static member Create
         (
-            ?guid : Guid,
-            ?name : string
+            ?guid : (* Device *) Guid,
+            ?name : (* Device *) string
         ) : Device =
         {
             Guid = (* Device *) guid
-                |> Option.defaultWith (fun () -> (System.Guid.NewGuid().ToString()))
+                |> Option.defaultWith (fun () -> (newGuid ()))
             Name = (* Device *) name
                 |> Option.defaultWith (fun () -> "")
         }
-    static member Default () =
-        Device.Create (
-            (System.Guid.NewGuid().ToString()), (* Device *) (* guid *)
-            "" (* Device *) (* name *)
-        )
+    static member Default () = Device.Create ()
     static member SetGuid ((* Device *) guid : Guid) (this : Device) =
         {this with Guid = guid}
     static member SetName ((* Device *) name : string) (this : Device) =
         {this with Name = name}
-    static member UpdateGuid ((* Device *) update : Guid -> Guid) (this : Device) =
-        this |> Device.SetGuid (update this.Guid)
-    static member UpdateName ((* Device *) update : string -> string) (this : Device) =
-        this |> Device.SetName (update this.Name)
     static member JsonEncoder : JsonEncoder<Device> =
         fun (this : Device) ->
             E.object [
@@ -107,28 +100,20 @@ type Channel = {
 } with
     static member Create
         (
-            ?guid : Guid,
-            ?name : string
+            ?guid : (* Channel *) Guid,
+            ?name : (* Channel *) string
         ) : Channel =
         {
             Guid = (* Channel *) guid
-                |> Option.defaultWith (fun () -> (System.Guid.NewGuid().ToString()))
+                |> Option.defaultWith (fun () -> (newGuid ()))
             Name = (* Channel *) name
                 |> Option.defaultWith (fun () -> "")
         }
-    static member Default () =
-        Channel.Create (
-            (System.Guid.NewGuid().ToString()), (* Channel *) (* guid *)
-            "" (* Channel *) (* name *)
-        )
+    static member Default () = Channel.Create ()
     static member SetGuid ((* Channel *) guid : Guid) (this : Channel) =
         {this with Guid = guid}
     static member SetName ((* Channel *) name : string) (this : Channel) =
         {this with Name = name}
-    static member UpdateGuid ((* Channel *) update : Guid -> Guid) (this : Channel) =
-        this |> Channel.SetGuid (update this.Guid)
-    static member UpdateName ((* Channel *) update : string -> string) (this : Channel) =
-        this |> Channel.SetName (update this.Name)
     static member JsonEncoder : JsonEncoder<Channel> =
         fun (this : Channel) ->
             E.object [
@@ -162,8 +147,8 @@ type Peer = {
 } with
     static member Create
         (
-            ?channel : Channel,
-            ?device : Device
+            ?channel : (* Peer *) Channel,
+            ?device : (* Peer *) Device
         ) : Peer =
         {
             Channel = (* Peer *) channel
@@ -171,19 +156,11 @@ type Peer = {
             Device = (* Peer *) device
                 |> Option.defaultWith (fun () -> (Device.Default ()))
         }
-    static member Default () =
-        Peer.Create (
-            (Channel.Default ()), (* Peer *) (* channel *)
-            (Device.Default ()) (* Peer *) (* device *)
-        )
+    static member Default () = Peer.Create ()
     static member SetChannel ((* Peer *) channel : Channel) (this : Peer) =
         {this with Channel = channel}
     static member SetDevice ((* Peer *) device : Device) (this : Peer) =
         {this with Device = device}
-    static member UpdateChannel ((* Peer *) update : Channel -> Channel) (this : Peer) =
-        this |> Peer.SetChannel (update this.Channel)
-    static member UpdateDevice ((* Peer *) update : Device -> Device) (this : Peer) =
-        this |> Peer.SetDevice (update this.Device)
     static member JsonEncoder : JsonEncoder<Peer> =
         fun (this : Peer) ->
             E.object [
@@ -217,8 +194,8 @@ type Peers = {
 } with
     static member Create
         (
-            ?channel : Channel,
-            ?devices : Device list
+            ?channel : (* Peers *) Channel,
+            ?devices : (* Peers *) Device list
         ) : Peers =
         {
             Channel = (* Peers *) channel
@@ -226,19 +203,11 @@ type Peers = {
             Devices = (* Peers *) devices
                 |> Option.defaultWith (fun () -> [])
         }
-    static member Default () =
-        Peers.Create (
-            (Channel.Default ()), (* Peers *) (* channel *)
-            [] (* Peers *) (* devices *)
-        )
+    static member Default () = Peers.Create ()
     static member SetChannel ((* Peers *) channel : Channel) (this : Peers) =
         {this with Channel = channel}
     static member SetDevices ((* Peers *) devices : Device list) (this : Peers) =
         {this with Devices = devices}
-    static member UpdateChannel ((* Peers *) update : Channel -> Channel) (this : Peers) =
-        this |> Peers.SetChannel (update this.Channel)
-    static member UpdateDevices ((* Peers *) update : Device list -> Device list) (this : Peers) =
-        this |> Peers.SetDevices (update this.Devices)
     static member JsonEncoder : JsonEncoder<Peers> =
         fun (this : Peers) ->
             E.object [
@@ -291,8 +260,6 @@ with
         FieldSpec.Create<Source> (Source.JsonEncoder, Source.JsonDecoder)
     interface IJson with
         member this.ToJson () = Source.JsonEncoder this
-    static member Default () =
-        Source.NoSource
 
 (*
  * Generated: <Record>
@@ -300,54 +267,43 @@ with
  *)
 type Item = {
     Time : (* Item *) Instant
-    Source : Source
-    Content : Content
+    Source : (* Item *) Source
+    Content : (* Item *) Content
 } with
     static member Create
         (
-            ?time : Instant,
-            ?source : Source,
-            ?content : Content
+            ?time : (* Item *) Instant,
+            ?source : (* Item *) Source,
+            ?content : (* Item *) Content
         ) : Item =
         {
             Time = (* Item *) time
                 |> Option.defaultWith (fun () -> (getNow' ()))
-            Source = source
+            Source = (* Item *) source
                 |> Option.defaultWith (fun () -> NoSource)
-            Content = content
+            Content = (* Item *) content
                 |> Option.defaultWith (fun () -> NoContent)
         }
-    static member Default () =
-        Item.Create (
-            (getNow' ()), (* Item *) (* time *)
-            NoSource, (* source *)
-            NoContent (* content *)
-        )
+    static member Default () = Item.Create ()
     static member SetTime ((* Item *) time : Instant) (this : Item) =
         {this with Time = time}
-    static member SetSource (source : Source) (this : Item) =
+    static member SetSource ((* Item *) source : Source) (this : Item) =
         {this with Source = source}
-    static member SetContent (content : Content) (this : Item) =
+    static member SetContent ((* Item *) content : Content) (this : Item) =
         {this with Content = content}
-    static member UpdateTime ((* Item *) update : Instant -> Instant) (this : Item) =
-        this |> Item.SetTime (update this.Time)
-    static member UpdateSource (update : Source -> Source) (this : Item) =
-        this |> Item.SetSource (update this.Source)
-    static member UpdateContent (update : Content -> Content) (this : Item) =
-        this |> Item.SetContent (update this.Content)
     static member JsonEncoder : JsonEncoder<Item> =
         fun (this : Item) ->
             E.object [
                 "time", E.instant (* Item *) this.Time
-                "source", Source.JsonEncoder this.Source
-                "content", Content.JsonEncoder this.Content
+                "source", Source.JsonEncoder (* Item *) this.Source
+                "content", Content.JsonEncoder (* Item *) this.Content
             ]
     static member JsonDecoder : JsonDecoder<Item> =
         D.object (fun get ->
             {
                 Time = get.Required.Field (* Item *) "time" D.instant
-                Source = get.Required.Field "source" Source.JsonDecoder
-                Content = get.Required.Field "content" Content.JsonDecoder
+                Source = get.Required.Field (* Item *) "source" Source.JsonDecoder
+                Content = get.Required.Field (* Item *) "content" Content.JsonDecoder
             }
         )
     static member JsonSpec =
@@ -357,9 +313,9 @@ type Item = {
     interface IObj
     member this.WithTime ((* Item *) time : Instant) =
         this |> Item.SetTime time
-    member this.WithSource (source : Source) =
+    member this.WithSource ((* Item *) source : Source) =
         this |> Item.SetSource source
-    member this.WithContent (content : Content) =
+    member this.WithContent ((* Item *) content : Content) =
         this |> Item.SetContent content
 
 (*
@@ -372,28 +328,20 @@ type PrimaryClipboardArgs = {
 } with
     static member Create
         (
-            ?checkInterval : Duration,
-            ?timeoutDuration : Duration
+            ?checkInterval : (* PrimaryClipboardArgs *) Duration,
+            ?timeoutDuration : (* PrimaryClipboardArgs *) Duration
         ) : PrimaryClipboardArgs =
         {
             CheckInterval = (* PrimaryClipboardArgs *) checkInterval
-                |> Option.defaultWith (fun () -> (decodeJsonString Duration.JsonDecoder """0:00:00:00.5"""))
+                |> Option.defaultWith (fun () -> (decodeJsonString DurationFormat.Second.JsonDecoder """0.5"""))
             TimeoutDuration = (* PrimaryClipboardArgs *) timeoutDuration
-                |> Option.defaultWith (fun () -> (decodeJsonString Duration.JsonDecoder """0:00:00:01"""))
+                |> Option.defaultWith (fun () -> (decodeJsonString DurationFormat.Second.JsonDecoder """1"""))
         }
-    static member Default () =
-        PrimaryClipboardArgs.Create (
-            (decodeJsonString Duration.JsonDecoder """0:00:00:00.5"""), (* PrimaryClipboardArgs *) (* checkInterval *)
-            (decodeJsonString Duration.JsonDecoder """0:00:00:01""") (* PrimaryClipboardArgs *) (* timeoutDuration *)
-        )
+    static member Default () = PrimaryClipboardArgs.Create ()
     static member SetCheckInterval ((* PrimaryClipboardArgs *) checkInterval : Duration) (this : PrimaryClipboardArgs) =
         {this with CheckInterval = checkInterval}
     static member SetTimeoutDuration ((* PrimaryClipboardArgs *) timeoutDuration : Duration) (this : PrimaryClipboardArgs) =
         {this with TimeoutDuration = timeoutDuration}
-    static member UpdateCheckInterval ((* PrimaryClipboardArgs *) update : Duration -> Duration) (this : PrimaryClipboardArgs) =
-        this |> PrimaryClipboardArgs.SetCheckInterval (update this.CheckInterval)
-    static member UpdateTimeoutDuration ((* PrimaryClipboardArgs *) update : Duration -> Duration) (this : PrimaryClipboardArgs) =
-        this |> PrimaryClipboardArgs.SetTimeoutDuration (update this.TimeoutDuration)
     static member JsonEncoder : JsonEncoder<PrimaryClipboardArgs> =
         fun (this : PrimaryClipboardArgs) ->
             E.object [
@@ -427,8 +375,8 @@ type HistoryArgs = {
 } with
     static member Create
         (
-            ?maxSize : int,
-            ?recentSize : int
+            ?maxSize : (* HistoryArgs *) int,
+            ?recentSize : (* HistoryArgs *) int
         ) : HistoryArgs =
         {
             MaxSize = (* HistoryArgs *) maxSize
@@ -436,19 +384,11 @@ type HistoryArgs = {
             RecentSize = (* HistoryArgs *) recentSize
                 |> Option.defaultWith (fun () -> 20)
         }
-    static member Default () =
-        HistoryArgs.Create (
-            400, (* HistoryArgs *) (* maxSize *)
-            20 (* HistoryArgs *) (* recentSize *)
-        )
+    static member Default () = HistoryArgs.Create ()
     static member SetMaxSize ((* HistoryArgs *) maxSize : int) (this : HistoryArgs) =
         {this with MaxSize = maxSize}
     static member SetRecentSize ((* HistoryArgs *) recentSize : int) (this : HistoryArgs) =
         {this with RecentSize = recentSize}
-    static member UpdateMaxSize ((* HistoryArgs *) update : int -> int) (this : HistoryArgs) =
-        this |> HistoryArgs.SetMaxSize (update this.MaxSize)
-    static member UpdateRecentSize ((* HistoryArgs *) update : int -> int) (this : HistoryArgs) =
-        this |> HistoryArgs.SetRecentSize (update this.RecentSize)
     static member JsonEncoder : JsonEncoder<HistoryArgs> =
         fun (this : HistoryArgs) ->
             E.object [
@@ -471,3 +411,70 @@ type HistoryArgs = {
         this |> HistoryArgs.SetMaxSize maxSize
     member this.WithRecentSize ((* HistoryArgs *) recentSize : int) =
         this |> HistoryArgs.SetRecentSize recentSize
+
+(*
+ * Generated: <Combo>
+ *)
+type LocalClipboardProps (owner : IOwner, key : Key) =
+    inherit WrapProperties<LocalClipboardProps, IComboProperty> ()
+    let target' = Properties.combo (owner, key)
+    let supportOnChanged = target'.AddVar<(* LocalClipboardProps *) bool> (E.bool, D.bool, "support_on_changed", false, None)
+    do (
+        base.Setup (target')
+    )
+    static member Create (o, k) = new LocalClipboardProps (o, k)
+    static member Default () = LocalClipboardProps.Create (noOwner, NoKey)
+    static member AddToCombo key (combo : IComboProperty) =
+        combo.AddCustom<LocalClipboardProps> (LocalClipboardProps.Create, key)
+    override this.Self = this
+    override __.Spawn (o, k) = LocalClipboardProps.Create (o, k)
+    override __.SyncTo t = target'.SyncTo t.Target
+    member __.SupportOnChanged (* LocalClipboardProps *) : IVarProperty<bool> = supportOnChanged
+
+(*
+ * Generated: <Context>
+ *)
+type ILocalClipboard =
+    inherit IContext<LocalClipboardProps>
+    abstract LocalClipboardProps : LocalClipboardProps with get
+    abstract OnChanged : IChannel<Content> with get
+    abstract GetAsync : IAsyncHandler<unit, Content> with get
+    abstract SetAsync : IAsyncHandler<Content, unit> with get
+
+(*
+ * Generated: <Context>
+ *)
+[<Literal>]
+let LocalClipboardKind = "LocalClipboard"
+
+[<AbstractClass>]
+type BaseLocalClipboard<'context when 'context :> ILocalClipboard> (logging : ILogging) =
+    inherit CustomContext<'context, ContextSpec<LocalClipboardProps>, LocalClipboardProps> (logging, new ContextSpec<LocalClipboardProps>(LocalClipboardKind, LocalClipboardProps.Create))
+    let onChanged = base.Channels.Add<Content> (Content.JsonEncoder, Content.JsonDecoder, "on_changed")
+    let getAsync = base.AsyncHandlers.Add<unit, Content> (E.unit, D.unit, Content.JsonEncoder, Content.JsonDecoder, "get")
+    let setAsync = base.AsyncHandlers.Add<Content, unit> (Content.JsonEncoder, Content.JsonDecoder, E.unit, D.unit, "set")
+    member this.LocalClipboardProps : LocalClipboardProps = this.Properties
+    member __.OnChanged : IChannel<Content> = onChanged
+    member __.GetAsync : IAsyncHandler<unit, Content> = getAsync
+    member __.SetAsync : IAsyncHandler<Content, unit> = setAsync
+    interface ILocalClipboard with
+        member this.LocalClipboardProps : LocalClipboardProps = this.Properties
+        member __.OnChanged : IChannel<Content> = onChanged
+        member __.GetAsync : IAsyncHandler<unit, Content> = getAsync
+        member __.SetAsync : IAsyncHandler<Content, unit> = setAsync
+    member this.AsLocalClipboard = this :> ILocalClipboard
+
+(*
+ * Generated: <Pack>
+ *)
+type ILocalPackArgs =
+    inherit ITickingPackArgs
+    abstract LocalClipboard : Context.Args<ILocalClipboard> with get
+    abstract AsTickingPackArgs : ITickingPackArgs with get
+
+type ILocalPack =
+    inherit IPack
+    inherit ITickingPack
+    abstract Args : ILocalPackArgs with get
+    abstract LocalClipboard : Context.Agent<ILocalClipboard> with get
+    abstract AsTickingPack : ITickingPack with get

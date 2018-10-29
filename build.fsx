@@ -12,45 +12,36 @@ open Dap.Build
 #load "src/SuperClip.Core/Dsl/Packs.fs"
 #load "src/SuperClip.Core/Dsl/Cloud.fs"
 #load "src/SuperClip.Core/Dsl/Compiler.fs"
-#load "src/SuperClip.Forms/Dsl.fs"
 #load "src/SuperClip.Server/Meta.fs"
 #load "src/SuperClip.Server/Dsl.fs"
+#load "src/SuperClip.App/Dsl.fs"
+#load "src/SuperClip.Gui/Dsl/Prefabs.fs"
+#load "src/SuperClip.Eto/Dsl/Prefabs.fs"
 
 [<Literal>]
 let Dist = "Dist"
 
-let feed =
-    NuGet.Feed.Create (
-        server = NuGet.ProGet "https://nuget.yjpark.org/nuget/dap",
-        apiKey = NuGet.Environment "API_KEY_nuget_yjpark_org"
-    )
-
-let libProjects =
-    !! "src/SuperClip.Core/*.fsproj"
-    ++ "src/SuperClip.Forms/*.fsproj"
-
 let allProjects =
-    libProjects
-    ++ "src/SuperClip.Ooui/*.fsproj"
-    ++ "src/SuperClip.Server/*.fsproj"
+    !! "src/SuperClip.Server/*.fsproj"
     ++ "src/SuperClip.Web/*.fsproj"
+    ++ "src/SuperClip.Gtk/*.fsproj"
+    ++ "src/SuperClip.Forms/*.fsproj"
+    ++ "src/SuperClip.Ooui/*.fsproj"
     ++ "src/SuperClip.Tools/*.fsproj"
 
-DotNet.create DotNet.release allProjects
+DotNet.create DotNet.debug allProjects
 
 DotNet.createPrepares [
-    ["SuperClip.Core"], fun _ ->
+    ["SuperClip.Forms"], fun _ ->
         SuperClip.Core.Dsl.Compiler.compile ["src" ; "SuperClip.Core"]
         |> List.iter traceSuccess
-    ["SuperClip.Forms"], fun _ ->
-        SuperClip.Forms.Dsl.compile ["src" ; "SuperClip.Forms"]
+        SuperClip.App.Dsl.compile ["src" ; "SuperClip.App"]
+        |> List.iter traceSuccess
+        SuperClip.Eto.Dsl.Prefabs.compile ["src" ; "SuperClip.Eto"]
         |> List.iter traceSuccess
     ["SuperClip.Server"], fun _ ->
         SuperClip.Server.Dsl.compile ["src" ; "SuperClip.Server"]
         |> List.iter traceSuccess
 ]
 
-NuGet.extend NuGet.release feed libProjects
-
 Target.runOrDefault DotNet.Build
-

@@ -7,7 +7,7 @@ open Foundation
 open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
 
-module Helper = SuperClip.Forms.Helper
+module FormsApp = SuperClip.Forms.FormsApp
 
 [<Register ("AppDelegate")>]
 type AppDelegate () =
@@ -15,7 +15,7 @@ type AppDelegate () =
 
     override this.FinishedLaunching (app, options) =
         Forms.Init()
-        this.LoadApplication (Helper.createApplication ())
+        this.LoadApplication (FormsApp.createApplication ())
         base.FinishedLaunching(app, options)
 
 module Main =

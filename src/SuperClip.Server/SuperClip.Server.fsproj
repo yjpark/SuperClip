@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+  <Import Project="../SuperClip.Core/SuperClip.Core.props" />
   <ItemGroup>
     <Compile Include="Meta.fs" />
     <Compile Include="Dsl.fs" />
@@ -13,9 +14,6 @@
     <Compile Include="_Gen/Packs.fs" />
     <Compile Include="_Gen/App.fs" />
     <Compile Include="Helper.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

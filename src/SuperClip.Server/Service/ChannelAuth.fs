@@ -59,7 +59,7 @@ let getByChannelKeyAsync (key : string) (db : IDbPack) : Task<Result<Record, str
 
 let createAsync (record : Record) (db : IDbPack) = task {
     let! doc =
-        createDocument db.Conn Collection <| E.encodeJson 0 record
+        createDocument db.Conn Collection <| encodeJson 0 record
     return
         doc
         |> Result.map (fun _ -> record)

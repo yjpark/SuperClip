@@ -15,9 +15,9 @@ open SuperClip.Server.Meta
 
 let ICloudHubPack =
     pack [ <@ ITickingPack @> ] {
-        register_pack <@ ITickingPack @> (M.packetConnSpawner (true))
-        register_pack <@ IDbPack @> (M.cloudHubSpawner ())
-        register (M.cloudHubGatewaySpawner ())
+        register_pack <@ ITickingPack @> (M.packetConn (logTraffic = true))
+        register_pack <@ IDbPack @> (M.cloudHub ())
+        register (M.cloudHubGateway ())
     }
 
 let App =

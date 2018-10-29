@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Server.Packs
 
+open System.Threading
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 open Dap.Prelude
@@ -14,6 +15,9 @@ module PacketConn = Dap.Remote.WebSocketGateway.PacketConn
 module CloudHubTypes = SuperClip.Server.CloudHub.Types
 module Gateway = Dap.Remote.WebSocketGateway.Gateway
 
+(*
+ * Generated: <Pack>
+ *)
 type ICloudHubPackArgs =
     inherit ITickingPackArgs
     abstract PacketConn : PacketConn.Args with get

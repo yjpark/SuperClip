@@ -8,6 +8,7 @@ open Elmish.XamarinForms.DynamicViews
 open Dap.Prelude
 open Dap.Platform
 
+open SuperClip.App
 open SuperClip.Forms
 open SuperClip.Forms.View.Types
 

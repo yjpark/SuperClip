@@ -10,6 +10,7 @@ open Dap.Platform
 open Dap.Remote
 
 open SuperClip.Core
+open SuperClip.App
 open SuperClip.Forms
 open SuperClip.Forms.View.Types
 module HistoryTypes = SuperClip.Core.History.Types

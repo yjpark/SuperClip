@@ -10,15 +10,15 @@ open Dap.Platform.Dsl.Packs
 open SuperClip.Core.Dsl.Types
 
 let ICorePack =
-    pack [ <@ ITickingPack @> ] {
-        add_pack <@ ITickingPack @> (M.primaryClipboardService ())
-        add (M.historyService ("Local"))
-        register (M.historySpawner ())
+    pack [ <@ ILocalPack @> ] {
+        add_pack <@ ILocalPack @> (M.primaryClipboard ())
+        add (M.history (key = "Local"))
+        register (M.history ())
     }
 
 let compile segments =
     [
-        G.File (segments, ["_Gen" ; "Packs.fs"],
+        G.File (segments, ["_Gen1" ; "Packs.fs"],
             G.AutoOpenModule ("SuperClip.Core.Packs",
                 [
                     G.PackOpens

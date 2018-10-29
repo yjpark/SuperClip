@@ -2,11 +2,9 @@ module SuperClip.Core.Channel.Logic
 
 open NodaTime
 open Elmish
-open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
-open Dap.Forms
 
 open SuperClip.Core
 open SuperClip.Core.Channel.Types

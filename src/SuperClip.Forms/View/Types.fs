@@ -9,7 +9,7 @@ open Dap.Forms
 module ViewTypes = Dap.Forms.View.Types
 
 open SuperClip.Core
-open SuperClip.Forms
+open SuperClip.App
 module HistoryTypes = SuperClip.Core.History.Types
 
 type Page =

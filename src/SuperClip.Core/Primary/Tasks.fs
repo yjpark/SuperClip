@@ -1,7 +1,6 @@
 module SuperClip.Core.Primary.Tasks
 
 open FSharp.Control.Tasks.V2
-open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Platform
@@ -15,12 +14,16 @@ let internal onGetFailed : OnFailed<Agent> =
 
 let internal doGetAsync (index : int32) : GetTask<Agent, unit> =
     fun runner -> task {
-        let! text = CrossClipboard.Current.GetTextAsync ()
+        let! content = runner.Pack.LocalClipboard.Context.GetAsync.Handle ()
         if runner.Actor.State.GettingIndex = index then
-            let content = Text text
             runner.Deliver <| InternalEvt ^<| OnGet ^<| Ok content
         else
-            logWarn runner "doGetAsync" "Timeout" (index, runner.Actor.State.GettingIndex, text)
+            logWarn runner "doGetAsync" "Timeout" (index, runner.Actor.State.GettingIndex, content)
+    }
+
+let internal doSetAsync (content : Content) : GetTask<Agent, unit> =
+    fun runner -> task {
+        do! runner.Pack.LocalClipboard.Context.SetAsync.Handle content
     }
 
 let internal onGetAsync

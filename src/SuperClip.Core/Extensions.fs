@@ -95,3 +95,8 @@ type Item with
         let content = this.Content.Decrypt runner cryptoKey
         {this with Content = content}
 
+type BaseLocalClipboard<'context when 'context :> ILocalClipboard> with
+    member this.SetSupportOnChanged (v : bool) =
+        let prop = this.Properties.SupportOnChanged
+        prop.SetValue false
+        prop.Seal ()

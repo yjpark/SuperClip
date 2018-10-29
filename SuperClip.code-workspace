@@ -4,12 +4,6 @@
 			"path": "src/SuperClip.Core"
 		},
 		{
-			"path": "src/SuperClip.Forms"
-		},
-		{
-			"path": "src/SuperClip.Ooui"
-		},
-		{
 			"path": "src/SuperClip.Server"
 		},
 		{
@@ -19,10 +13,28 @@
 			"path": "src/SuperClip.Tools"
 		},
 		{
-			"path": "src/SuperClip.UWP"
+			"path": "src/SuperClip.App"
 		},
 		{
-			"path": "src/SuperClip.GTK"
+			"path": "src/SuperClip.Gui"
+		},
+		{
+			"path": "src/SuperClip.Eto"
+		},
+		{
+			"path": "src/SuperClip.Gtk"
+		},
+		{
+			"path": "src/SuperClip.Mac"
+		},
+		{
+			"path": "src/SuperClip.Forms"
+		},
+		{
+			"path": "src/SuperClip.Ooui"
+		},
+		{
+			"path": "src/SuperClip.UWP"
 		},
 		{
 			"path": "src/SuperClip.macOS"

@@ -40,7 +40,7 @@ let getTokenAndChannelAuthAsync (token : string) : GetTask<Agent, Result<Token *
     }
 
 let private createToken runner (channelKey : string) (req : Cloud.JoinReq) =
-    let token = Token.create runner channelKey "" (E.json req.Peer.Device) (Duration.FromDays(1))
+    let token = Token.create runner channelKey "" (toJson req.Peer.Device) (Duration.FromDays(1))
     let jwt = JsonString <| Token.toJwt token
     (token, jwt)
     //reply runner callback <| ack req ^<| Ok jwt
@@ -75,7 +75,7 @@ let doJoinAsync (join : Cloud.JoinReq) : GetReplyTask<Agent, Result<Cloud.JoinRe
                 | Ok _ ->
                     reply runner callback <| ack req ^<| Ok jwt
                 | Error err ->
-                    logWarn runner "doJoinAsync" "Create_ChannelAuth_Failed" (token, E.encodeJson 4 auth, err)
+                    logWarn runner "doJoinAsync" "Create_ChannelAuth_Failed" (token, encodeJson 4 auth, err)
                     reply runner callback <| ack req ^<| Error Cloud.JoinErr.JoinChannelFailed
     }
 

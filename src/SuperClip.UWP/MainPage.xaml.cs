@@ -25,7 +25,7 @@ namespace SuperClip.UWP
         public MainPage()
         {
             this.InitializeComponent();
-            LoadApplication(SuperClip.Forms.Helper.createApplication());
+            LoadApplication(SuperClip.Forms.FormsApp.createApplication());
         }
     }
 }

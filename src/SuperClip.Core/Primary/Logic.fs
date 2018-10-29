@@ -2,12 +2,10 @@ module SuperClip.Core.Primary.Logic
 
 open NodaTime
 open Elmish
-open Plugin.Clipboard
 
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
-open Dap.Forms
 
 open SuperClip.Core
 open SuperClip.Core.Primary.Types
@@ -20,7 +18,7 @@ type ActorOperate = Operate<Agent, Model, Msg>
 let private doGet' : ActorOperate =
     fun runner (model, cmd) ->
         let index = model.GettingIndex + 1
-        runner.AddUiTask onGetFailed <| doGetAsync index
+        runner.AddTask onGetFailed <| doGetAsync index
         ({model with
             Getting = true
             GettingIndex = index
@@ -43,14 +41,7 @@ let private doSet req ((content, callback) : Content * Callback<unit>) : ActorOp
             reply runner callback <| ack req ()
             (model, cmd)
         else
-            match content with
-            | NoContent -> ()
-            | Text text ->
-                runner.RunUiFunc (fun _ -> CrossClipboard.Current.SetText (text))
-                |> ignore
-            | Asset url ->
-                //TODO
-                ()
+            runner.AddTask ignoreOnFailed <| doSetAsync content
             let current = Item.Create (runner.Clock.Now, Local, content)
             runner.Deliver <| Evt ^<| OnSet current
             reply runner callback <| ack req ()

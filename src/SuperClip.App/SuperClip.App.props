@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <Compile Include="../SuperClip.App/Dsl.fs" />
+    <Compile Include="../SuperClip.App/_Gen/Types.fs" />
+    <Compile Include="../SuperClip.App/Extensions.fs" />
+    <Compile Include="../SuperClip.App/UserPref.fs" />
+    <Compile Include="../SuperClip.App/Session/Types.fs" />
+    <Compile Include="../SuperClip.App/Session/Tasks.fs" />
+    <Compile Include="../SuperClip.App/Session/Logic.fs" />
+    <Compile Include="../SuperClip.App/_Gen1/Packs.fs" />
+    <Compile Include="../SuperClip.App/_Gen1/IApp.fs" />
+    <Compile Include="../SuperClip.App/_Gen1/BaseApp.fs" />
+    <Compile Include="../SuperClip.App/App.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
+  </ItemGroup>
+</Project>

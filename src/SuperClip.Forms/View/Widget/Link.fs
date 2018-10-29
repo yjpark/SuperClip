@@ -8,9 +8,10 @@ open Elmish.XamarinForms.DynamicViews
 open Dap.Prelude
 open Dap.Platform
 
+open SuperClip.App
 open SuperClip.Forms
 open SuperClip.Forms.View.Types
-module SessionTypes = SuperClip.Forms.Session.Types
+module SessionTypes = SuperClip.App.Session.Types
 
 let private button text command =
     View.Button (

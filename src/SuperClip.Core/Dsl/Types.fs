@@ -4,7 +4,9 @@ open Dap.Context.Meta
 open Dap.Context.Generator
 open Dap.Platform
 open Dap.Platform.Meta
+open Dap.Platform.Dsl.Packs
 open Dap.Platform.Generator
+open Dap.Context.CustomProperty
 
 let Content =
     union {
@@ -15,7 +17,7 @@ let Content =
         case "Asset" (fields {
             var (M.string "url")
         })
-    }
+    }|> UnionMeta.SetInitValue (Some "NoContent")
 
 let Device =
     combo {
@@ -48,13 +50,13 @@ let Source =
         case "Cloud" (fields {
             var (M.custom (<@ Peer @>, "sender"))
         })
-    }
+    }|> UnionMeta.SetInitValue (Some "NoSource")
 
 let Item =
     combo {
         var (M.instant "time")
-        var (M.union (<@ Source @>, "source", "NoSource", ""))
-        var (M.union (<@ Content @>, "content", "NoContent", ""))
+        var (M.custom (<@ Source @>, "source"))
+        var (M.custom (<@ Content @>, "content"))
     }
 
 let PrimaryClipboardArgs =
@@ -69,22 +71,47 @@ let HistoryArgs =
         var (M.int ("recent_size", 20))
     }
 
+let LocalClipboardProps =
+    combo {
+        var (M.bool ("support_on_changed"))
+    }
+
+let LocalClipboard =
+    context <@ LocalClipboardProps @> {
+        kind "LocalClipboard"
+        channel (M.custom (<@ Content @>, "on_changed"))
+        async_handler (M.unit "get") (M.custom (<@ Content @>, response))
+        async_handler (M.custom (<@ Content @>, "set")) (M.unit response)
+    }
+
 type M with
-    static member primaryClipboardService () =
+    static member localClipboard (?name : string, ?spawner : string, ?kind : Kind, ?key : Key, ?aliases : ModuleAlias list) =
+        let name = defaultArg name "ILocalClipboard"
+        M.context (name, ?spawner = spawner, ?kind = kind, ?key = key, ?aliases = aliases)
+    static member primaryClipboard () =
         let alias = "PrimaryTypes", "SuperClip.Core.Primary.Types"
         let args = JsonArgs "PrimaryTypes.Args"
         let type' = "IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>"
         let spec = "SuperClip.Core.Primary.Logic.spec"
-        M.service ([alias], args, type', spec, "Clipboard", "Primary")
-    static member historySpawner () =
+        M.agent (args, type', spec, kind = "Clipboard", key = "Primary", aliases = [alias])
+    static member history (?key : Key) =
         let alias = "HistoryTypes", "SuperClip.Core.History.Types"
         let args = JsonArgs "HistoryTypes.Args"
         let type' = "HistoryTypes.Agent"
         let spec = "SuperClip.Core.History.Logic.spec"
-        M.spawner ([alias], args, type', spec, "History")
-    static member historyService (key : Key) =
-        M.historySpawner ()
-        |> fun s -> s.ToService key
+        M.agent (args, type', spec, kind = "History", ?key = key, aliases = [alias])
+
+let ILocalPack =
+    pack [ <@ ITickingPack @> ] {
+        add (M.localClipboard ())
+    }
+
+type G with
+    static member CorePack (feature : string option) =
+        let feature = defaultArg feature "SuperClip.Core.Feature"
+        [
+            sprintf "type LocalClipboard = %s.LocalClipboard.Context" feature
+        ]
 
 let compile segments =
     [
@@ -93,16 +120,17 @@ let compile segments =
                 [
                     G.PackOpens
                     G.JsonUnion <@ Content @>
-                    |> G.Default "Content.NoContent"
                     G.JsonRecord <@ Device @>
                     G.JsonRecord <@ Channel @>
                     G.JsonRecord <@ Peer @>
                     G.JsonRecord <@ Peers @>
                     G.JsonUnion <@ Source @>
-                    |> G.Default "Source.NoSource"
                     G.JsonRecord <@ Item @>
                     G.JsonRecord <@ PrimaryClipboardArgs @>
                     G.JsonRecord <@ HistoryArgs @>
+                    G.Combo <@ LocalClipboardProps @>
+                    G.Context <@ LocalClipboard @>
+                    G.PackInterface <@ ILocalPack @>
                 ]
             )
         )

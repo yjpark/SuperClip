@@ -2,8 +2,6 @@
 
 open Argu
 
-open Plugin.Clipboard
-
 open Dap.Prelude
 open Dap.Platform
 

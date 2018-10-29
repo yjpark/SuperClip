@@ -1,0 +1,128 @@
+module SuperClip.App.Dsl
+
+open Dap.Context
+open Dap.Context.Meta
+open Dap.Context.Generator
+open Dap.Platform
+open Dap.Platform.Meta
+open Dap.Platform.Generator
+open Dap.Platform.Dsl.Packs
+open Dap.WebSocket.Meta
+open Dap.Local.Dsl
+open Dap.Remote.Meta
+
+open SuperClip.Core.Dsl.Types
+open SuperClip.Core.Dsl.Packs
+
+let Credential =
+    combo {
+        var (M.custom (<@ Device @>, "device"))
+        var (M.custom (<@ Channel @>, "channel"))
+        var (M.string "pass_hash")
+        var (M.string "crypto_key")
+        var (M.string "token")
+    }
+
+let UserProps =
+    combo {
+        option (M.custom (<@ Credential @>, "credential"))
+    }
+
+let UserPref =
+    context <@ UserProps @> {
+        kind "UserPref"
+    }
+
+let ICloudStubPack =
+    pack [ <@ ITickingPack @> ] {
+        register_pack <@ ITickingPack @> (M.packetClient (logTraffic = true))
+        add (M.proxy (
+                aliases = [("Cloud", "SuperClip.Core.Cloud")],
+                reqResEvt = "Cloud.Req, Cloud.ClientRes, Cloud.Evt",
+                stubSpec = "Cloud.StubSpec",
+                url = "(getCloudServerUri ())",
+                retryDelay = 5.0<second>,
+                logTraffic = true,
+                kind = "CloudStub"
+            ))
+    }
+
+let IClientPack =
+    pack [ <@ ICorePack @> ; <@ ICloudStubPack @> ; <@ IAppPack @>] {
+        add (M.context (<@ UserPref @>))
+    }
+
+let ISessionPack =
+    pack [ <@ IClientPack @> ] {
+        add_pack <@ IClientPack @> (
+            M.agent (
+                aliases = [("SessionTypes", "SuperClip.App.Session.Types")],
+                args = M.noArgs,
+                type' = "SessionTypes.Agent",
+                spec = "SuperClip.App.Session.Logic.spec",
+                kind = "Session"
+            )
+        )
+    }
+
+let App =
+    live {
+        has <@ ISessionPack @>
+    }
+
+let commonLines =
+    [
+        G.PackOpens
+        [
+            "open Dap.Local"
+            "open SuperClip.Core"
+        ]
+        G.Feature (G.AppPack, "Dap.Forms.Feature")
+        G.Feature (G.CorePack,
+            [
+                "SuperClip.Core.Feature"
+                "SuperClip.Forms.Feature"
+                "SuperClip.Mac.Feature"
+                "SuperClip.Gtk.Feature"
+            ])
+    ]|> concatSections
+
+let compile segments =
+    [
+        G.File (segments, ["_Gen" ; "Types.fs"],
+            G.AutoOpenModule ("SuperClip.App.Types",
+                [
+                    commonLines
+                    G.JsonRecord <@ Credential @>
+                    G.Combo (<@ UserProps @>)
+                    G.Context <@ UserPref @>
+                    G.PackInterface <@ ICloudStubPack @>
+                    G.PackInterface <@ IClientPack @>
+                ]
+            )
+        )
+        G.File (segments, ["_Gen1" ; "Packs.fs"],
+            G.AutoOpenModule ("SuperClip.App.Packs",
+                [
+                    commonLines
+                    G.PackInterface <@ ISessionPack @>
+                ]
+            )
+        )
+        G.File (segments, ["_Gen1"; "IApp.fs"],
+            G.AutoOpenModule ("SuperClip.App.IApp",
+                [
+                    commonLines
+                    G.GuiAppInterface <@ App @>
+                ]
+            )
+        )
+        G.File (segments, ["_Gen1"; "BaseApp.fs"],
+            G.QualifiedModule ("SuperClip.App.BaseApp",
+                [
+                    commonLines
+                    G.GuiAppClass <@ App @>
+                ]
+            )
+        )
+    ]

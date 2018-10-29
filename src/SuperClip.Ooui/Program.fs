@@ -1,17 +1,15 @@
-﻿module SuperClip.Program
+﻿module SuperClip.Ooui.Program
 
 open System
 open System.Threading
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
 
-open Plugin.Clipboard
-
 open Dap.Prelude
 open Dap.Platform
 
 open SuperClip.Core
-open SuperClip.Clipboard
+open SuperClip.App
 open SuperClip.Forms
 
 let onExit (app : IApp) (exited : AutoResetEvent) =
@@ -38,15 +36,15 @@ let setTestDataAsync : GetTask<App.View, unit> =
     }
 *)
 
-let onAppStarted (app : IApp) =
+let onAppStarted (app : FormsApp) =
     Xamarin.Forms.Forms.LoadApplication <| app.View.Application
     //app.View.RunTask ignoreOnFailed setTestDataAsync
 
 [<EntryPoint>]
+[<STAThread>]
 let main argv =
     Ooui.UI.Port <- 6060
     Xamarin.Forms.Forms.Init ();
-    CrossClipboard.Current <- new ClipboardImplementation ()
-    let app = FormsApp.Create onAppStarted
+    let app = FormsApp.Create (onAppStarted)
     waitForExit app
     0 // return an integer exit code

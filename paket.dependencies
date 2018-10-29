@@ -12,6 +12,9 @@ nuget Argu
 nuget Dap.Forms
 nuget Dap.Local
 nuget Dap.Context
+nuget Dap.Gui
+nuget Dap.Eto
+nuget Dap.Eto.Gtk
 
 nuget Elmish.XamarinForms
 nuget FSharp.Data 3.0.0-beta4
@@ -19,8 +22,6 @@ nuget Dap.Remote.FSharpData
 
 nuget Xamarin.Forms 3.1.0.637273
 nuget Xamarin.Essentials
-
-nuget Xamarin.Plugins.Clipboard
 
 # Ooui
 nuget Ooui.Forms
@@ -42,9 +43,6 @@ group Build
     nuget Dap.Platform
     nuget Dap.Remote
     nuget Dap.Forms
+    nuget Dap.Gui
+    nuget Dap.Eto
     nuget Dap.Local.Farango
-
-    clitool dotnet-sourcelink
-    nuget Microsoft.SourceLink.GitHub 1.0.0-beta-62925-02
-    nuget Microsoft.Build.Tasks.Git 1.0.0-beta-62925-02
-    nuget Microsoft.SourceLink.Common 1.0.0-beta-62925-02
