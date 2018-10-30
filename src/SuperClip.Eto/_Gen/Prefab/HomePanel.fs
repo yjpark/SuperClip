@@ -1,6 +1,5 @@
-[<AutoOpen>]
 [<RequireQualifiedAccess>]
-module SuperClip.Prefab.HomeView
+module SuperClip.Prefab.HomePanel
 
 open Dap.Prelude
 open Dap.Context
@@ -10,11 +9,11 @@ open Dap.Eto
 open Dap.Eto.Prefab
 
 [<Literal>]
-let Kind = "HomeView"
+let Kind = "HomePanel"
 
 let Json = parseJson """
 {
-    "prefab": "home_view",
+    "prefab": "home_panel",
     "styles": [],
     "layout": "vertical_stack",
     "children": {
@@ -23,7 +22,12 @@ let Json = parseJson """
             "styles": [],
             "layout": "horizontal_stack",
             "children": {
-                "status": {
+                "link": {
+                    "prefab": "",
+                    "styles": [],
+                    "text": "..."
+                },
+                "session": {
                     "prefab": "",
                     "styles": [],
                     "text": "..."

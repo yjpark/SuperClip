@@ -41,9 +41,15 @@ type LocalClipboard = SuperClip.Mac.Feature.LocalClipboard.Context
 type LocalClipboard = SuperClip.Gtk.Feature.LocalClipboard.Context
 #endif
 
+#if SUPERCLIP_ETO_FEATURE
+type AppGui = SuperClip.Eto.Feature.AppGui.Context
+#endif
+#if SUPERCLIP_FORMS_FEATURE
+type AppGui = SuperClip.Forms.Feature.AppGui.Context
+#endif
+
 (*
  * Generated: <App>
- *     IsGui
  *)
 type App (logging : ILogging, args : AppArgs) as this =
     let env = Env.live MailboxPlatform logging args.Scope
@@ -57,7 +63,7 @@ type App (logging : ILogging, args : AppArgs) as this =
     let mutable (* IAppPack *) secureStorage : Context.Agent<ISecureStorage> option = None
     let mutable (* IClientPack *) userPref : Context.Agent<IUserPref> option = None
     let mutable (* ISessionPack *) session : SessionTypes.Agent option = None
-    let mutable guiContext : SynchronizationContext option = None
+    let mutable (* IGuiPack *) appGui : Context.Agent<IAppGui> option = None
     let setupAsync (_runner : IRunner) : Task<unit> = task {
         try
             let! (* ITickingPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args.Ticker) AppKinds.Ticker AppKeys.Ticker
@@ -80,6 +86,8 @@ type App (logging : ILogging, args : AppArgs) as this =
             userPref <- Some userPref'
             let! (* ISessionPack *) session' = env |> Env.addServiceAsync (SuperClip.App.Session.Logic.spec this.AsClientPack args.Session) AppKinds.Session AppKeys.Session
             session <- Some session'
+            let! (* IGuiPack *) appGui' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.AppGui) AppKinds.AppGui AppKeys.AppGui
+            appGui <- Some appGui'
             do! this.SetupAsync' ()
             logInfo env "App.setupAsync" "Setup_Succeed" (encodeJson 4 args)
             args.Setup this.AsApp
@@ -93,14 +101,6 @@ type App (logging : ILogging, args : AppArgs) as this =
     )
     new (loggingArgs : LoggingArgs, a : AppArgs) = new App (loggingArgs.CreateLogging (), a)
     new (a : AppArgs) = new App (getLogging (), a)
-    member __.SetupGuiContext' () =
-        match guiContext with
-        | Some guiContext' ->
-            failWith "GuiContext_Already_Setup" guiContext'
-        | None ->
-            let guiContext' = SynchronizationContext.Current
-            guiContext <- Some guiContext'
-            logInfo env "SetupGuiContext'" "Succeed" guiContext'
     abstract member SetupAsync' : unit -> Task<unit>
     default __.SetupAsync' () = task {
         return ()
@@ -176,23 +176,12 @@ type App (logging : ILogging, args : AppArgs) as this =
         member __.Session (* ISessionPack *) : SessionTypes.Agent = session |> Option.get
         member __.AsClientPack = this.AsClientPack
     member __.AsSessionPack = this :> ISessionPack
+    interface IGuiPack with
+        member __.Args = this.Args.AsGuiPackArgs
+        member __.AppGui (* IGuiPack *) : Context.Agent<IAppGui> = appGui |> Option.get
+    member __.AsGuiPack = this :> IGuiPack
     interface IApp with
         member __.Args : AppArgs = this.Args
         member __.AsSessionPack = this.AsSessionPack
-        member __.GuiContext =
-            match guiContext with
-            | Some guiContext' -> guiContext'
-            | None -> failWith "GuiContext_Not_Setup" this
-        member __.GetGuiTask (getTask : GetTask<IApp, 'res>) : Task<'res> = task {
-            return! async {
-                do! Async.SwitchToContext (this.AsApp.GuiContext)
-                return! Async.AwaitTask (getTask this)
-            }
-        }
-        member __.RunGuiTask (onFailed : OnFailed<IApp>) (getTask : GetTask<IApp, unit>) : unit =
-            (this :> IRunner<IApp>).RunTask onFailed (fun _ -> this.AsApp.GetGuiTask getTask)
-        member __.RunGuiFunc (func : Func<IApp, unit>) : unit =
-            this.AsApp.RunGuiTask ignoreOnFailed (fun _ -> task {
-                runFunc' this func |> ignore
-            })
+        member __.AsGuiPack = this.AsGuiPack
     member __.AsApp = this :> IApp

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <Compile Include="../SuperClip.Gui/Presenter/LinkStatus.fs" />
+    <Compile Include="../SuperClip.Gui/Presenter/HomePanel.fs" />
+    <Compile Include="../SuperClip.Gui/Presenter/AuthPanel.fs" />
+  </ItemGroup>
+</Project>

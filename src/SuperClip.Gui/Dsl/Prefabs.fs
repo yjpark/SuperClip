@@ -12,7 +12,12 @@ open Dap.Gui.Dsl.Prefab
 let LinkStatus =
     h_stack {
         prefab "link_status"
-        child "status" (
+        child "link" (
+            label {
+                text "..."
+            }
+        )
+        child "session" (
             label {
                 text "..."
             }
@@ -24,9 +29,9 @@ let LinkStatus =
         )
     }
 
-let HomeView =
+let HomePanel =
     v_stack {
-        prefab "home_view"
+        prefab "home_panel"
         child "link_status" LinkStatus
         child "history" (
             label {
@@ -35,9 +40,9 @@ let HomeView =
         )
     }
 
-let AuthView =
+let AuthPanel =
     v_stack {
-        prefab "auth_view"
+        prefab "auth_panel"
         styles ["style1" ; "style2"]
         child "title" (
             label {

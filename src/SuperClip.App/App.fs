@@ -14,6 +14,34 @@ open SuperClip.App
 [<Literal>]
 let Scope = "SuperClip"
 
+type LinkSessionStatus =
+    | NoLink
+    | NoAuth
+    | NoChannel of Credential
+    | Syncing of Credential
+    | Pausing of Credential
+
+type IApp with
+    member this.LinkSessionStatus : LinkSessionStatus =
+        let session = this.Session
+        if this.CloudStub.Status = LinkStatus.Linked then
+            match session.Actor.State.Auth with
+            | Some auth ->
+                match session.Actor.State.Channel with
+                | Some channel ->
+                    match session.Actor.State.Syncing with
+                    | true ->
+                        Syncing auth
+                    | false ->
+                        Pausing auth
+                | None ->
+                    NoChannel auth
+            | None ->
+                NoAuth
+        else
+            NoLink
+    member this.Gui = this.AsGuiPack.AppGui.Context
+
 type App (loggingArgs : LoggingArgs, args : AppArgs) =
     inherit SuperClip.App.BaseApp.App (loggingArgs, args.WithScope Scope)
     override this.SetupAsync' () = task {

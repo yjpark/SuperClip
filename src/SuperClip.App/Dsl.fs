@@ -65,10 +65,29 @@ let ISessionPack =
         )
     }
 
+let AppGui =
+    emptyContext {
+        kind "AppGui"
+        handler (M.unit "do_login") (M.unit response)
+    }
+
+let IGuiPack =
+    pack [] {
+        add (M.context ("IAppGui"))
+    }
+
 let App =
     live {
         has <@ ISessionPack @>
+        has <@ IGuiPack @>
     }
+
+type G with
+    static member GuiPack (feature : string option) =
+        let feature = defaultArg feature "SuperClip.App.Feature"
+        [
+            sprintf "type AppGui = %s.AppGui.Context" feature
+        ]
 
 let commonLines =
     [
@@ -87,6 +106,14 @@ let commonLines =
             ])
     ]|> concatSections
 
+let guiFeature =
+    G.Feature (G.GuiPack,
+        [
+            "SuperClip.Eto.Feature"
+            "SuperClip.Forms.Feature"
+        ])
+
+
 let compile segments =
     [
         G.File (segments, ["_Gen" ; "Types.fs"],
@@ -98,6 +125,8 @@ let compile segments =
                     G.Context <@ UserPref @>
                     G.PackInterface <@ ICloudStubPack @>
                     G.PackInterface <@ IClientPack @>
+                    G.Context <@ AppGui @>
+                    G.PackInterface <@ IGuiPack @>
                 ]
             )
         )
@@ -113,7 +142,8 @@ let compile segments =
             G.AutoOpenModule ("SuperClip.App.IApp",
                 [
                     commonLines
-                    G.GuiAppInterface <@ App @>
+                    guiFeature
+                    G.AppInterface <@ App @>
                 ]
             )
         )
@@ -121,7 +151,8 @@ let compile segments =
             G.QualifiedModule ("SuperClip.App.BaseApp",
                 [
                     commonLines
-                    G.GuiAppClass <@ App @>
+                    guiFeature
+                    G.AppClass <@ App @>
                 ]
             )
         )

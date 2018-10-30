@@ -1,4 +1,3 @@
-[<AutoOpen>]
 [<RequireQualifiedAccess>]
 module SuperClip.Prefab.LinkStatus
 
@@ -18,7 +17,12 @@ let Json = parseJson """
     "styles": [],
     "layout": "horizontal_stack",
     "children": {
-        "status": {
+        "link": {
+            "prefab": "",
+            "styles": [],
+            "text": "..."
+        },
+        "session": {
             "prefab": "",
             "styles": [],
             "text": "..."
@@ -38,11 +42,13 @@ type Widget = Stack.Model
 
 type Prefab (logging : ILogging) =
     inherit Stack.Prefab (logging)
-    let status = Label.Prefab.AddToGroup logging "status" base.Model
+    let link = Label.Prefab.AddToGroup logging "link" base.Model
+    let session = Label.Prefab.AddToGroup logging "session" base.Model
     let action = Button.Prefab.AddToGroup logging "action" base.Model
     do (
         base.Model.AsProperty.LoadJson Json
-        base.AddChild (status.Widget)
+        base.AddChild (link.Widget)
+        base.AddChild (session.Widget)
         base.AddChild (action.Widget)
     )
     static member Create l = new Prefab (l)
@@ -51,5 +57,6 @@ type Prefab (logging : ILogging) =
         let prefab = Prefab.Create l
         group.Children.AddLink<Model> (prefab.Model, key) |> ignore
         prefab
-    member __.Status : Label.Prefab = status
+    member __.Link : Label.Prefab = link
+    member __.Session : Label.Prefab = session
     member __.Action : Button.Prefab = action

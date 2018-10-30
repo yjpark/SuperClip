@@ -41,9 +41,15 @@ type LocalClipboard = SuperClip.Mac.Feature.LocalClipboard.Context
 type LocalClipboard = SuperClip.Gtk.Feature.LocalClipboard.Context
 #endif
 
+#if SUPERCLIP_ETO_FEATURE
+type AppGui = SuperClip.Eto.Feature.AppGui.Context
+#endif
+#if SUPERCLIP_FORMS_FEATURE
+type AppGui = SuperClip.Forms.Feature.AppGui.Context
+#endif
+
 (*
  * Generated: <App>
- *     IsGui
  *)
 
 type AppKinds () =
@@ -58,6 +64,7 @@ type AppKinds () =
     static member SecureStorage (* IAppPack *) = "SecureStorage"
     static member UserPref (* IClientPack *) = "UserPref"
     static member Session (* ISessionPack *) = "Session"
+    static member AppGui (* IGuiPack *) = "AppGui"
 
 type AppKeys () =
     static member Ticker (* ITickingPack *) = ""
@@ -69,16 +76,16 @@ type AppKeys () =
     static member SecureStorage (* IAppPack *) = ""
     static member UserPref (* IClientPack *) = ""
     static member Session (* ISessionPack *) = ""
+    static member AppGui (* IGuiPack *) = ""
 
 type IApp =
+    inherit IRunner<IApp>
     inherit IPack
     inherit ISessionPack
+    inherit IGuiPack
     abstract Args : AppArgs with get
     abstract AsSessionPack : ISessionPack with get
-    abstract GuiContext : SynchronizationContext with get
-    abstract GetGuiTask : GetTask<IApp, 'res> -> Task<'res>
-    abstract RunGuiTask : OnFailed<IApp> -> GetTask<IApp, unit> -> unit
-    abstract RunGuiFunc : Func<IApp, unit> -> unit
+    abstract AsGuiPack : IGuiPack with get
 
 (*
  * Generated: <Record>
@@ -98,6 +105,7 @@ and AppArgs = {
     SecureStorage : (* IAppPack *) Context.Args<ISecureStorage>
     UserPref : (* IClientPack *) Context.Args<IUserPref>
     Session : (* ISessionPack *) NoArgs
+    AppGui : (* IGuiPack *) Context.Args<IAppGui>
 } with
     static member Create
         (
@@ -113,7 +121,8 @@ and AppArgs = {
             ?preferences : (* IAppPack *) Context.Args<IPreferences>,
             ?secureStorage : (* IAppPack *) Context.Args<ISecureStorage>,
             ?userPref : (* IClientPack *) Context.Args<IUserPref>,
-            ?session : (* ISessionPack *) NoArgs
+            ?session : (* ISessionPack *) NoArgs,
+            ?appGui : (* IGuiPack *) Context.Args<IAppGui>
         ) : AppArgs =
         {
             Scope = (* AppArgs *) scope
@@ -142,6 +151,8 @@ and AppArgs = {
                 |> Option.defaultWith (fun () -> UserPref.AddToAgent)
             Session = (* ISessionPack *) session
                 |> Option.defaultWith (fun () -> NoArgs)
+            AppGui = (* IGuiPack *) appGui
+                |> Option.defaultWith (fun () -> AppGui.AddToAgent)
         }
     static member Default () = AppArgs.Create ()
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
@@ -170,6 +181,8 @@ and AppArgs = {
         {this with UserPref = userPref}
     static member SetSession ((* ISessionPack *) session : NoArgs) (this : AppArgs) =
         {this with Session = session}
+    static member SetAppGui ((* IGuiPack *) appGui : Context.Args<IAppGui>) (this : AppArgs) =
+        {this with AppGui = appGui}
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
@@ -200,6 +213,7 @@ and AppArgs = {
                 SecureStorage = (* (* IAppPack *)  *) SecureStorage.AddToAgent
                 UserPref = (* (* IClientPack *)  *) UserPref.AddToAgent
                 Session = (* (* ISessionPack *)  *) NoArgs
+                AppGui = (* (* IGuiPack *)  *) AppGui.AddToAgent
             }
         )
     static member JsonSpec =
@@ -233,6 +247,8 @@ and AppArgs = {
         this |> AppArgs.SetUserPref userPref
     member this.WithSession ((* ISessionPack *) session : NoArgs) =
         this |> AppArgs.SetSession session
+    member this.WithAppGui ((* IGuiPack *) appGui : Context.Args<IAppGui>) =
+        this |> AppArgs.SetAppGui appGui
     interface ITickingPackArgs with
         member this.Ticker (* ITickingPack *) : TickerTypes.Args = this.Ticker
     member this.AsTickingPackArgs = this :> ITickingPackArgs
@@ -265,6 +281,9 @@ and AppArgs = {
         member this.Session (* ISessionPack *) : NoArgs = this.Session
         member this.AsClientPackArgs = this.AsClientPackArgs
     member this.AsSessionPackArgs = this :> ISessionPackArgs
+    interface IGuiPackArgs with
+        member this.AppGui (* IGuiPack *) : Context.Args<IAppGui> = this.AppGui
+    member this.AsGuiPackArgs = this :> IGuiPackArgs
 
 (*
  * Generated: <ValueBuilder>
@@ -311,5 +330,8 @@ type AppArgsBuilder () =
     [<CustomOperation("session")>]
     member __.Session (target : AppArgs, (* ISessionPack *) session : NoArgs) =
         target.WithSession session
+    [<CustomOperation("app_gui")>]
+    member __.AppGui (target : AppArgs, (* IGuiPack *) appGui : Context.Args<IAppGui>) =
+        target.WithAppGui appGui
 
 let app_args = new AppArgsBuilder ()

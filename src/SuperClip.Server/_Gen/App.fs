@@ -33,6 +33,7 @@ type AppKeys () =
     static member Ticker (* ITickingPack *) = ""
 
 type IApp =
+    inherit IRunner<IApp>
     inherit IPack
     inherit IDbPack
     inherit ICloudHubPack

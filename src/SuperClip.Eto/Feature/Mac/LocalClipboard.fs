@@ -9,6 +9,7 @@ open Foundation
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
+open Dap.Gui
 
 open SuperClip.Core
 open SuperClip.Core.Primary.Types

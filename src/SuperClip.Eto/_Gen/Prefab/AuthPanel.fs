@@ -1,6 +1,5 @@
-[<AutoOpen>]
 [<RequireQualifiedAccess>]
-module SuperClip.Prefab.AuthView
+module SuperClip.Prefab.AuthPanel
 
 open Dap.Prelude
 open Dap.Context
@@ -10,11 +9,11 @@ open Dap.Eto
 open Dap.Eto.Prefab
 
 [<Literal>]
-let Kind = "AuthView"
+let Kind = "AuthPanel"
 
 let Json = parseJson """
 {
-    "prefab": "auth_view",
+    "prefab": "auth_panel",
     "styles": [
         "style1",
         "style2"

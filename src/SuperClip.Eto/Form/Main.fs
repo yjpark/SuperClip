@@ -12,7 +12,8 @@ open Dap.Eto
 
 open SuperClip.Core
 open SuperClip.App
-open SuperClip.Prefab
+
+type HomePanel = SuperClip.Presenter.HomePanel.Presenter
 
 type QuitCommand (app : IApp) =
     inherit Command ()
@@ -32,8 +33,8 @@ type MainForm (app : IApp) =
         base.Menu <- new MenuBar()
         let fileItem = new ButtonMenuItem(Text = "&File")
         base.Menu.QuitItem <- (new QuitCommand(app)) .CreateMenuItem ()
-        let prefab = new HomeView.Prefab (app.Env.Logging)
-        base.Content <- prefab.Widget
+        let homePanel = new HomePanel (app)
+        base.Content <- homePanel.Prefab.Widget
         // about command (goes in Application menu on OS X, Help menu for others)
         (*
         base.Menu.AboutItem <- (new Command((fun sender e -> (new Dialog(Content = (new Label(Text = "About my app...")), ClientSize = Size(200, 200))).ShowModal(base)), MenuText = "About my app")).CreateMenuItem()

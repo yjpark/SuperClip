@@ -9,7 +9,7 @@
     <ProjectGuid>{D056F368-E045-4738-BB64-E957B193E594}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{F2A71F9B-5D33-465A-A702-920D77279786}</ProjectTypeGuids>
     <UseStandardResourceNames>true</UseStandardResourceNames>
-    <DefineConstants>SUPERCLIP_MAC_FEATURE</DefineConstants>
+    <DefineConstants>SUPERCLIP_ETO_FEATURE;SUPERCLIP_MAC_FEATURE</DefineConstants>
     <OutputType>Exe</OutputType>
     <RootNamespace>SuperClip.Mac</RootNamespace>
     <AssemblyName>SuperClip</AssemblyName>
@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;SUPERCLIP_MAC_FEATURE</DefineConstants>
+    <DefineConstants>DEBUG;SUPERCLIP_ETO_FEATURE;SUPERCLIP_MAC_FEATURE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CodeSigningKey>Mac Developer</CodeSigningKey>
@@ -40,7 +40,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>SUPERCLIP_MAC_FEATURE</DefineConstants>
+    <DefineConstants>SUPERCLIP_ETO_FEATURE;SUPERCLIP_MAC_FEATURE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CreatePackage>true</CreatePackage>

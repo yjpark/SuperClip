@@ -196,3 +196,39 @@ type IClientPack =
     abstract AsCorePack : ICorePack with get
     abstract AsCloudStubPack : ICloudStubPack with get
     abstract AsAppPack : IAppPack with get
+
+(*
+ * Generated: <Context>
+ *)
+type IAppGui =
+    inherit IContext<NoProperties>
+    abstract NoProperties : NoProperties with get
+    abstract DoLogin : IHandler<unit, unit> with get
+
+(*
+ * Generated: <Context>
+ *)
+[<Literal>]
+let AppGuiKind = "AppGui"
+
+[<AbstractClass>]
+type BaseAppGui<'context when 'context :> IAppGui> (logging : ILogging) =
+    inherit CustomContext<'context, ContextSpec<NoProperties>, NoProperties> (logging, new ContextSpec<NoProperties>(AppGuiKind, NoProperties.Create))
+    let doLogin = base.Handlers.Add<unit, unit> (E.unit, D.unit, E.unit, D.unit, "do_login")
+    member this.NoProperties : NoProperties = this.Properties
+    member __.DoLogin : IHandler<unit, unit> = doLogin
+    interface IAppGui with
+        member this.NoProperties : NoProperties = this.Properties
+        member __.DoLogin : IHandler<unit, unit> = doLogin
+    member this.AsAppGui = this :> IAppGui
+
+(*
+ * Generated: <Pack>
+ *)
+type IGuiPackArgs =
+    abstract AppGui : Context.Args<IAppGui> with get
+
+type IGuiPack =
+    inherit IPack
+    abstract Args : IGuiPackArgs with get
+    abstract AppGui : Context.Agent<IAppGui> with get

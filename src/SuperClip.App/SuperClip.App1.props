@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <Compile Include="../SuperClip.App/_Gen1/Packs.fs" />
+    <Compile Include="../SuperClip.App/_Gen1/IApp.fs" />
+    <Compile Include="../SuperClip.App/_Gen1/BaseApp.fs" />
+    <Compile Include="../SuperClip.App/App.fs" />
+  </ItemGroup>
+</Project>
