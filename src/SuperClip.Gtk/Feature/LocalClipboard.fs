@@ -1,7 +1,6 @@
 [<RequireQualifiedAccess>]
 module SuperClip.Gtk.Feature.LocalClipboard
 
-#if SUPERCLIP_GTK_FEATURE
 open FSharp.Control.Tasks.V2
 
 open Dap.Prelude
@@ -35,4 +34,3 @@ type Context (logging : ILogging) =
     override __.Spawn l = new Context (l)
     static member AddToAgent (agent : IAgent) =
         new Context (agent.Env.Logging) :> ILocalClipboard
-#endif

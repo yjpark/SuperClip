@@ -16,27 +16,6 @@ module Cloud = SuperClip.Core.Cloud
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module Context = Dap.Platform.Context
 
-#if DAP_FORMS_FEATURE
-type Preferences = Dap.Forms.Feature.Preferences.Context
-type SecureStorage = Dap.Forms.Feature.SecureStorage.Context
-#else
-type Preferences = Dap.Local.Feature.Preferences.Context
-type SecureStorage = Dap.Local.Feature.SecureStorage.Context
-#endif
-
-#if SUPERCLIP_CORE_FEATURE
-type LocalClipboard = SuperClip.Core.Feature.LocalClipboard.Context
-#endif
-#if SUPERCLIP_FORMS_FEATURE
-type LocalClipboard = SuperClip.Forms.Feature.LocalClipboard.Context
-#endif
-#if SUPERCLIP_MAC_FEATURE
-type LocalClipboard = SuperClip.Mac.Feature.LocalClipboard.Context
-#endif
-#if SUPERCLIP_GTK_FEATURE
-type LocalClipboard = SuperClip.Gtk.Feature.LocalClipboard.Context
-#endif
-
 (*
  * Generated: <Record>
  *     IsJson
@@ -148,8 +127,9 @@ let UserPrefKind = "UserPref"
 
 type UserPref (logging : ILogging) =
     inherit CustomContext<UserPref, ContextSpec<UserProps>, UserProps> (logging, new ContextSpec<UserProps>(UserPrefKind, UserProps.Create))
-    static member AddToAgent (agent : IAgent) =
-        new UserPref (agent.Env.Logging) :> IUserPref
+    static member Create (?logging : ILogging) =
+        let logging = logging |> Option.defaultWith (fun () -> getLogging ())
+        new UserPref (logging)
     override this.Self = this
     override __.Spawn l = new UserPref (l)
     member this.UserProps : UserProps = this.Properties
@@ -201,6 +181,7 @@ type IClientPack =
  * Generated: <Context>
  *)
 type IAppGui =
+    inherit IFeature
     inherit IContext<NoProperties>
     abstract NoProperties : NoProperties with get
     abstract DoLogin : IHandler<unit, unit> with get
@@ -220,6 +201,7 @@ type BaseAppGui<'context when 'context :> IAppGui> (logging : ILogging) =
     interface IAppGui with
         member this.NoProperties : NoProperties = this.Properties
         member __.DoLogin : IHandler<unit, unit> = doLogin
+    interface IFeature
     member this.AsAppGui = this :> IAppGui
 
 (*

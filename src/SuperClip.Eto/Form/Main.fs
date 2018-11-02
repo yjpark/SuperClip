@@ -9,11 +9,12 @@ open Dap.Prelude
 open Dap.Context
 open Dap.Platform
 open Dap.Eto
+open Dap.Eto.Prefab
 
 open SuperClip.Core
 open SuperClip.App
 
-type HomePanel = SuperClip.Presenter.HomePanel.Presenter
+type HomePanel = SuperClip.Gui.Presenter.HomePanel.Presenter
 
 type QuitCommand (app : IApp) =
     inherit Command ()
@@ -25,16 +26,18 @@ type QuitCommand (app : IApp) =
         base.OnExecuted e
         Application.Instance.Quit()
 
-type MainForm (app : IApp) =
+type MainForm (env : IEnv) =
     inherit Form ()
+    let homePanel = new HomePanel (env)
     do (
         base.Title <- "SuperClip"
         base.ClientSize <- Size (640, 800)
+        base.Content <- homePanel.Prefab.Widget0 :?> StackWidget
+        (*
         base.Menu <- new MenuBar()
         let fileItem = new ButtonMenuItem(Text = "&File")
-        base.Menu.QuitItem <- (new QuitCommand(app)) .CreateMenuItem ()
-        let homePanel = new HomePanel (app)
-        base.Content <- homePanel.Prefab.Widget
+        base.Menu.QuitItem <- (new QuitCommand(env)) .CreateMenuItem ()
+        *)
         // about command (goes in Application menu on OS X, Help menu for others)
         (*
         base.Menu.AboutItem <- (new Command((fun sender e -> (new Dialog(Content = (new Label(Text = "About my app...")), ClientSize = Size(200, 200))).ShowModal(base)), MenuText = "About my app")).CreateMenuItem()
@@ -57,4 +60,6 @@ type MainForm (app : IApp) =
         prefab.Title.Model.Text.SetValue "Hello World"
         *)
     )
+    member __.Attach (app : IApp) =
+        homePanel.Attach app
 

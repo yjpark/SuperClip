@@ -28,6 +28,9 @@
 			"path": "src/SuperClip.Mac"
 		},
 		{
+			"path": "src/SuperClip.Wpf"
+		},
+		{
 			"path": "src/SuperClip.Forms"
 		},
 		{

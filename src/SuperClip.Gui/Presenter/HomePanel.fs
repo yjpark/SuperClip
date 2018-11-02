@@ -1,15 +1,26 @@
 [<RequireQualifiedAccess>]
-module SuperClip.Presenter.HomePanel
+module SuperClip.Gui.Presenter.HomePanel
 
 open Dap.Prelude
 open Dap.Context
+open Dap.Platform
 open Dap.Gui
 
 open SuperClip.Core
 open SuperClip.App
+open SuperClip.Gui.Prefab
+open SuperClip.Gui.Presenter
 
-type Prefab = SuperClip.Prefab.HomePanel.Prefab
+type Prefab = IHomePanel
 
-type Presenter (app : IApp) =
-    inherit BasePresenter<Prefab> (new Prefab (app.Env.Logging))
-    let linkStatus = new SuperClip.Presenter.LinkStatus.Presenter (app, base.Prefab.LinkStatus)
+type Presenter (env : IEnv) =
+    inherit BasePresenter<Prefab, IApp> (Feature.create<Prefab> env.Logging)
+
+    override this.OnAttached () =
+        let prefab = this.Prefab
+        let app = this.Domain.Value
+        let linkStatus = new LinkStatus.Presenter (prefab.LinkStatus, app)
+        let history = new Items.Presenter (prefab.History, app)
+        app.History.Actor.OnEvent.AddWatcher prefab "OnHistory" (fun _ ->
+            history.Attach (app.History.Actor.State.RecentItems)
+        )

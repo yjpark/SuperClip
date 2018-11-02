@@ -1,28 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-  </PropertyGroup>
-  <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <DefineConstants>DAP_FORMS_FEATURE;SUPERCLIP_FORMS_FEATURE</DefineConstants>
-    <PackageProjectUrl>https://github.com/pettyfun/SuperClip</PackageProjectUrl>
-    <PackageTags>fsharp;</PackageTags>
-    <Authors>YJ Park</Authors>
-    <Version>0.6.0</Version>
-    <Description>SuperClip.Core</Description>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
-  <Import Project="../SuperClip.Core/SuperClip.Core.props" />
   <ItemGroup>
     <Compile Include="Feature/LocalClipboard.fs" />
-  </ItemGroup>
-  <Import Project="../SuperClip.App/SuperClip.App.props" />
-  <ItemGroup>
     <Compile Include="Feature/AppGui.fs" />
-  </ItemGroup>
-  <Import Project="../SuperClip.App/SuperClip.App1.props" />
-  <Import Project="../SuperClip.Gui/SuperClip.Gui.props" />
-  <ItemGroup>
     <Compile Include="View/Types.fs" />
     <Compile Include="View/Widget/Item.fs" />
     <Compile Include="View/Widget/Items.fs" />
@@ -32,6 +14,9 @@
     <Compile Include="View/Page/Home.fs" />
     <Compile Include="View/Logic.fs" />
     <Compile Include="FormsApp.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

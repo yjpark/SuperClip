@@ -87,7 +87,7 @@ let LocalClipboard =
 type M with
     static member localClipboard (?name : string, ?spawner : string, ?kind : Kind, ?key : Key, ?aliases : ModuleAlias list) =
         let name = defaultArg name "ILocalClipboard"
-        M.context (name, ?spawner = spawner, ?kind = kind, ?key = key, ?aliases = aliases)
+        M.feature (name, ?spawner = spawner, ?kind = kind, ?key = key, ?aliases = aliases)
     static member primaryClipboard () =
         let alias = "PrimaryTypes", "SuperClip.Core.Primary.Types"
         let args = JsonArgs "PrimaryTypes.Args"
@@ -129,7 +129,7 @@ let compile segments =
                     G.JsonRecord <@ PrimaryClipboardArgs @>
                     G.JsonRecord <@ HistoryArgs @>
                     G.Combo <@ LocalClipboardProps @>
-                    G.Context <@ LocalClipboard @>
+                    G.Feature <@ LocalClipboard @>
                     G.PackInterface <@ ILocalPack @>
                 ]
             )

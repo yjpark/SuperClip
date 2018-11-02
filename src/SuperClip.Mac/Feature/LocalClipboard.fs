@@ -1,7 +1,6 @@
 [<RequireQualifiedAccess>]
 module SuperClip.Mac.Feature.LocalClipboard
 
-#if SUPERCLIP_MAC_FEATURE
 open FSharp.Control.Tasks.V2
 open AppKit
 open Foundation
@@ -27,11 +26,11 @@ type Context (logging : ILogging) =
     do (
         pasteboard.DeclareTypes (PboardTypes, null) |> ignore
         base.SetSupportOnChanged false
-        base.GetAsync.SetupHandler (fun () -> task {
+        base.GetAsync.SetupGuiHandler (fun () -> task {
             let text = pasteboard.GetStringForType (NSStringPboardType);
             return Base.textToContent text
         })
-        base.SetAsync.SetupHandler (fun (content : Content) -> task {
+        base.SetAsync.SetupGuiHandler (fun (content : Content) -> task {
             let text = Base.contentToText content
             pasteboard.SetStringForType (text, NSStringPboardType) |> ignore
             return ()
@@ -41,4 +40,3 @@ type Context (logging : ILogging) =
     override __.Spawn l = new Context (l)
     static member AddToAgent (agent : IAgent) =
         new Context (agent.Env.Logging) :> ILocalClipboard
-#endif

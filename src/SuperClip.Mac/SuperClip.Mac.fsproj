@@ -9,7 +9,6 @@
     <ProjectGuid>{D056F368-E045-4738-BB64-E957B193E594}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{F2A71F9B-5D33-465A-A702-920D77279786}</ProjectTypeGuids>
     <UseStandardResourceNames>true</UseStandardResourceNames>
-    <DefineConstants>SUPERCLIP_ETO_FEATURE;SUPERCLIP_MAC_FEATURE</DefineConstants>
     <OutputType>Exe</OutputType>
     <RootNamespace>SuperClip.Mac</RootNamespace>
     <AssemblyName>SuperClip</AssemblyName>
@@ -21,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;SUPERCLIP_ETO_FEATURE;SUPERCLIP_MAC_FEATURE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CodeSigningKey>Mac Developer</CodeSigningKey>
@@ -40,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>SUPERCLIP_ETO_FEATURE;SUPERCLIP_MAC_FEATURE</DefineConstants>
+    <DefineConstants></DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CreatePackage>true</CreatePackage>
@@ -62,9 +61,7 @@
     <Reference Include="mscorlib" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
-    <Reference Include="FSharp.Core">
-      <HintPath>..\packages\FSharp.Core.4.3.3\lib\netstandard1.6\FSharp.Core.dll</HintPath>
-    </Reference>
+    <Reference Include="FSharp.Core" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -85,8 +82,8 @@
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
   </ItemGroup>
-  <Import Project="../SuperClip.Eto/SuperClip.Eto.props" />
   <ItemGroup>
+    <Compile Include="Feature/LocalClipboard.fs" />
     <Compile Include="AppDelegate.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -103,6 +100,12 @@
     <PackageReference Include="Eto.Forms">
       <Version>2.4.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
+    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
+    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
+    <ProjectReference Include="..\SuperClip.Eto\SuperClip.Eto.fsproj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.FSharp.targets" />
 </Project>

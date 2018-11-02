@@ -20,34 +20,6 @@ module Cloud = SuperClip.Core.Cloud
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
 module SessionTypes = SuperClip.App.Session.Types
 
-#if DAP_FORMS_FEATURE
-type Preferences = Dap.Forms.Feature.Preferences.Context
-type SecureStorage = Dap.Forms.Feature.SecureStorage.Context
-#else
-type Preferences = Dap.Local.Feature.Preferences.Context
-type SecureStorage = Dap.Local.Feature.SecureStorage.Context
-#endif
-
-#if SUPERCLIP_CORE_FEATURE
-type LocalClipboard = SuperClip.Core.Feature.LocalClipboard.Context
-#endif
-#if SUPERCLIP_FORMS_FEATURE
-type LocalClipboard = SuperClip.Forms.Feature.LocalClipboard.Context
-#endif
-#if SUPERCLIP_MAC_FEATURE
-type LocalClipboard = SuperClip.Mac.Feature.LocalClipboard.Context
-#endif
-#if SUPERCLIP_GTK_FEATURE
-type LocalClipboard = SuperClip.Gtk.Feature.LocalClipboard.Context
-#endif
-
-#if SUPERCLIP_ETO_FEATURE
-type AppGui = SuperClip.Eto.Feature.AppGui.Context
-#endif
-#if SUPERCLIP_FORMS_FEATURE
-type AppGui = SuperClip.Forms.Feature.AppGui.Context
-#endif
-
 (*
  * Generated: <App>
  *)
@@ -132,7 +104,7 @@ and AppArgs = {
             Ticker = (* ITickingPack *) ticker
                 |> Option.defaultWith (fun () -> (TickerTypes.Args.Default ()))
             LocalClipboard = (* ILocalPack *) localClipboard
-                |> Option.defaultWith (fun () -> LocalClipboard.AddToAgent)
+                |> Option.defaultWith (fun () -> Feature.addToAgent<ILocalClipboard>)
             PrimaryClipboard = (* ICorePack *) primaryClipboard
                 |> Option.defaultWith (fun () -> (PrimaryTypes.Args.Default ()))
             LocalHistory = (* ICorePack *) localHistory
@@ -144,15 +116,15 @@ and AppArgs = {
             PacketClient = (* ICloudStubPack *) packetClient
                 |> Option.defaultWith (fun () -> (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
             Preferences = (* IAppPack *) preferences
-                |> Option.defaultWith (fun () -> Preferences.AddToAgent)
+                |> Option.defaultWith (fun () -> Feature.addToAgent<IPreferences>)
             SecureStorage = (* IAppPack *) secureStorage
-                |> Option.defaultWith (fun () -> SecureStorage.AddToAgent)
+                |> Option.defaultWith (fun () -> Feature.addToAgent<ISecureStorage>)
             UserPref = (* IClientPack *) userPref
-                |> Option.defaultWith (fun () -> UserPref.AddToAgent)
+                |> Option.defaultWith (fun () -> (fun (agent : IAgent) -> UserPref.Create agent.Env.Logging :> IUserPref))
             Session = (* ISessionPack *) session
                 |> Option.defaultWith (fun () -> NoArgs)
             AppGui = (* IGuiPack *) appGui
-                |> Option.defaultWith (fun () -> AppGui.AddToAgent)
+                |> Option.defaultWith (fun () -> Feature.addToAgent<IAppGui>)
         }
     static member Default () = AppArgs.Create ()
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
@@ -200,7 +172,7 @@ and AppArgs = {
                 Setup = (* (* AppArgs *)  *) ignore
                 Ticker = get.Optional.Field (* ITickingPack *) "ticker" TickerTypes.Args.JsonDecoder
                     |> Option.defaultValue (TickerTypes.Args.Default ())
-                LocalClipboard = (* (* ILocalPack *)  *) LocalClipboard.AddToAgent
+                LocalClipboard = (* (* ILocalPack *)  *) Feature.addToAgent<ILocalClipboard>
                 PrimaryClipboard = get.Optional.Field (* ICorePack *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder
                     |> Option.defaultValue (PrimaryTypes.Args.Default ())
                 LocalHistory = get.Optional.Field (* ICorePack *) "local_history" HistoryTypes.Args.JsonDecoder
@@ -209,11 +181,11 @@ and AppArgs = {
                     |> Option.defaultValue (HistoryTypes.Args.Default ())
                 CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
                 PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
-                Preferences = (* (* IAppPack *)  *) Preferences.AddToAgent
-                SecureStorage = (* (* IAppPack *)  *) SecureStorage.AddToAgent
-                UserPref = (* (* IClientPack *)  *) UserPref.AddToAgent
+                Preferences = (* (* IAppPack *)  *) Feature.addToAgent<IPreferences>
+                SecureStorage = (* (* IAppPack *)  *) Feature.addToAgent<ISecureStorage>
+                UserPref = (* (* IClientPack *)  *) (fun (agent : IAgent) -> UserPref.Create agent.Env.Logging :> IUserPref)
                 Session = (* (* ISessionPack *)  *) NoArgs
-                AppGui = (* (* IGuiPack *)  *) AppGui.AddToAgent
+                AppGui = (* (* IGuiPack *)  *) Feature.addToAgent<IAppGui>
             }
         )
     static member JsonSpec =

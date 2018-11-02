@@ -1,29 +1,56 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "SuperClip.Mac", "SuperClip.Mac\SuperClip.Mac.fsproj", "{D056F368-E045-4738-BB64-E957B193E594}"
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Mac", "SuperClip.Mac\SuperClip.Mac.fsproj", "{D056F368-E045-4738-BB64-E957B193E594}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "SuperClip.Forms", "SuperClip.Forms\SuperClip.Forms.fsproj", "{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.Forms", "SuperClip.Forms\SuperClip.Forms.fsproj", "{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "SuperClip.macOS", "SuperClip.macOS\SuperClip.macOS.fsproj", "{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.macOS", "SuperClip.macOS\SuperClip.macOS.fsproj", "{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Wpf", "SuperClip.Wpf\SuperClip.Wpf.fsproj", "{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D056F368-E045-4738-BB64-E957B193E594}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{D056F368-E045-4738-BB64-E957B193E594}.Debug|x86.ActiveCfg = Debug|x86
 		{D056F368-E045-4738-BB64-E957B193E594}.Debug|x86.Build.0 = Debug|x86
+		{D056F368-E045-4738-BB64-E957B193E594}.Release|Any CPU.ActiveCfg = Release|x86
 		{D056F368-E045-4738-BB64-E957B193E594}.Release|x86.ActiveCfg = Release|x86
 		{D056F368-E045-4738-BB64-E957B193E594}.Release|x86.Build.0 = Release|x86
+		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Debug|x86.Build.0 = Debug|Any CPU
+		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Release|x86.ActiveCfg = Release|Any CPU
 		{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}.Release|x86.Build.0 = Release|Any CPU
+		{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}.Debug|x86.Build.0 = Debug|Any CPU
+		{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}.Release|x86.ActiveCfg = Release|Any CPU
 		{E90EDF1A-8048-4D97-9E3D-1F1C185D9476}.Release|x86.Build.0 = Release|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Debug|x86.Build.0 = Debug|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|x86.ActiveCfg = Release|Any CPU
+		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71FE21D0-1EF3-45A5-A33D-CEFC6052C791}
 	EndGlobalSection
 EndGlobal

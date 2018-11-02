@@ -16,14 +16,17 @@ open Dap.Build
 #load "src/SuperClip.Server/Dsl.fs"
 #load "src/SuperClip.App/Dsl.fs"
 #load "src/SuperClip.Gui/Dsl/Prefabs.fs"
-#load "src/SuperClip.Eto/Dsl/Prefabs.fs"
 
 [<Literal>]
 let Dist = "Dist"
 
 let allProjects =
-    !! "src/SuperClip.Server/*.fsproj"
+    !! "src/SuperClip.Core/*.fsproj"
+    ++ "src/SuperClip.Server/*.fsproj"
     ++ "src/SuperClip.Web/*.fsproj"
+    ++ "src/SuperClip.App/*.fsproj"
+    ++ "src/SuperClip.Gui/*.fsproj"
+    ++ "src/SuperClip.Eto/*.fsproj"
     ++ "src/SuperClip.Gtk/*.fsproj"
     ++ "src/SuperClip.Forms/*.fsproj"
     ++ "src/SuperClip.Ooui/*.fsproj"
@@ -32,12 +35,14 @@ let allProjects =
 DotNet.create DotNet.debug allProjects
 
 DotNet.createPrepares [
-    ["SuperClip.Forms"], fun _ ->
+    ["SuperClip.Core"], fun _ ->
         SuperClip.Core.Dsl.Compiler.compile ["src" ; "SuperClip.Core"]
         |> List.iter traceSuccess
+    ["SuperClip.App"], fun _ ->
         SuperClip.App.Dsl.compile ["src" ; "SuperClip.App"]
         |> List.iter traceSuccess
-        SuperClip.Eto.Dsl.Prefabs.compile ["src" ; "SuperClip.Eto"]
+    ["SuperClip.Gui"], fun _ ->
+        SuperClip.Gui.Dsl.Prefabs.compile ["src" ; "SuperClip.Gui"]
         |> List.iter traceSuccess
     ["SuperClip.Server"], fun _ ->
         SuperClip.Server.Dsl.compile ["src" ; "SuperClip.Server"]

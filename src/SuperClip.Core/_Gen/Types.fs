@@ -435,6 +435,7 @@ type LocalClipboardProps (owner : IOwner, key : Key) =
  * Generated: <Context>
  *)
 type ILocalClipboard =
+    inherit IFeature
     inherit IContext<LocalClipboardProps>
     abstract LocalClipboardProps : LocalClipboardProps with get
     abstract OnChanged : IChannel<Content> with get
@@ -462,6 +463,7 @@ type BaseLocalClipboard<'context when 'context :> ILocalClipboard> (logging : IL
         member __.OnChanged : IChannel<Content> = onChanged
         member __.GetAsync : IAsyncHandler<unit, Content> = getAsync
         member __.SetAsync : IAsyncHandler<Content, unit> = setAsync
+    interface IFeature
     member this.AsLocalClipboard = this :> ILocalClipboard
 
 (*

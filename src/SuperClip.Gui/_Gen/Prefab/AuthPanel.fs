@@ -1,17 +1,16 @@
-[<RequireQualifiedAccess>]
-module SuperClip.Prefab.AuthPanel
+[<AutoOpen>]
+module SuperClip.Gui.Prefab.AuthPanel
 
 open Dap.Prelude
 open Dap.Context
+open Dap.Platform
 open Dap.Gui
-open Eto.Forms
-open Dap.Eto
-open Dap.Eto.Prefab
+open Dap.Gui.Prefab
 
 [<Literal>]
-let Kind = "AuthPanel"
+let AuthPanelKind = "AuthPanel"
 
-let Json = parseJson """
+let AuthPanelJson = parseJson """
 {
     "prefab": "auth_panel",
     "styles": [
@@ -101,35 +100,43 @@ let Json = parseJson """
 }
 """
 
-type Model = Stack.Model
-type Widget = Stack.Model
+type AuthPanelProps = StackProps
 
-type Prefab (logging : ILogging) =
-    inherit Stack.Prefab (logging)
-    let title = Label.Prefab.AddToGroup logging "title" base.Model
-    let name = InputField.Prefab.AddToGroup logging "name" base.Model
-    let device = InputField.Prefab.AddToGroup logging "device" base.Model
-    let password = InputField.Prefab.AddToGroup logging "password" base.Model
-    let cancel = Button.Prefab.AddToGroup logging "cancel" base.Model
-    let auth = Button.Prefab.AddToGroup logging "auth" base.Model
+type IAuthPanel =
+    inherit IPrefab<AuthPanelProps>
+    abstract Title : ILabel with get
+    abstract Name : IInputField with get
+    abstract Device : IInputField with get
+    abstract Password : IInputField with get
+    abstract Cancel : IButton with get
+    abstract Auth : IButton with get
+
+type AuthPanel (logging : ILogging) =
+    inherit WrapGroup<AuthPanel, AuthPanelProps, IStack> (AuthPanelKind, AuthPanelProps.Create, logging)
+    let title : ILabel = base.AsGroup.Add "title" Feature.create<ILabel>
+    let name : IInputField = base.AsGroup.Add "name" Feature.create<IInputField>
+    let device : IInputField = base.AsGroup.Add "device" Feature.create<IInputField>
+    let password : IInputField = base.AsGroup.Add "password" Feature.create<IInputField>
+    let cancel : IButton = base.AsGroup.Add "cancel" Feature.create<IButton>
+    let auth : IButton = base.AsGroup.Add "auth" Feature.create<IButton>
     do (
-        base.Model.AsProperty.LoadJson Json
-        base.AddChild (title.Widget)
-        base.AddChild (name.Widget)
-        base.AddChild (device.Widget)
-        base.AddChild (password.Widget)
-        base.AddChild (cancel.Widget)
-        base.AddChild (auth.Widget)
+        base.Model.AsProperty.LoadJson AuthPanelJson
     )
-    static member Create l = new Prefab (l)
-    static member Create () = new Prefab (getLogging ())
-    static member AddToGroup l key (group : IGroup) =
-        let prefab = Prefab.Create l
-        group.Children.AddLink<Model> (prefab.Model, key) |> ignore
-        prefab
-    member __.Title : Label.Prefab = title
-    member __.Name : InputField.Prefab = name
-    member __.Device : InputField.Prefab = device
-    member __.Password : InputField.Prefab = password
-    member __.Cancel : Button.Prefab = cancel
-    member __.Auth : Button.Prefab = auth
+    static member Create l = new AuthPanel (l)
+    static member Create () = new AuthPanel (getLogging ())
+    override this.Self = this
+    override __.Spawn l = AuthPanel.Create l
+    member __.Title : ILabel = title
+    member __.Name : IInputField = name
+    member __.Device : IInputField = device
+    member __.Password : IInputField = password
+    member __.Cancel : IButton = cancel
+    member __.Auth : IButton = auth
+    interface IFallback
+    interface IAuthPanel with
+        member __.Title : ILabel = title
+        member __.Name : IInputField = name
+        member __.Device : IInputField = device
+        member __.Password : IInputField = password
+        member __.Cancel : IButton = cancel
+        member __.Auth : IButton = auth

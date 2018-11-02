@@ -73,7 +73,7 @@ let AppGui =
 
 let IGuiPack =
     pack [] {
-        add (M.context ("IAppGui"))
+        add (M.feature ("IAppGui"))
     }
 
 let App =
@@ -96,23 +96,7 @@ let commonLines =
             "open Dap.Local"
             "open SuperClip.Core"
         ]
-        G.Feature (G.AppPack, "Dap.Forms.Feature")
-        G.Feature (G.CorePack,
-            [
-                "SuperClip.Core.Feature"
-                "SuperClip.Forms.Feature"
-                "SuperClip.Mac.Feature"
-                "SuperClip.Gtk.Feature"
-            ])
     ]|> concatSections
-
-let guiFeature =
-    G.Feature (G.GuiPack,
-        [
-            "SuperClip.Eto.Feature"
-            "SuperClip.Forms.Feature"
-        ])
-
 
 let compile segments =
     [
@@ -125,7 +109,7 @@ let compile segments =
                     G.Context <@ UserPref @>
                     G.PackInterface <@ ICloudStubPack @>
                     G.PackInterface <@ IClientPack @>
-                    G.Context <@ AppGui @>
+                    G.Feature <@ AppGui @>
                     G.PackInterface <@ IGuiPack @>
                 ]
             )
@@ -142,7 +126,6 @@ let compile segments =
             G.AutoOpenModule ("SuperClip.App.IApp",
                 [
                     commonLines
-                    guiFeature
                     G.AppInterface <@ App @>
                 ]
             )
@@ -151,7 +134,6 @@ let compile segments =
             G.QualifiedModule ("SuperClip.App.BaseApp",
                 [
                     commonLines
-                    guiFeature
                     G.AppClass <@ App @>
                 ]
             )

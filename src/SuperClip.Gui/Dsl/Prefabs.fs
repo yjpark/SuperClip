@@ -7,7 +7,8 @@ open Dap.Context.Generator
 open Dap.Platform
 open Dap.Gui
 open Dap.Gui.Builder
-open Dap.Gui.Dsl.Prefab
+open Dap.Gui.Generator
+open Dap.Gui.Dsl.Prefabs
 
 let LinkStatus =
     h_stack {
@@ -63,4 +64,17 @@ let AuthPanel =
             }
         )
     }
+
+let compile segments =
+    [
+        G.PrefabFile (segments, ["_Gen" ; "Prefab" ; "LinkStatus.fs"],
+            "SuperClip.Gui.Prefab.LinkStatus", <@ LinkStatus @>
+        )
+        G.PrefabFile (segments, ["_Gen" ; "Prefab" ; "AuthPanel.fs"],
+            "SuperClip.Gui.Prefab.AuthPanel", <@ AuthPanel @>
+        )
+        G.PrefabFile (segments, ["_Gen" ; "Prefab" ; "HomePanel.fs"],
+            "SuperClip.Gui.Prefab.HomePanel", <@ HomePanel @>
+        )
+    ]
 
