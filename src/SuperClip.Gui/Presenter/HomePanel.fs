@@ -14,13 +14,14 @@ open SuperClip.Gui.Presenter
 type Prefab = IHomePanel
 
 type Presenter (env : IEnv) =
-    inherit BasePresenter<Prefab, IApp> (Feature.create<Prefab> env.Logging)
+    inherit BasePresenter<IApp, Prefab> (Feature.create<Prefab> env.Logging)
 
     override this.OnAttached () =
         let prefab = this.Prefab
         let app = this.Domain.Value
         let linkStatus = new LinkStatus.Presenter (prefab.LinkStatus, app)
-        let history = new Items.Presenter (prefab.History, app)
+        let history = new Clips.Presenter (prefab.History, app)
         app.History.Actor.OnEvent.AddWatcher prefab "OnHistory" (fun _ ->
             history.Attach (app.History.Actor.State.RecentItems)
         )
+    static member Create e = new Presenter (e)

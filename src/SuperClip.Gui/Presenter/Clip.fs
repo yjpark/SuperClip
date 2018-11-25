@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module SuperClip.Gui.Presenter.Items
+module SuperClip.Gui.Presenter.Clip
 
 open Dap.Prelude
 open Dap.Context
@@ -8,9 +8,9 @@ open Dap.Gui
 
 open SuperClip.Core
 open SuperClip.App
-module HistoryTypes = SuperClip.Core.History.Types
+open SuperClip.Gui.Prefab
 
-type Prefab = ILabel
+type Prefab = IClip
 
 let private capText (limit : int) (str : string) =
     if str.Length <= limit then
@@ -25,11 +25,8 @@ let private getText (item : Item) =
     | Asset url -> url
     |> capText 128
 
-type Presenter (prefab : Prefab, app : IApp) =
-    inherit DynamicPresenter<Prefab, Item list> (prefab)
-    override this.OnWillAttach (items : Item list) =
-        let text =
-            match List.tryHead items with
-            | None -> ""
-            | Some item -> getText item
-        app.SetGuiValue (prefab.Model.Text, text)
+type Presenter (prefab : Prefab, app : IApp, item : Item) =
+    inherit BasePresenter<Item, Prefab> (prefab, item)
+    do (
+        app.SetGuiValue (prefab.Content.Model.Text, getText item)
+    )

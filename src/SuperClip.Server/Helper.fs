@@ -14,10 +14,16 @@ let Scope = "SuperClipServer"
 let DbUri = "http://superclip_dev:Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5@localhost:8529/superclip_dev"
 
 type App with
-    static member Create (logFile, ?consoleLogLevel : LogLevel) =
-        let consoleLogLevel = defaultArg consoleLogLevel LogLevelWarning
-        let loggingArgs = LoggingArgs.LocalCreate (consoleLogLevel = consoleLogLevel, filename = logFile, rolling = RollingInterval.Daily)
+    static member CreateArgs (logFile, ?scope : string, ?consoleMinLevel : LogLevel) =
+        let scope = defaultArg scope Scope
+        let loggingArgs = LoggingArgs.CreateBoth (logFile, ?consoleMinLevel = consoleMinLevel)
         let args =
-            AppArgs.Default ()
+            AppArgs.Create ()
+            |> fun a -> a.WithScope scope
             |> fun a -> a.WithFarangoDb (DbArgs.Create DbUri)
-        new App (loggingArgs, args)
+        (loggingArgs, args)
+    static member Start (logFile, ?scope : string, ?consoleMinLevel : LogLevel) =
+        let (l, a) = App.CreateArgs(logFile, ?scope = scope, ?consoleMinLevel = consoleMinLevel)
+        let app = new App (l, a)
+        app.Start ()
+        app.AsApp

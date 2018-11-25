@@ -112,13 +112,13 @@ type IAuthPanel =
     abstract Auth : IButton with get
 
 type AuthPanel (logging : ILogging) =
-    inherit WrapGroup<AuthPanel, AuthPanelProps, IStack> (AuthPanelKind, AuthPanelProps.Create, logging)
-    let title : ILabel = base.AsGroup.Add "title" Feature.create<ILabel>
-    let name : IInputField = base.AsGroup.Add "name" Feature.create<IInputField>
-    let device : IInputField = base.AsGroup.Add "device" Feature.create<IInputField>
-    let password : IInputField = base.AsGroup.Add "password" Feature.create<IInputField>
-    let cancel : IButton = base.AsGroup.Add "cancel" Feature.create<IButton>
-    let auth : IButton = base.AsGroup.Add "auth" Feature.create<IButton>
+    inherit WrapCombo<AuthPanel, AuthPanelProps, IStack> (AuthPanelKind, AuthPanelProps.Create, logging)
+    let title : ILabel = base.AsComboLayout.Add "title" Feature.create<ILabel>
+    let name : IInputField = base.AsComboLayout.Add "name" Feature.create<IInputField>
+    let device : IInputField = base.AsComboLayout.Add "device" Feature.create<IInputField>
+    let password : IInputField = base.AsComboLayout.Add "password" Feature.create<IInputField>
+    let cancel : IButton = base.AsComboLayout.Add "cancel" Feature.create<IButton>
+    let auth : IButton = base.AsComboLayout.Add "auth" Feature.create<IButton>
     do (
         base.Model.AsProperty.LoadJson AuthPanelJson
     )

@@ -51,8 +51,7 @@ type AppKeys () =
     static member AppGui (* IGuiPack *) = ""
 
 type IApp =
-    inherit IRunner<IApp>
-    inherit IPack
+    inherit IApp<IApp>
     inherit ISessionPack
     inherit IGuiPack
     abstract Args : AppArgs with get
@@ -102,15 +101,15 @@ and AppArgs = {
             Setup = (* AppArgs *) setup
                 |> Option.defaultWith (fun () -> ignore)
             Ticker = (* ITickingPack *) ticker
-                |> Option.defaultWith (fun () -> (TickerTypes.Args.Default ()))
+                |> Option.defaultWith (fun () -> (TickerTypes.Args.Create ()))
             LocalClipboard = (* ILocalPack *) localClipboard
                 |> Option.defaultWith (fun () -> Feature.addToAgent<ILocalClipboard>)
             PrimaryClipboard = (* ICorePack *) primaryClipboard
-                |> Option.defaultWith (fun () -> (PrimaryTypes.Args.Default ()))
+                |> Option.defaultWith (fun () -> (PrimaryTypes.Args.Create ()))
             LocalHistory = (* ICorePack *) localHistory
-                |> Option.defaultWith (fun () -> (HistoryTypes.Args.Default ()))
+                |> Option.defaultWith (fun () -> (HistoryTypes.Args.Create ()))
             History = (* ICorePack *) history
-                |> Option.defaultWith (fun () -> (HistoryTypes.Args.Default ()))
+                |> Option.defaultWith (fun () -> (HistoryTypes.Args.Create ()))
             CloudStub = (* ICloudStubPack *) cloudStub
                 |> Option.defaultWith (fun () -> (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true))
             PacketClient = (* ICloudStubPack *) packetClient
@@ -126,7 +125,6 @@ and AppArgs = {
             AppGui = (* IGuiPack *) appGui
                 |> Option.defaultWith (fun () -> Feature.addToAgent<IAppGui>)
         }
-    static member Default () = AppArgs.Create ()
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
         {this with Scope = scope}
     static member SetSetup ((* AppArgs *) setup : IApp -> unit) (this : AppArgs) =
@@ -171,14 +169,14 @@ and AppArgs = {
                     |> Option.defaultValue NoScope
                 Setup = (* (* AppArgs *)  *) ignore
                 Ticker = get.Optional.Field (* ITickingPack *) "ticker" TickerTypes.Args.JsonDecoder
-                    |> Option.defaultValue (TickerTypes.Args.Default ())
+                    |> Option.defaultValue (TickerTypes.Args.Create ())
                 LocalClipboard = (* (* ILocalPack *)  *) Feature.addToAgent<ILocalClipboard>
                 PrimaryClipboard = get.Optional.Field (* ICorePack *) "primary_clipboard" PrimaryTypes.Args.JsonDecoder
-                    |> Option.defaultValue (PrimaryTypes.Args.Default ())
+                    |> Option.defaultValue (PrimaryTypes.Args.Create ())
                 LocalHistory = get.Optional.Field (* ICorePack *) "local_history" HistoryTypes.Args.JsonDecoder
-                    |> Option.defaultValue (HistoryTypes.Args.Default ())
+                    |> Option.defaultValue (HistoryTypes.Args.Create ())
                 History = get.Optional.Field (* ICorePack *) "history" HistoryTypes.Args.JsonDecoder
-                    |> Option.defaultValue (HistoryTypes.Args.Default ())
+                    |> Option.defaultValue (HistoryTypes.Args.Create ())
                 CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
                 PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
                 Preferences = (* (* IAppPack *)  *) Feature.addToAgent<IPreferences>
@@ -262,7 +260,7 @@ and AppArgs = {
  *)
 type AppArgsBuilder () =
     inherit ObjBuilder<AppArgs> ()
-    override __.Zero () = AppArgs.Default ()
+    override __.Zero () = AppArgs.Create ()
     [<CustomOperation("scope")>]
     member __.Scope (target : AppArgs, (* AppArgs *) scope : Scope) =
         target.WithScope scope

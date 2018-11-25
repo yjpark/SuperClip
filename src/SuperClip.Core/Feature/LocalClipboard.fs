@@ -9,6 +9,7 @@ open Dap.Platform
 open Dap.Local
 
 open SuperClip.Core
+open System.Runtime.InteropServices
 
 [<Literal>]
 let AssetPrefix = "__SUPERCLIP_ASSET__"
@@ -19,12 +20,11 @@ let UseShellClipboard = true
 let mutable private text' = ""
 let getText () =
     if UseShellClipboard then
-        match Runtime.Platform with
-        | Mac ->
+        if RuntimeInformation.IsOSPlatform (OSPlatform.OSX) then
             Shell.bash "pbpaste"
-        | Linux ->
+        elif RuntimeInformation.IsOSPlatform (OSPlatform.Linux) then
             Shell.bash "xsel -b"
-        | Windows ->
+        else
             text'
     else
         text'
@@ -33,13 +33,14 @@ let setText text =
     text' <- text
     if UseShellClipboard then
         let text = text |> Shell.escape
-        match Runtime.Platform with
-        | Mac ->
+        if RuntimeInformation.IsOSPlatform (OSPlatform.OSX) then
             Shell.bash <| sprintf "echo \"%s\" | pbcopy" text
-        | Linux ->
+        elif RuntimeInformation.IsOSPlatform (OSPlatform.Linux) then
             Shell.bash <| sprintf "echo \"%s\" | xsel -i -b" text
-        | Windows ->
+        elif RuntimeInformation.IsOSPlatform (OSPlatform.Windows) then
             Shell.bat <| sprintf "echo %s | clip" text
+        else
+            ""
         |> ignore
 
 let textToContent (text : string) : Content =
@@ -68,4 +69,7 @@ type Context (logging : ILogging) =
     )
     override this.Self = this
     override __.Spawn l = new Context (l)
+    static member AddToAgent (agent : IAgent) =
+        new Context (agent.Env.Logging) :> ILocalClipboard
+
     interface IFallback

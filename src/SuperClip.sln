@@ -10,6 +10,14 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.macOS", "SuperCli
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Wpf", "SuperClip.Wpf\SuperClip.Wpf.fsproj", "{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}"
 EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.Core", "SuperClip.Core\SuperClip.Core.fsproj", "{363A252D-9D4C-4607-98A7-D11F1A460EA2}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.App", "SuperClip.App\SuperClip.App.fsproj", "{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.Gui", "SuperClip.Gui\SuperClip.Gui.fsproj", "{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.Eto", "SuperClip.Eto\SuperClip.Eto.fsproj", "{C18689F2-614C-4FA6-A57C-531770650B4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +54,38 @@ Global
 		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|x86.ActiveCfg = Release|Any CPU
 		{3DAA5B6D-4A11-4677-A49D-1ED7FEBFF663}.Release|x86.Build.0 = Release|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Debug|x86.Build.0 = Debug|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Release|x86.ActiveCfg = Release|Any CPU
+		{363A252D-9D4C-4607-98A7-D11F1A460EA2}.Release|x86.Build.0 = Release|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Debug|x86.Build.0 = Debug|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Release|x86.ActiveCfg = Release|Any CPU
+		{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}.Release|x86.Build.0 = Release|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Debug|x86.Build.0 = Debug|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Release|x86.ActiveCfg = Release|Any CPU
+		{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}.Release|x86.Build.0 = Release|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C18689F2-614C-4FA6-A57C-531770650B4E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

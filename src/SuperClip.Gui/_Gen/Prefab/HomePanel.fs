@@ -40,9 +40,10 @@ let HomePanelJson = parseJson """
             }
         },
         "history": {
-            "prefab": "",
+            "prefab": "clips",
             "styles": [],
-            "text": "TODO"
+            "layout": "full_table",
+            "item_prefab": "clip"
         }
     }
 }
@@ -53,12 +54,12 @@ type HomePanelProps = StackProps
 type IHomePanel =
     inherit IPrefab<HomePanelProps>
     abstract LinkStatus : ILinkStatus with get
-    abstract History : ILabel with get
+    abstract History : IClips with get
 
 type HomePanel (logging : ILogging) =
-    inherit WrapGroup<HomePanel, HomePanelProps, IStack> (HomePanelKind, HomePanelProps.Create, logging)
-    let linkStatus : ILinkStatus = base.AsGroup.Add "link_status" Feature.create<ILinkStatus>
-    let history : ILabel = base.AsGroup.Add "history" Feature.create<ILabel>
+    inherit WrapCombo<HomePanel, HomePanelProps, IStack> (HomePanelKind, HomePanelProps.Create, logging)
+    let linkStatus : ILinkStatus = base.AsComboLayout.Add "link_status" Feature.create<ILinkStatus>
+    let history : IClips = base.AsComboLayout.Add "history" Feature.create<IClips>
     do (
         base.Model.AsProperty.LoadJson HomePanelJson
     )
@@ -67,8 +68,8 @@ type HomePanel (logging : ILogging) =
     override this.Self = this
     override __.Spawn l = HomePanel.Create l
     member __.LinkStatus : ILinkStatus = linkStatus
-    member __.History : ILabel = history
+    member __.History : IClips = history
     interface IFallback
     interface IHomePanel with
         member __.LinkStatus : ILinkStatus = linkStatus
-        member __.History : ILabel = history
+        member __.History : IClips = history

@@ -8,11 +8,40 @@ open Dap.Platform
 open Dap.Gui
 open Dap.Gui.Builder
 open Dap.Gui.Generator
-open Dap.Gui.Dsl.Prefabs
+
+let inputField labelText =
+    input_field {
+        update_label (fun l ->
+            l.Text.SetValue labelText
+        )
+    }
+
+let Clip =
+    v_stack {
+        child "content" (
+            label {
+                text "..."
+            }
+        )
+        child "delete" (
+            label {
+                text "Delete"
+            }
+        )
+        child "copy" (
+            button {
+                text "Copy"
+            }
+        )
+    }
+
+let Clips =
+    f_table {
+        item <@ Clip @>
+    }
 
 let LinkStatus =
     h_stack {
-        prefab "link_status"
         child "link" (
             label {
                 text "..."
@@ -32,18 +61,12 @@ let LinkStatus =
 
 let HomePanel =
     v_stack {
-        prefab "home_panel"
-        child "link_status" LinkStatus
-        child "history" (
-            label {
-                text "TODO"
-            }
-        )
+        child "link_status" <@ LinkStatus @>
+        child "history" <@ Clips @>
     }
 
 let AuthPanel =
     v_stack {
-        prefab "auth_panel"
         styles ["style1" ; "style2"]
         child "title" (
             label {
@@ -67,6 +90,12 @@ let AuthPanel =
 
 let compile segments =
     [
+        G.PrefabFile (segments, ["_Gen" ; "Prefab" ; "Clip.fs"],
+            "SuperClip.Gui.Prefab.Clip", <@ Clip @>
+        )
+        G.PrefabFile (segments, ["_Gen" ; "Prefab" ; "Clips.fs"],
+            "SuperClip.Gui.Prefab.Clips", <@ Clips @>
+        )
         G.PrefabFile (segments, ["_Gen" ; "Prefab" ; "LinkStatus.fs"],
             "SuperClip.Gui.Prefab.LinkStatus", <@ LinkStatus @>
         )

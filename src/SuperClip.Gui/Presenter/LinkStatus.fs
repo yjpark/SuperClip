@@ -13,7 +13,7 @@ open SuperClip.Gui.Prefab
 type Prefab = ILinkStatus
 
 type Presenter (prefab : Prefab, app : IApp) =
-    inherit BasePresenter<Prefab, IApp> (prefab, app)
+    inherit BasePresenter<IApp, Prefab> (prefab, app)
     let setLinkText (v : string) =
         app.SetGuiValue (prefab.Link.Model.Text, v)
     let setSessionText (v : string) =

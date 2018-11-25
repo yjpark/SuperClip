@@ -14,6 +14,4 @@ open SuperClip.Eto
 [<EntryPoint>]
 [<STAThread>]
 let main args =
-    let platform = new Eto.Wpf.Platform ()
-    let app = EtoApp.Create (platform)
-    0 // return an integer exit code
+    EtoApp.Run (platform = new Eto.Wpf.Platform ())

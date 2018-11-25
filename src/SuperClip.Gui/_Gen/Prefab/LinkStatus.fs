@@ -45,10 +45,10 @@ type ILinkStatus =
     abstract Action : IButton with get
 
 type LinkStatus (logging : ILogging) =
-    inherit WrapGroup<LinkStatus, LinkStatusProps, IStack> (LinkStatusKind, LinkStatusProps.Create, logging)
-    let link : ILabel = base.AsGroup.Add "link" Feature.create<ILabel>
-    let session : ILabel = base.AsGroup.Add "session" Feature.create<ILabel>
-    let action : IButton = base.AsGroup.Add "action" Feature.create<IButton>
+    inherit WrapCombo<LinkStatus, LinkStatusProps, IStack> (LinkStatusKind, LinkStatusProps.Create, logging)
+    let link : ILabel = base.AsComboLayout.Add "link" Feature.create<ILabel>
+    let session : ILabel = base.AsComboLayout.Add "session" Feature.create<ILabel>
+    let action : IButton = base.AsComboLayout.Add "action" Feature.create<IButton>
     do (
         base.Model.AsProperty.LoadJson LinkStatusJson
     )

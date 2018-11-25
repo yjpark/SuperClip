@@ -33,8 +33,7 @@ type AppKeys () =
     static member Ticker (* ITickingPack *) = ""
 
 type IApp =
-    inherit IRunner<IApp>
-    inherit IPack
+    inherit IApp<IApp>
     inherit IDbPack
     inherit ICloudHubPack
     abstract Args : AppArgs with get
@@ -70,9 +69,9 @@ and AppArgs = {
             Setup = (* AppArgs *) setup
                 |> Option.defaultWith (fun () -> ignore)
             FarangoDb = (* IDbPack *) farangoDb
-                |> Option.defaultWith (fun () -> (FarangoDb.Args.Default ()))
+                |> Option.defaultWith (fun () -> (FarangoDb.Args.Create ()))
             Ticker = (* ITickingPack *) ticker
-                |> Option.defaultWith (fun () -> (TickerTypes.Args.Default ()))
+                |> Option.defaultWith (fun () -> (TickerTypes.Args.Create ()))
             PacketConn = (* ICloudHubPack *) packetConn
                 |> Option.defaultWith (fun () -> (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
             CloudHub = (* ICloudHubPack *) cloudHub
@@ -80,7 +79,6 @@ and AppArgs = {
             CloudHubGateway = (* ICloudHubPack *) cloudHubGateway
                 |> Option.defaultWith (fun () -> (Gateway.args CloudHubTypes.HubSpec true))
         }
-    static member Default () = AppArgs.Create ()
     static member SetScope ((* AppArgs *) scope : Scope) (this : AppArgs) =
         {this with Scope = scope}
     static member SetSetup ((* AppArgs *) setup : IApp -> unit) (this : AppArgs) =
@@ -109,9 +107,9 @@ and AppArgs = {
                     |> Option.defaultValue NoScope
                 Setup = (* (* AppArgs *)  *) ignore
                 FarangoDb = get.Optional.Field (* IDbPack *) "farango_db" FarangoDb.Args.JsonDecoder
-                    |> Option.defaultValue (FarangoDb.Args.Default ())
+                    |> Option.defaultValue (FarangoDb.Args.Create ())
                 Ticker = get.Optional.Field (* ITickingPack *) "ticker" TickerTypes.Args.JsonDecoder
-                    |> Option.defaultValue (TickerTypes.Args.Default ())
+                    |> Option.defaultValue (TickerTypes.Args.Create ())
                 PacketConn = (* (* ICloudHubPack *)  *) (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
                 CloudHub = (* (* ICloudHubPack *)  *) NoArgs
                 CloudHubGateway = (* (* ICloudHubPack *)  *) (Gateway.args CloudHubTypes.HubSpec true)
@@ -154,7 +152,7 @@ and AppArgs = {
  *)
 type AppArgsBuilder () =
     inherit ObjBuilder<AppArgs> ()
-    override __.Zero () = AppArgs.Default ()
+    override __.Zero () = AppArgs.Create ()
     [<CustomOperation("scope")>]
     member __.Scope (target : AppArgs, (* AppArgs *) scope : Scope) =
         target.WithScope scope
@@ -182,13 +180,24 @@ let app_args = new AppArgsBuilder ()
 (*
  * Generated: <App>
  *)
-type App (logging : ILogging, args : AppArgs) as this =
-    let env = Env.live MailboxPlatform logging args.Scope
-    let mutable setupError : exn option = None
+type App (param : EnvParam, args : AppArgs) =
+    let env = Env.create param
+    let mutable setupResult : Result<bool, exn> option = None
     let mutable (* IDbPack *) farangoDb : FarangoDb.Agent option = None
     let mutable (* ITickingPack *) ticker : TickerTypes.Agent option = None
-    let setupAsync (_runner : IRunner) : Task<unit> = task {
+    new (logging : ILogging, a : AppArgs) =
+        let platform = Feature.create<IPlatform> logging
+        let clock = new RealClock ()
+        App (Env.param platform logging a.Scope clock, a)
+    new (loggingArgs : LoggingArgs, a : AppArgs) =
+        App (Feature.createLogging loggingArgs, a)
+    new (a : AppArgs) =
+        App (getLogging (), a)
+    member this.SetupAsync () : Task<unit> = task {
+        if setupResult.IsSome then
+            failWith "Already_Setup" setupResult.Value
         try
+            setupResult <- Some (Ok false)
             let! (* IDbPack *) farangoDb' = env |> Env.addServiceAsync (FarangoDb.spec args.FarangoDb) AppKinds.FarangoDb AppKeys.FarangoDb
             farangoDb <- Some farangoDb'
             let! (* ITickingPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args.Ticker) AppKinds.Ticker AppKeys.Ticker
@@ -199,36 +208,34 @@ type App (logging : ILogging, args : AppArgs) as this =
             do! this.SetupAsync' ()
             logInfo env "App.setupAsync" "Setup_Succeed" (encodeJson 4 args)
             args.Setup this.AsApp
+            setupResult <- Some (Ok true)
         with e ->
-            setupError <- Some e
+            setupResult <- Some (Error e)
             logException env "App.setupAsync" "Setup_Failed" (encodeJson 4 args) e
             raise e
     }
-    do (
-        env.RunTask0 raiseOnFailed setupAsync
-    )
-    new (loggingArgs : LoggingArgs, a : AppArgs) = new App (loggingArgs.CreateLogging (), a)
-    new (a : AppArgs) = new App (getLogging (), a)
     abstract member SetupAsync' : unit -> Task<unit>
     default __.SetupAsync' () = task {
         return ()
     }
     member __.Args : AppArgs = args
     member __.Env : IEnv = env
-    member __.SetupError : exn option = setupError
-    interface ILogger with
-        member __.Log m = env.Log m
+    member __.SetupResult : Result<bool, exn> option = setupResult
+    interface IApp<IApp>
+    interface INeedSetupAsync with
+        member this.SetupResult = this.SetupResult
+        member this.SetupAsync () = this.SetupAsync ()
     interface IRunner<IApp> with
-        member __.Runner = this.AsApp
-        member __.RunFunc func = runFunc' this func
-        member __.AddTask onFailed getTask = addTask' this onFailed getTask
-        member __.RunTask onFailed getTask = runTask' this onFailed getTask
+        member this.Runner = this.AsApp
+        member this.RunFunc func = runFunc' this func
+        member this.AddTask onFailed getTask = addTask' this onFailed getTask
+        member this.RunTask onFailed getTask = runTask' this onFailed getTask
     interface IRunner with
         member __.Clock = env.Clock
         member __.Console0 = env.Console0
-        member __.RunFunc0 func = runFunc' this func
-        member __.AddTask0 onFailed getTask = addTask' this onFailed getTask
-        member __.RunTask0 onFailed getTask = runTask' this onFailed getTask
+        member this.RunFunc0 func = runFunc' this func
+        member this.AddTask0 onFailed getTask = addTask' this onFailed getTask
+        member this.RunTask0 onFailed getTask = runTask' this onFailed getTask
     interface ITaskManager with
         member __.StartTask task = env.StartTask task
         member __.ScheduleTask task = env.ScheduleTask task
@@ -239,16 +246,18 @@ type App (logging : ILogging, args : AppArgs) as this =
         member __.CancelRunningTasks () = env.CancelRunningTasks ()
     interface IPack with
         member __.Env : IEnv = env
+    interface ILogger with
+        member __.Log m = env.Log m
     interface IDbPack with
-        member __.Args = this.Args.AsDbPackArgs
+        member this.Args = this.Args.AsDbPackArgs
         member __.FarangoDb (* IDbPack *) : FarangoDb.Agent = farangoDb |> Option.get
-    member __.AsDbPack = this :> IDbPack
+    member this.AsDbPack = this :> IDbPack
     interface ITickingPack with
-        member __.Args = this.Args.AsTickingPackArgs
+        member this.Args = this.Args.AsTickingPackArgs
         member __.Ticker (* ITickingPack *) : TickerTypes.Agent = ticker |> Option.get
-    member __.AsTickingPack = this :> ITickingPack
+    member this.AsTickingPack = this :> ITickingPack
     interface ICloudHubPack with
-        member __.Args = this.Args.AsCloudHubPackArgs
+        member this.Args = this.Args.AsCloudHubPackArgs
         member __.GetPacketConnAsync (key : Key) (* ICloudHubPack *) : Task<PacketConn.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketConn" key
             return (agent :?> PacketConn.Agent, isNew)
@@ -261,10 +270,10 @@ type App (logging : ILogging, args : AppArgs) as this =
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "CloudHubGateway" key
             return (agent :?> Gateway.Gateway, isNew)
         }
-        member __.AsTickingPack = this.AsTickingPack
-    member __.AsCloudHubPack = this :> ICloudHubPack
+        member this.AsTickingPack = this.AsTickingPack
+    member this.AsCloudHubPack = this :> ICloudHubPack
     interface IApp with
-        member __.Args : AppArgs = this.Args
-        member __.AsDbPack = this.AsDbPack
-        member __.AsCloudHubPack = this.AsCloudHubPack
-    member __.AsApp = this :> IApp
+        member this.Args : AppArgs = this.Args
+        member this.AsDbPack = this.AsDbPack
+        member this.AsCloudHubPack = this.AsCloudHubPack
+    member this.AsApp = this :> IApp

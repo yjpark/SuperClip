@@ -2,19 +2,16 @@
 
 open System
 open AppKit
-open Eto.Forms
-open Eto.Drawing
 
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
 open Dap.Eto.Prefab
+open Dap.Eto.Mac
 
 open SuperClip.Eto
 
 [<EntryPoint>]
 [<STAThread>]
 let main args =
-    let platform = new Eto.Mac.Platform ()
-    let app = EtoApp.Create(platform)
-    0 // return an integer exit code
+    EtoApp.Run (etoPlatform (new Eto.Mac.Platform ()))

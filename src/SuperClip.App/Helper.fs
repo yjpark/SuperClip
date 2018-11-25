@@ -1,7 +1,5 @@
 [<AutoOpen>]
-module SuperClip.App.App
-
-open FSharp.Control.Tasks.V2
+module SuperClip.App.Helper
 
 open Dap.Prelude
 open Dap.Context
@@ -22,6 +20,10 @@ type LinkSessionStatus =
     | Pausing of Credential
 
 type IApp with
+    member this.SetupSecureStorage () =
+        Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
+        |> this.SecureStorageProps.Secret.SetValue
+        UserPref.setup this.SecureStorage.Context this.UserPref
     member this.LinkSessionStatus : LinkSessionStatus =
         let session = this.Session
         if this.CloudStub.Status = LinkStatus.Linked then
@@ -42,14 +44,7 @@ type IApp with
             NoLink
     member this.Gui = this.AsGuiPack.AppGui.Context
 
-type App (loggingArgs : LoggingArgs, args : AppArgs) =
-    inherit SuperClip.App.BaseApp.App (loggingArgs, args.WithScope Scope)
-    override this.SetupAsync' () = task {
-        let app = this.AsApp
-        Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
-        |> app.SecureStorageProps.Secret.SetValue
-        UserPref.setup app.SecureStorage.Context app.UserPref
-    }
+(*
     new (onAppStarted : IApp -> unit, ?consoleLogLevel : LogLevel, ?logFile : string) =
         let logFile = logFile |> Option.defaultValue "super-clip-.log"
     #if FEATURE_DAP_FORMS
@@ -58,6 +53,7 @@ type App (loggingArgs : LoggingArgs, args : AppArgs) =
         let loggingArgs = LoggingArgs.LocalCreate (?consoleLogLevel = consoleLogLevel, filename = logFile, rolling = RollingInterval.Daily)
     #endif
         let args =
-            AppArgs.Default ()
+            AppArgs.Create ()
             |> AppArgs.SetSetup onAppStarted
         new App (loggingArgs, args)
+*)

@@ -130,8 +130,8 @@ let compile segments =
                 ]
             )
         )
-        G.File (segments, ["_Gen1"; "BaseApp.fs"],
-            G.QualifiedModule ("SuperClip.App.BaseApp",
+        G.File (segments, ["_Gen1"; "App.fs"],
+            G.AutoOpenModule ("SuperClip.App.App",
                 [
                     commonLines
                     G.AppClass <@ App @>

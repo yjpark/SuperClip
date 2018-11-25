@@ -10,7 +10,7 @@ open Dap.Platform
  *)
 type PrimaryClipboardArgsBuilder () =
     inherit ObjBuilder<PrimaryClipboardArgs> ()
-    override __.Zero () = PrimaryClipboardArgs.Default ()
+    override __.Zero () = PrimaryClipboardArgs.Create ()
     [<CustomOperation("check_interval")>]
     member __.CheckInterval (target : PrimaryClipboardArgs, (* PrimaryClipboardArgs *) checkInterval : Duration) =
         target.WithCheckInterval checkInterval
@@ -25,7 +25,7 @@ let primary_clipboard_args = new PrimaryClipboardArgsBuilder ()
  *)
 type HistoryArgsBuilder () =
     inherit ObjBuilder<HistoryArgs> ()
-    override __.Zero () = HistoryArgs.Default ()
+    override __.Zero () = HistoryArgs.Create ()
     [<CustomOperation("max_size")>]
     member __.MaxSize (target : HistoryArgs, (* HistoryArgs *) maxSize : int) =
         target.WithMaxSize maxSize

@@ -62,7 +62,6 @@ type Device = {
             Name = (* Device *) name
                 |> Option.defaultWith (fun () -> "")
         }
-    static member Default () = Device.Create ()
     static member SetGuid ((* Device *) guid : Guid) (this : Device) =
         {this with Guid = guid}
     static member SetName ((* Device *) name : string) (this : Device) =
@@ -109,7 +108,6 @@ type Channel = {
             Name = (* Channel *) name
                 |> Option.defaultWith (fun () -> "")
         }
-    static member Default () = Channel.Create ()
     static member SetGuid ((* Channel *) guid : Guid) (this : Channel) =
         {this with Guid = guid}
     static member SetName ((* Channel *) name : string) (this : Channel) =
@@ -152,11 +150,10 @@ type Peer = {
         ) : Peer =
         {
             Channel = (* Peer *) channel
-                |> Option.defaultWith (fun () -> (Channel.Default ()))
+                |> Option.defaultWith (fun () -> (Channel.Create ()))
             Device = (* Peer *) device
-                |> Option.defaultWith (fun () -> (Device.Default ()))
+                |> Option.defaultWith (fun () -> (Device.Create ()))
         }
-    static member Default () = Peer.Create ()
     static member SetChannel ((* Peer *) channel : Channel) (this : Peer) =
         {this with Channel = channel}
     static member SetDevice ((* Peer *) device : Device) (this : Peer) =
@@ -199,11 +196,10 @@ type Peers = {
         ) : Peers =
         {
             Channel = (* Peers *) channel
-                |> Option.defaultWith (fun () -> (Channel.Default ()))
+                |> Option.defaultWith (fun () -> (Channel.Create ()))
             Devices = (* Peers *) devices
                 |> Option.defaultWith (fun () -> [])
         }
-    static member Default () = Peers.Create ()
     static member SetChannel ((* Peers *) channel : Channel) (this : Peers) =
         {this with Channel = channel}
     static member SetDevices ((* Peers *) devices : Device list) (this : Peers) =
@@ -284,7 +280,6 @@ type Item = {
             Content = (* Item *) content
                 |> Option.defaultWith (fun () -> NoContent)
         }
-    static member Default () = Item.Create ()
     static member SetTime ((* Item *) time : Instant) (this : Item) =
         {this with Time = time}
     static member SetSource ((* Item *) source : Source) (this : Item) =
@@ -337,7 +332,6 @@ type PrimaryClipboardArgs = {
             TimeoutDuration = (* PrimaryClipboardArgs *) timeoutDuration
                 |> Option.defaultWith (fun () -> (decodeJsonString DurationFormat.Second.JsonDecoder """1"""))
         }
-    static member Default () = PrimaryClipboardArgs.Create ()
     static member SetCheckInterval ((* PrimaryClipboardArgs *) checkInterval : Duration) (this : PrimaryClipboardArgs) =
         {this with CheckInterval = checkInterval}
     static member SetTimeoutDuration ((* PrimaryClipboardArgs *) timeoutDuration : Duration) (this : PrimaryClipboardArgs) =
@@ -384,7 +378,6 @@ type HistoryArgs = {
             RecentSize = (* HistoryArgs *) recentSize
                 |> Option.defaultWith (fun () -> 20)
         }
-    static member Default () = HistoryArgs.Create ()
     static member SetMaxSize ((* HistoryArgs *) maxSize : int) (this : HistoryArgs) =
         {this with MaxSize = maxSize}
     static member SetRecentSize ((* HistoryArgs *) recentSize : int) (this : HistoryArgs) =
@@ -423,7 +416,7 @@ type LocalClipboardProps (owner : IOwner, key : Key) =
         base.Setup (target')
     )
     static member Create (o, k) = new LocalClipboardProps (o, k)
-    static member Default () = LocalClipboardProps.Create (noOwner, NoKey)
+    static member Create () = LocalClipboardProps.Create (noOwner, NoKey)
     static member AddToCombo key (combo : IComboProperty) =
         combo.AddCustom<LocalClipboardProps> (LocalClipboardProps.Create, key)
     override this.Self = this

@@ -13,8 +13,8 @@
     <Compile Include="../SuperClip.App/Session/Logic.fs" />
     <Compile Include="../SuperClip.App/_Gen1/Packs.fs" />
     <Compile Include="../SuperClip.App/_Gen1/IApp.fs" />
-    <Compile Include="../SuperClip.App/_Gen1/BaseApp.fs" />
-    <Compile Include="../SuperClip.App/App.fs" />
+    <Compile Include="../SuperClip.App/_Gen1/App.fs" />
+    <Compile Include="../SuperClip.App/Helper.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />

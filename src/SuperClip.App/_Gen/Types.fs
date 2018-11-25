@@ -37,9 +37,9 @@ type Credential = {
         ) : Credential =
         {
             Device = (* Credential *) device
-                |> Option.defaultWith (fun () -> (Device.Default ()))
+                |> Option.defaultWith (fun () -> (Device.Create ()))
             Channel = (* Credential *) channel
-                |> Option.defaultWith (fun () -> (Channel.Default ()))
+                |> Option.defaultWith (fun () -> (Channel.Create ()))
             PassHash = (* Credential *) passHash
                 |> Option.defaultWith (fun () -> "")
             CryptoKey = (* Credential *) cryptoKey
@@ -47,7 +47,6 @@ type Credential = {
             Token = (* Credential *) token
                 |> Option.defaultWith (fun () -> "")
         }
-    static member Default () = Credential.Create ()
     static member SetDevice ((* Credential *) device : Device) (this : Credential) =
         {this with Device = device}
     static member SetChannel ((* Credential *) channel : Channel) (this : Credential) =
@@ -104,7 +103,7 @@ type UserProps (owner : IOwner, key : Key) =
         base.Setup (target')
     )
     static member Create (o, k) = new UserProps (o, k)
-    static member Default () = UserProps.Create (noOwner, NoKey)
+    static member Create () = UserProps.Create (noOwner, NoKey)
     static member AddToCombo key (combo : IComboProperty) =
         combo.AddCustom<UserProps> (UserProps.Create, key)
     override this.Self = this

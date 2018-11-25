@@ -1,4 +1,4 @@
-#r "paket: groupref Build //"
+#r "paket: groupref Main //"
 #load ".fake/build.fsx/intellisense.fsx"
 
 open Fake.Core

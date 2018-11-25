@@ -13,4 +13,4 @@ open SuperClip.Gui.Prefab
 type Prefab = IAuthPanel
 
 type Presenter (env : IEnv) =
-    inherit BasePresenter<Prefab, IApp> (Feature.create<Prefab> env.Logging)
+    inherit BasePresenter<IApp, Prefab> (Feature.create<Prefab> env.Logging)
