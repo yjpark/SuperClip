@@ -82,6 +82,7 @@
     <ImageAsset Include="Assets.xcassets\Contents.json" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
+    <Compile Include="..\SuperClip.Mac\Feature\LocalClipboard.fs" />
     <Compile Include="AppDelegate.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
@@ -106,10 +107,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj">
-      <Project>{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}</Project>
-      <Name>SuperClip.Forms</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj" />
+    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.FSharp.targets" />
 </Project>

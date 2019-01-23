@@ -1,11 +1,11 @@
-﻿namespace SuperClip.macOS
+﻿module SuperClip.macOS.Main
 open System
 open AppKit
 
-module main =
-    [<EntryPoint>]
-    let main args =
-        NSApplication.Init ()
-        NSApplication.SharedApplication.Delegate <- new AppDelegate();
-        NSApplication.Main (args)
-        0
+[<STAThread>]
+[<EntryPoint>]
+let main args =
+    NSApplication.Init ()
+    NSApplication.SharedApplication.Delegate <- new AppDelegate();
+    NSApplication.Main (args)
+    0

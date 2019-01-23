@@ -36,6 +36,7 @@ type Context (logging : ILogging) =
             return ()
         })
     )
+    interface IOverride
     override this.Self = this
     override __.Spawn l = new Context (l)
     static member AddToAgent (agent : IAgent) =
