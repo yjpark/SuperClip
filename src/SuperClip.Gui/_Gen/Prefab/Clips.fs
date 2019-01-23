@@ -24,6 +24,7 @@ type ClipsProps = ListProps<ClipProps>
 
 type IClips =
     inherit IListPrefab<ClipsProps, ClipProps>
+    inherit IListLayout<ClipsProps, IClip>
     abstract Target : IFullTable with get
     abstract ResizeItems : int -> unit
 

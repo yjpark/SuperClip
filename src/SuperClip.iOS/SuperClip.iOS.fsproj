@@ -153,11 +153,29 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets')" />
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms">
-      <Version>3.1.0.637273</Version>
-    </PackageReference>
-    <PackageReference Include="SuperClip.App">
+    <PackageReference Include="Dap.Forms">
       <Version>0.6.0</Version>
     </PackageReference>
+    <PackageReference Include="Dap.Forms.Fabulous">
+      <Version>0.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Forms">
+      <Version>3.4.0.1009999</Version>
+    </PackageReference>
+    <PackageReference Include="Fabulous.Core">
+      <Version>0.30</Version>
+    </PackageReference>
+    <PackageReference Include="Fabulous.CustomControls">
+      <Version>0.30</Version>
+    </PackageReference>
+    <PackageReference Include="Fabulous.LiveUpdate">
+      <Version>0.30</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj">
+      <Project>{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}</Project>
+      <Name>SuperClip.Forms</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

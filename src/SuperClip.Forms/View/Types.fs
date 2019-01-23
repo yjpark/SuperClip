@@ -1,12 +1,12 @@
 [<AutoOpen>]
 module SuperClip.Forms.View.Types
 
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.DynamicViews
 
 open Dap.Platform
 open Dap.Forms
 
-module ViewTypes = Dap.Forms.View.Types
+module ViewTypes = Dap.Forms.Fabulous.View.Types
 
 open SuperClip.Core
 open SuperClip.App
@@ -72,7 +72,7 @@ and Initer = ViewTypes.Initer<Model, Msg>
 and Render = ViewTypes.Render<ISessionPack, Model, Msg>
 and Widget = ViewTypes.Widget
 
-type Elmish.XamarinForms.DynamicViews.View with
+type Fabulous.DynamicViews.View with
     static member ScrollingContentPage(title, children) =
         View.ContentPage(title=title, content=View.ScrollView(View.StackLayout(padding=20.0, children=children) ), useSafeArea=true)
 

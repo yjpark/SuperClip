@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../SuperClip.Eto/Feature/AppGui.fs" />
-    <Compile Include="../SuperClip.Eto/Form/Main.fs" />
-    <Compile Include="../SuperClip.Eto/EtoApp.fs" />
+    <Compile Include="Feature\AppGui.fs" />
+    <Compile Include="Form\Main.fs" />
+    <Compile Include="EtoApp.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />

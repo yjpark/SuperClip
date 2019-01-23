@@ -16,7 +16,7 @@ type Prefab = IHomePanel
 type Presenter (env : IEnv) =
     inherit BasePresenter<IApp, Prefab> (Feature.create<Prefab> env.Logging)
 
-    override this.OnAttached () =
+    override this.OnDidAttach () =
         let prefab = this.Prefab
         let app = this.Domain.Value
         let linkStatus = new LinkStatus.Presenter (prefab.LinkStatus, app)

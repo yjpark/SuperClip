@@ -4,28 +4,28 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../SuperClip.Core/Const.fs" />
-    <Compile Include="../SuperClip.Core/Dsl/Types.fs" />
-    <Compile Include="../SuperClip.Core/Dsl/Cloud.fs" />
-    <Compile Include="../SuperClip.Core/Dsl/Packs.fs" />
-    <Compile Include="../SuperClip.Core/Dsl/Compiler.fs" />
-    <Compile Include="../SuperClip.Core/_Gen/Types.fs" />
-    <Compile Include="../SuperClip.Core/_Gen/Builder.fs" />
-    <Compile Include="../SuperClip.Core/Extensions.fs" />
-    <Compile Include="../SuperClip.Core/Clipboard.fs" />
-    <Compile Include="../SuperClip.Core/Primary/Types.fs" />
-    <Compile Include="../SuperClip.Core/Primary/Tasks.fs" />
-    <Compile Include="../SuperClip.Core/Primary/Logic.fs" />
-    <Compile Include="../SuperClip.Core/Channel/Types.fs" />
-    <Compile Include="../SuperClip.Core/Channel/Logic.fs" />
-    <Compile Include="../SuperClip.Core/Channel/Service.fs" />
-    <Compile Include="../SuperClip.Core/History/Types.fs" />
-    <Compile Include="../SuperClip.Core/History/Logic.fs" />
-    <Compile Include="../SuperClip.Core/History/Agent.fs" />
-    <Compile Include="../SuperClip.Core/_Gen1/Cloud.fs" />
-    <Compile Include="../SuperClip.Core/_Gen1/Packs.fs" />
-    <Compile Include="../SuperClip.Core/Feature/LocalClipboard.fs" />
-    <Compile Include="../SuperClip.Core/Helper.fs" />
+    <Compile Include="Const.fs" />
+    <Compile Include="Dsl\Types.fs" />
+    <Compile Include="Dsl\Cloud.fs" />
+    <Compile Include="Dsl\Packs.fs" />
+    <Compile Include="Dsl\Compiler.fs" />
+    <Compile Include="_Gen\Types.fs" />
+    <Compile Include="_Gen\Builder.fs" />
+    <Compile Include="Extensions.fs" />
+    <Compile Include="Clipboard.fs" />
+    <Compile Include="Primary\Types.fs" />
+    <Compile Include="Primary\Tasks.fs" />
+    <Compile Include="Primary\Logic.fs" />
+    <Compile Include="Channel\Types.fs" />
+    <Compile Include="Channel\Logic.fs" />
+    <Compile Include="Channel\Service.fs" />
+    <Compile Include="History\Types.fs" />
+    <Compile Include="History\Logic.fs" />
+    <Compile Include="History\Agent.fs" />
+    <Compile Include="_Gen1\Cloud.fs" />
+    <Compile Include="_Gen1\Packs.fs" />
+    <Compile Include="Feature\LocalClipboard.fs" />
+    <Compile Include="Helper.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

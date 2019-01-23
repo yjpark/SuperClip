@@ -2,8 +2,8 @@
 module SuperClip.Forms.View.Page.Home
 
 open Xamarin.Forms
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Platform

@@ -4,8 +4,8 @@ module SuperClip.Forms.View.Logic
 open FSharp.Control.Tasks.V2
 
 open Elmish
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Platform
@@ -99,5 +99,5 @@ let args application =
     Args.Create init update subscribe render application
 
 let newArgs () =
-    Dap.Forms.Util.newApplication ()
+    Dap.Forms.Fabulous.Util.newApplication ()
     |> args

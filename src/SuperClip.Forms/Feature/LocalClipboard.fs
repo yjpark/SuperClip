@@ -26,7 +26,7 @@ type Context (logging : ILogging) =
             return Base.textToContent text
         })
         base.SetAsync.SetupGuiHandler (fun (content : Content) -> task {
-            Provider.SetText <| Base.contentToText content
+            do! Provider.SetTextAsync <| Base.contentToText content
             return ()
         })
     )

@@ -1,4 +1,4 @@
-﻿// Copyright 2018 Elmish.XamarinForms contributors. See LICENSE.md for license.
+﻿// Copyright 2018 EFabulous.Corecontributors. See LICENSE.md for license.
 namespace SuperClip.Droid
 
 open System

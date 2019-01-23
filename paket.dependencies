@@ -1,4 +1,4 @@
-version 5.181.1
+version 5.195.5
 
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
@@ -10,18 +10,17 @@ nuget FSharp.Core
 nuget Argu
 
 nuget Dap.Forms
+nuget Dap.Forms.Fabulous
+
 nuget Dap.Local
 nuget Dap.Context
 nuget Dap.Gui
 nuget Dap.Eto
 nuget Dap.Eto.Gtk
-
-nuget Elmish.XamarinForms
-nuget FSharp.Data 3.0.0-beta4
 nuget Dap.Remote.FSharpData
 
-nuget Xamarin.Forms 3.1.0.637273
-nuget Xamarin.Essentials
+# nuget Xamarin.Forms 3.1.0.637273
+# nuget Xamarin.Essentials
 
 # Ooui
 nuget Ooui.Forms
