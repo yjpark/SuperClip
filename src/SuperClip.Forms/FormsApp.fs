@@ -42,7 +42,7 @@ type FormsApp (loggingArgs : LoggingArgs, args : AppArgs, onAppStarted : FormsAp
         let loggingArgs = LoggingArgs.CreateBoth ("super-clip-.log")
         let args = AppArgs.Create () |> AppArgs.SetScope "SuperClip"
         let app = new FormsApp (loggingArgs, args, onAppStarted)
-        Feature.tryStartApp app
+        Feature.startApp app
         logWip app "Run" ()
         app
 
