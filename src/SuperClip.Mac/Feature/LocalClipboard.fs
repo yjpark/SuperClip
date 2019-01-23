@@ -22,17 +22,21 @@ let PboardTypes = [| "NSStringPboardType" |]
 
 type Context (logging : ILogging) =
     inherit BaseLocalClipboard<Context> (logging)
-    let pasteboard = NSPasteboard.GeneralPasteboard
+    let mutable pasteboard : NSPasteboard option = None
+    let getPasteboard () =
+        if pasteboard.IsNone then
+            pasteboard <- Some NSPasteboard.GeneralPasteboard
+            pasteboard.Value.DeclareTypes (PboardTypes, null) |> ignore
+        pasteboard.Value
     do (
-        pasteboard.DeclareTypes (PboardTypes, null) |> ignore
         base.SetSupportOnChanged false
         base.GetAsync.SetupGuiHandler (fun () -> task {
-            let text = pasteboard.GetStringForType (NSStringPboardType);
+            let text = (getPasteboard ()).GetStringForType (NSStringPboardType);
             return Base.textToContent text
         })
         base.SetAsync.SetupGuiHandler (fun (content : Content) -> task {
             let text = Base.contentToText content
-            pasteboard.SetStringForType (text, NSStringPboardType) |> ignore
+            (getPasteboard ()).SetStringForType (text, NSStringPboardType) |> ignore
             return ()
         })
     )
