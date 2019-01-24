@@ -32,8 +32,3 @@ type Context (logging : ILogging) =
     )
     override this.Self = this
     override __.Spawn l = new Context (l)
-    static member AddToAgent (agent : IAgent) =
-        if hasEssentials () then
-            new Context (agent.Env.Logging) :> ILocalClipboard
-        else
-            Fallback.AddToAgent agent

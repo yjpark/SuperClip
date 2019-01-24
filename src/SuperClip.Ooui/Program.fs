@@ -7,6 +7,7 @@ open FSharp.Control.Tasks.V2
 
 open Dap.Prelude
 open Dap.Platform
+open Dap.Gui
 
 open SuperClip.Core
 open SuperClip.App
