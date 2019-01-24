@@ -14,7 +14,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SuperClip.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Demo.iOS</AssemblyName>
+    <AssemblyName>SuperClip.iOS</AssemblyName>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
