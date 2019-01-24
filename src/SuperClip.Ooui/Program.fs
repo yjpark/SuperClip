@@ -45,6 +45,6 @@ let onAppStarted (app : FormsApp) =
 let main argv =
     Ooui.UI.Port <- 6060
     Xamarin.Forms.Forms.Init ();
-    let app = FormsApp.Create (onAppStarted)
+    let app = FormsApp.Run (onAppStarted)
     waitForExit app
     0 // return an integer exit code
