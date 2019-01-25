@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+cd ../src/Superclip.iOS
+
+xcrun simctl install booted bin/iPhoneSimulator/Debug/SuperClip.iOS.app
