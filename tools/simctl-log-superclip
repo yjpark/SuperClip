@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+xcrun simctl spawn booted log stream --predicate 'eventMessage contains "com.pettyfun.superclip"'
