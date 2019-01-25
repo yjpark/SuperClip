@@ -53,6 +53,7 @@ type HomePanelProps = StackProps
 
 type IHomePanel =
     inherit IPrefab<HomePanelProps>
+    abstract Target : IStack with get
     abstract LinkStatus : ILinkStatus with get
     abstract History : IClips with get
 
@@ -71,5 +72,6 @@ type HomePanel (logging : ILogging) =
     member __.History : IClips = history
     interface IFallback
     interface IHomePanel with
+        member this.Target = this.Target
         member __.LinkStatus : ILinkStatus = linkStatus
         member __.History : IClips = history

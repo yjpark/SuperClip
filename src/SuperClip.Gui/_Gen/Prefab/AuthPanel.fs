@@ -104,6 +104,7 @@ type AuthPanelProps = StackProps
 
 type IAuthPanel =
     inherit IPrefab<AuthPanelProps>
+    abstract Target : IStack with get
     abstract Title : ILabel with get
     abstract Name : IInputField with get
     abstract Device : IInputField with get
@@ -134,6 +135,7 @@ type AuthPanel (logging : ILogging) =
     member __.Auth : IButton = auth
     interface IFallback
     interface IAuthPanel with
+        member this.Target = this.Target
         member __.Title : ILabel = title
         member __.Name : IInputField = name
         member __.Device : IInputField = device

@@ -40,6 +40,7 @@ type ClipProps = StackProps
 
 type IClip =
     inherit IPrefab<ClipProps>
+    abstract Target : IStack with get
     abstract Content : ILabel with get
     abstract Delete : ILabel with get
     abstract Copy : IButton with get
@@ -61,6 +62,7 @@ type Clip (logging : ILogging) =
     member __.Copy : IButton = copy
     interface IFallback
     interface IClip with
+        member this.Target = this.Target
         member __.Content : ILabel = content
         member __.Delete : ILabel = delete
         member __.Copy : IButton = copy

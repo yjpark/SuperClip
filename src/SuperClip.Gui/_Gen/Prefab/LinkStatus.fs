@@ -40,6 +40,7 @@ type LinkStatusProps = StackProps
 
 type ILinkStatus =
     inherit IPrefab<LinkStatusProps>
+    abstract Target : IStack with get
     abstract Link : ILabel with get
     abstract Session : ILabel with get
     abstract Action : IButton with get
@@ -61,6 +62,7 @@ type LinkStatus (logging : ILogging) =
     member __.Action : IButton = action
     interface IFallback
     interface ILinkStatus with
+        member this.Target = this.Target
         member __.Link : ILabel = link
         member __.Session : ILabel = session
         member __.Action : IButton = action
