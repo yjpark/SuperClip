@@ -8,6 +8,7 @@ open Dap.Platform.Meta
 open Dap.Platform.Generator
 open Dap.WebSocket.Meta
 open Dap.Remote.Meta
+open Dap.Remote.Meta.Net
 
 [<Literal>]
 let CloudHubKind = "CloudHub"

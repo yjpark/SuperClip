@@ -28,6 +28,7 @@ nuget Ooui.Forms
 # Server
 nuget Dap.Local.Farango
 nuget Dap.Remote.Server
+nuget Dap.Remote.Dashboard
 
 nuget Dap.Remote.Web
 

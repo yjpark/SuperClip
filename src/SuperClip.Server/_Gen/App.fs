@@ -9,13 +9,15 @@ open Dap.Context
 open Dap.Context.Builder
 open Dap.Platform
 open Dap.Local.Farango
+open Dap.Remote.Dashboard
 open SuperClip.Core
 
 module FarangoDb = Dap.Local.Farango.Db
 module TickerTypes = Dap.Platform.Ticker.Types
 module PacketConn = Dap.Remote.WebSocketGateway.PacketConn
-module CloudHubTypes = SuperClip.Server.CloudHub.Types
+module OperatorHubTypes = Dap.Remote.Dashboard.OperatorHub.Types
 module Gateway = Dap.Remote.WebSocketGateway.Gateway
+module CloudHubTypes = SuperClip.Server.CloudHub.Types
 
 (*
  * Generated: <App>
@@ -24,7 +26,9 @@ module Gateway = Dap.Remote.WebSocketGateway.Gateway
 type AppKinds () =
     static member FarangoDb (* IDbPack *) = "FarangoDb"
     static member Ticker (* ITickingPack *) = "Ticker"
-    static member PacketConn (* ICloudHubPack *) = "PacketConn"
+    static member PacketConn (* IDashboardPack *) = "PacketConn"
+    static member OperatorHub (* IDashboardPack *) = "OperatorHub"
+    static member OperatorHubGateway (* IDashboardPack *) = "OperatorHubGateway"
     static member CloudHub (* ICloudHubPack *) = "CloudHub"
     static member CloudHubGateway (* ICloudHubPack *) = "CloudHubGateway"
 
@@ -35,9 +39,11 @@ type AppKeys () =
 type IApp =
     inherit IApp<IApp>
     inherit IDbPack
+    inherit IDashboardPack
     inherit ICloudHubPack
     abstract Args : AppArgs with get
     abstract AsDbPack : IDbPack with get
+    abstract AsDashboardPack : IDashboardPack with get
     abstract AsCloudHubPack : ICloudHubPack with get
 
 (*
@@ -49,7 +55,9 @@ and AppArgs = {
     Setup : (* AppArgs *) IApp -> unit
     FarangoDb : (* IDbPack *) FarangoDb.Args
     Ticker : (* ITickingPack *) TickerTypes.Args
-    PacketConn : (* ICloudHubPack *) PacketConn.Args
+    PacketConn : (* IDashboardPack *) PacketConn.Args
+    OperatorHub : (* IDashboardPack *) OperatorHubTypes.Args
+    OperatorHubGateway : (* IDashboardPack *) Gateway.Args<OperatorHubTypes.Req, OperatorHubTypes.Evt>
     CloudHub : (* ICloudHubPack *) NoArgs
     CloudHubGateway : (* ICloudHubPack *) Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
 } with
@@ -59,7 +67,9 @@ and AppArgs = {
             ?setup : (* AppArgs *) IApp -> unit,
             ?farangoDb : (* IDbPack *) FarangoDb.Args,
             ?ticker : (* ITickingPack *) TickerTypes.Args,
-            ?packetConn : (* ICloudHubPack *) PacketConn.Args,
+            ?packetConn : (* IDashboardPack *) PacketConn.Args,
+            ?operatorHub : (* IDashboardPack *) OperatorHubTypes.Args,
+            ?operatorHubGateway : (* IDashboardPack *) Gateway.Args<OperatorHubTypes.Req, OperatorHubTypes.Evt>,
             ?cloudHub : (* ICloudHubPack *) NoArgs,
             ?cloudHubGateway : (* ICloudHubPack *) Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>
         ) : AppArgs =
@@ -72,8 +82,12 @@ and AppArgs = {
                 |> Option.defaultWith (fun () -> (FarangoDb.Args.Create ()))
             Ticker = (* ITickingPack *) ticker
                 |> Option.defaultWith (fun () -> (TickerTypes.Args.Create ()))
-            PacketConn = (* ICloudHubPack *) packetConn
+            PacketConn = (* IDashboardPack *) packetConn
                 |> Option.defaultWith (fun () -> (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
+            OperatorHub = (* IDashboardPack *) operatorHub
+                |> Option.defaultWith (fun () -> (OperatorHubTypes.Args.Create ()))
+            OperatorHubGateway = (* IDashboardPack *) operatorHubGateway
+                |> Option.defaultWith (fun () -> (Gateway.args OperatorHubTypes.HubSpec true))
             CloudHub = (* ICloudHubPack *) cloudHub
                 |> Option.defaultWith (fun () -> NoArgs)
             CloudHubGateway = (* ICloudHubPack *) cloudHubGateway
@@ -87,8 +101,12 @@ and AppArgs = {
         {this with FarangoDb = farangoDb}
     static member SetTicker ((* ITickingPack *) ticker : TickerTypes.Args) (this : AppArgs) =
         {this with Ticker = ticker}
-    static member SetPacketConn ((* ICloudHubPack *) packetConn : PacketConn.Args) (this : AppArgs) =
+    static member SetPacketConn ((* IDashboardPack *) packetConn : PacketConn.Args) (this : AppArgs) =
         {this with PacketConn = packetConn}
+    static member SetOperatorHub ((* IDashboardPack *) operatorHub : OperatorHubTypes.Args) (this : AppArgs) =
+        {this with OperatorHub = operatorHub}
+    static member SetOperatorHubGateway ((* IDashboardPack *) operatorHubGateway : Gateway.Args<OperatorHubTypes.Req, OperatorHubTypes.Evt>) (this : AppArgs) =
+        {this with OperatorHubGateway = operatorHubGateway}
     static member SetCloudHub ((* ICloudHubPack *) cloudHub : NoArgs) (this : AppArgs) =
         {this with CloudHub = cloudHub}
     static member SetCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) (this : AppArgs) =
@@ -99,6 +117,7 @@ and AppArgs = {
                 "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
                 "farango_db", FarangoDb.Args.JsonEncoder (* IDbPack *) this.FarangoDb
                 "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
+                "operator_hub", OperatorHubTypes.Args.JsonEncoder (* IDashboardPack *) this.OperatorHub
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
         D.object (fun get ->
@@ -110,7 +129,10 @@ and AppArgs = {
                     |> Option.defaultValue (FarangoDb.Args.Create ())
                 Ticker = get.Optional.Field (* ITickingPack *) "ticker" TickerTypes.Args.JsonDecoder
                     |> Option.defaultValue (TickerTypes.Args.Create ())
-                PacketConn = (* (* ICloudHubPack *)  *) (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
+                PacketConn = (* (* IDashboardPack *)  *) (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
+                OperatorHub = get.Optional.Field (* IDashboardPack *) "operator_hub" OperatorHubTypes.Args.JsonDecoder
+                    |> Option.defaultValue (OperatorHubTypes.Args.Create ())
+                OperatorHubGateway = (* (* IDashboardPack *)  *) (Gateway.args OperatorHubTypes.HubSpec true)
                 CloudHub = (* (* ICloudHubPack *)  *) NoArgs
                 CloudHubGateway = (* (* ICloudHubPack *)  *) (Gateway.args CloudHubTypes.HubSpec true)
             }
@@ -128,8 +150,12 @@ and AppArgs = {
         this |> AppArgs.SetFarangoDb farangoDb
     member this.WithTicker ((* ITickingPack *) ticker : TickerTypes.Args) =
         this |> AppArgs.SetTicker ticker
-    member this.WithPacketConn ((* ICloudHubPack *) packetConn : PacketConn.Args) =
+    member this.WithPacketConn ((* IDashboardPack *) packetConn : PacketConn.Args) =
         this |> AppArgs.SetPacketConn packetConn
+    member this.WithOperatorHub ((* IDashboardPack *) operatorHub : OperatorHubTypes.Args) =
+        this |> AppArgs.SetOperatorHub operatorHub
+    member this.WithOperatorHubGateway ((* IDashboardPack *) operatorHubGateway : Gateway.Args<OperatorHubTypes.Req, OperatorHubTypes.Evt>) =
+        this |> AppArgs.SetOperatorHubGateway operatorHubGateway
     member this.WithCloudHub ((* ICloudHubPack *) cloudHub : NoArgs) =
         this |> AppArgs.SetCloudHub cloudHub
     member this.WithCloudHubGateway ((* ICloudHubPack *) cloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt>) =
@@ -140,8 +166,13 @@ and AppArgs = {
     interface ITickingPackArgs with
         member this.Ticker (* ITickingPack *) : TickerTypes.Args = this.Ticker
     member this.AsTickingPackArgs = this :> ITickingPackArgs
+    interface IDashboardPackArgs with
+        member this.PacketConn (* IDashboardPack *) : PacketConn.Args = this.PacketConn
+        member this.OperatorHub (* IDashboardPack *) : OperatorHubTypes.Args = this.OperatorHub
+        member this.OperatorHubGateway (* IDashboardPack *) : Gateway.Args<OperatorHubTypes.Req, OperatorHubTypes.Evt> = this.OperatorHubGateway
+        member this.AsTickingPackArgs = this.AsTickingPackArgs
+    member this.AsDashboardPackArgs = this :> IDashboardPackArgs
     interface ICloudHubPackArgs with
-        member this.PacketConn (* ICloudHubPack *) : PacketConn.Args = this.PacketConn
         member this.CloudHub (* ICloudHubPack *) : NoArgs = this.CloudHub
         member this.CloudHubGateway (* ICloudHubPack *) : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> = this.CloudHubGateway
         member this.AsTickingPackArgs = this.AsTickingPackArgs
@@ -166,8 +197,14 @@ type AppArgsBuilder () =
     member __.Ticker (target : AppArgs, (* ITickingPack *) ticker : TickerTypes.Args) =
         target.WithTicker ticker
     [<CustomOperation("packet_conn")>]
-    member __.PacketConn (target : AppArgs, (* ICloudHubPack *) packetConn : PacketConn.Args) =
+    member __.PacketConn (target : AppArgs, (* IDashboardPack *) packetConn : PacketConn.Args) =
         target.WithPacketConn packetConn
+    [<CustomOperation("operator_hub")>]
+    member __.OperatorHub (target : AppArgs, (* IDashboardPack *) operatorHub : OperatorHubTypes.Args) =
+        target.WithOperatorHub operatorHub
+    [<CustomOperation("operator_hub_gateway")>]
+    member __.OperatorHubGateway (target : AppArgs, (* IDashboardPack *) operatorHubGateway : Gateway.Args<OperatorHubTypes.Req, OperatorHubTypes.Evt>) =
+        target.WithOperatorHubGateway operatorHubGateway
     [<CustomOperation("cloud_hub")>]
     member __.CloudHub (target : AppArgs, (* ICloudHubPack *) cloudHub : NoArgs) =
         target.WithCloudHub cloudHub
@@ -202,7 +239,9 @@ type App (param : EnvParam, args : AppArgs) =
             farangoDb <- Some farangoDb'
             let! (* ITickingPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args.Ticker) AppKinds.Ticker AppKeys.Ticker
             ticker <- Some ticker'
-            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudHubPack *) this.AsTickingPack args.PacketConn) AppKinds.PacketConn
+            do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* IDashboardPack *) this.AsTickingPack args.PacketConn) AppKinds.PacketConn
+            do! env |> Env.registerAsync (Dap.Remote.Dashboard.OperatorHub.Logic.spec (* IDashboardPack *) this.AsTickingPack args.OperatorHub) AppKinds.OperatorHub
+            do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* IDashboardPack *) args.OperatorHubGateway) AppKinds.OperatorHubGateway
             do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args.CloudHub) AppKinds.CloudHub
             do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args.CloudHubGateway) AppKinds.CloudHubGateway
             do! this.SetupAsync' ()
@@ -232,7 +271,7 @@ type App (param : EnvParam, args : AppArgs) =
         member this.RunTask onFailed getTask = runTask' this onFailed getTask
     interface IRunner with
         member __.Clock = env.Clock
-        member __.Console0 = env.Console0
+        member __.Dash0 = env.Dash0
         member this.RunFunc0 func = runFunc' this func
         member this.AddTask0 onFailed getTask = addTask' this onFailed getTask
         member this.RunTask0 onFailed getTask = runTask' this onFailed getTask
@@ -256,12 +295,24 @@ type App (param : EnvParam, args : AppArgs) =
         member this.Args = this.Args.AsTickingPackArgs
         member __.Ticker (* ITickingPack *) : TickerTypes.Agent = ticker |> Option.get
     member this.AsTickingPack = this :> ITickingPack
-    interface ICloudHubPack with
-        member this.Args = this.Args.AsCloudHubPackArgs
-        member __.GetPacketConnAsync (key : Key) (* ICloudHubPack *) : Task<PacketConn.Agent * bool> = task {
+    interface IDashboardPack with
+        member this.Args = this.Args.AsDashboardPackArgs
+        member __.GetPacketConnAsync (key : Key) (* IDashboardPack *) : Task<PacketConn.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "PacketConn" key
             return (agent :?> PacketConn.Agent, isNew)
         }
+        member __.GetOperatorHubAsync (key : Key) (* IDashboardPack *) : Task<OperatorHubTypes.Agent * bool> = task {
+            let! (agent, isNew) = env.HandleAsync <| DoGetAgent "OperatorHub" key
+            return (agent :?> OperatorHubTypes.Agent, isNew)
+        }
+        member __.GetOperatorHubGatewayAsync (key : Key) (* IDashboardPack *) : Task<Gateway.Gateway * bool> = task {
+            let! (agent, isNew) = env.HandleAsync <| DoGetAgent "OperatorHubGateway" key
+            return (agent :?> Gateway.Gateway, isNew)
+        }
+        member this.AsTickingPack = this.AsTickingPack
+    member this.AsDashboardPack = this :> IDashboardPack
+    interface ICloudHubPack with
+        member this.Args = this.Args.AsCloudHubPackArgs
         member __.GetCloudHubAsync (key : Key) (* ICloudHubPack *) : Task<CloudHubTypes.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "CloudHub" key
             return (agent :?> CloudHubTypes.Agent, isNew)
@@ -275,5 +326,6 @@ type App (param : EnvParam, args : AppArgs) =
     interface IApp with
         member this.Args : AppArgs = this.Args
         member this.AsDbPack = this.AsDbPack
+        member this.AsDashboardPack = this.AsDashboardPack
         member this.AsCloudHubPack = this.AsCloudHubPack
     member this.AsApp = this :> IApp

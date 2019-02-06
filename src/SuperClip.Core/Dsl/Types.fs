@@ -1,9 +1,11 @@
 module SuperClip.Core.Dsl.Types
 
 open Dap.Context.Meta
+open Dap.Context.Meta.Net
 open Dap.Context.Generator
 open Dap.Platform
 open Dap.Platform.Meta
+open Dap.Platform.Meta.Net
 open Dap.Platform.Dsl.Packs
 open Dap.Platform.Generator
 open Dap.Context.CustomProperty

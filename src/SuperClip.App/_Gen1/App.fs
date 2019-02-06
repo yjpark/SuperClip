@@ -98,7 +98,7 @@ type App (param : EnvParam, args : AppArgs) =
         member this.RunTask onFailed getTask = runTask' this onFailed getTask
     interface IRunner with
         member __.Clock = env.Clock
-        member __.Console0 = env.Console0
+        member __.Dash0 = env.Dash0
         member this.RunFunc0 func = runFunc' this func
         member this.AddTask0 onFailed getTask = addTask' this onFailed getTask
         member this.RunTask0 onFailed getTask = runTask' this onFailed getTask
