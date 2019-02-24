@@ -6,8 +6,8 @@ open FSharp.Control.Tasks.V2
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
-open Dap.Forms
 open Dap.Gui
+open Dap.Gui.Fabulous
 
 open SuperClip.Core
 open SuperClip.Core.Primary.Types
@@ -19,15 +19,28 @@ type Fallback = SuperClip.Core.Feature.LocalClipboard.Context
 
 type Context (logging : ILogging) =
     inherit BaseLocalClipboard<Context> (logging)
+    let fallback : Fallback option =
+        if hasEssentials () then
+            None
+        else
+            Some <| new Fallback (logging)
     do (
         base.SetSupportOnChanged false
         base.GetAsync.SetupGuiHandler (fun () -> task {
-            let! text = Provider.GetTextAsync ()
-            return Base.textToContent text
+            match fallback with
+            | Some fallback ->
+                return! fallback.GetAsync.Handle ()
+            | None ->
+                let! text = Provider.GetTextAsync ()
+                return Base.textToContent text
         })
         base.SetAsync.SetupGuiHandler (fun (content : Content) -> task {
-            do! Provider.SetTextAsync <| Base.contentToText content
-            return ()
+            match fallback with
+            | Some fallback ->
+                return! fallback.SetAsync.Handle content
+            | None ->
+                do! Provider.SetTextAsync <| Base.contentToText content
+                return ()
         })
     )
     override this.Self = this
