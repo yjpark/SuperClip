@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <Import Project="SuperClip.Gui.props" />
+  <Import Project="SuperClip.Fabulous.props" />
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
+    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

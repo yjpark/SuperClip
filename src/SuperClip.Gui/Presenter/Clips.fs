@@ -18,7 +18,7 @@ type Presenter (prefab : Prefab, app : IApp) =
     inherit DynamicPresenter<Item list, Prefab> (prefab)
     override this.OnWillAttach (items : Item list) =
         prefab.ResizeItems items.Length
-        (items, prefab.Target.Prefabs0)
+        (items, prefab.Items)
         ||> List.iter2 (fun item itemPrefab ->
-            new Clip.Presenter(itemPrefab :?> IClip, app, item) |> ignore
+            new Clip.Presenter(itemPrefab, app, item) |> ignore
         )

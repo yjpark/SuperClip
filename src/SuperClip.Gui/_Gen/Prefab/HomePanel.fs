@@ -14,12 +14,12 @@ let HomePanelJson = parseJson """
 {
     "prefab": "home_panel",
     "styles": [],
-    "layout": "vertical_stack",
+    "container": "v_box",
     "children": {
         "link_status": {
             "prefab": "link_status",
             "styles": [],
-            "layout": "horizontal_stack",
+            "container": "h_box",
             "children": {
                 "link": {
                     "prefab": "",
@@ -42,27 +42,27 @@ let HomePanelJson = parseJson """
         "history": {
             "prefab": "clips",
             "styles": [],
-            "layout": "full_table",
+            "container": "table",
             "item_prefab": "clip"
         }
     }
 }
 """
 
-type HomePanelProps = StackProps
+type HomePanelProps = ComboProps
 
 type IHomePanel =
-    inherit IPrefab<HomePanelProps>
-    abstract Target : IStack with get
+    inherit IComboPrefab<HomePanelProps>
+    inherit IGroupPrefab<IVBox>
     abstract LinkStatus : ILinkStatus with get
     abstract History : IClips with get
 
 type HomePanel (logging : ILogging) =
-    inherit WrapCombo<HomePanel, HomePanelProps, IStack> (HomePanelKind, HomePanelProps.Create, logging)
-    let linkStatus : ILinkStatus = base.AsComboLayout.Add "link_status" Feature.create<ILinkStatus>
-    let history : IClips = base.AsComboLayout.Add "history" Feature.create<IClips>
+    inherit BaseCombo<HomePanel, HomePanelProps, IVBox> (HomePanelKind, HomePanelProps.Create, logging)
+    let linkStatus : ILinkStatus = base.AsComboPrefab.Add "link_status" Feature.create<ILinkStatus>
+    let history : IClips = base.AsComboPrefab.Add "history" Feature.create<IClips>
     do (
-        base.Model.AsProperty.LoadJson HomePanelJson
+        base.LoadJson' HomePanelJson
     )
     static member Create l = new HomePanel (l)
     static member Create () = new HomePanel (getLogging ())
@@ -72,6 +72,6 @@ type HomePanel (logging : ILogging) =
     member __.History : IClips = history
     interface IFallback
     interface IHomePanel with
-        member this.Target = this.Target
+        member this.Container = this.AsGroupPrefab.Container
         member __.LinkStatus : ILinkStatus = linkStatus
         member __.History : IClips = history

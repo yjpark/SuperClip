@@ -14,7 +14,7 @@ let LinkStatusJson = parseJson """
 {
     "prefab": "link_status",
     "styles": [],
-    "layout": "horizontal_stack",
+    "container": "h_box",
     "children": {
         "link": {
             "prefab": "",
@@ -36,22 +36,22 @@ let LinkStatusJson = parseJson """
 }
 """
 
-type LinkStatusProps = StackProps
+type LinkStatusProps = ComboProps
 
 type ILinkStatus =
-    inherit IPrefab<LinkStatusProps>
-    abstract Target : IStack with get
+    inherit IComboPrefab<LinkStatusProps>
+    inherit IGroupPrefab<IHBox>
     abstract Link : ILabel with get
     abstract Session : ILabel with get
     abstract Action : IButton with get
 
 type LinkStatus (logging : ILogging) =
-    inherit WrapCombo<LinkStatus, LinkStatusProps, IStack> (LinkStatusKind, LinkStatusProps.Create, logging)
-    let link : ILabel = base.AsComboLayout.Add "link" Feature.create<ILabel>
-    let session : ILabel = base.AsComboLayout.Add "session" Feature.create<ILabel>
-    let action : IButton = base.AsComboLayout.Add "action" Feature.create<IButton>
+    inherit BaseCombo<LinkStatus, LinkStatusProps, IHBox> (LinkStatusKind, LinkStatusProps.Create, logging)
+    let link : ILabel = base.AsComboPrefab.Add "link" Feature.create<ILabel>
+    let session : ILabel = base.AsComboPrefab.Add "session" Feature.create<ILabel>
+    let action : IButton = base.AsComboPrefab.Add "action" Feature.create<IButton>
     do (
-        base.Model.AsProperty.LoadJson LinkStatusJson
+        base.LoadJson' LinkStatusJson
     )
     static member Create l = new LinkStatus (l)
     static member Create () = new LinkStatus (getLogging ())
@@ -62,7 +62,7 @@ type LinkStatus (logging : ILogging) =
     member __.Action : IButton = action
     interface IFallback
     interface ILinkStatus with
-        member this.Target = this.Target
+        member this.Container = this.AsGroupPrefab.Container
         member __.Link : ILabel = link
         member __.Session : ILabel = session
         member __.Action : IButton = action

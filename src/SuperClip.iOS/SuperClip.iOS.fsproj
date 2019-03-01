@@ -8,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C6ADA296-625F-42B0-AC86-A11042A742DE}</ProjectGuid>
+    <ProjectGuid>{B4FFA9E8-C9B3-4E7B-85ED-B0604AFADDFD}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{F2A71F9B-5D33-465A-A702-920D77279786}</ProjectTypeGuids>
     <TemplateGuid>{6143fdea-f3c2-4a09-aafa-6e230626515e}</TemplateGuid>
     <OutputType>Exe</OutputType>
@@ -16,8 +16,7 @@
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>SuperClip.iOS</AssemblyName>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -33,7 +32,6 @@
     <MtouchArch>x86_64</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <MtouchExtraArgs>--framework:/Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/RevealServer.framework</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -96,10 +94,6 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.fs" />
-    <Compile Include="AppDelegate.fs" />
-    <None Include="Entitlements.plist" />
-    <None Include="Info.plist" />
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
@@ -152,31 +146,50 @@
     <Reference Include="System.Numerics.Vectors" />
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets')" />
+  <Import Project="..\SuperClip.Gui\SuperClip.Gui.props" />
+  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.props" />
   <ItemGroup>
-    <PackageReference Include="Dap.Forms">
-      <Version>0.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="Dap.Forms.Fabulous">
-      <Version>0.6.0</Version>
-    </PackageReference>
+    <None Include="Entitlements.plist" />
+    <None Include="Info.plist" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>3.5.0.129452</Version>
+      <Version>3.5.0.169047</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Essentials">
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Fabulous.Core">
-      <Version>0.31</Version>
+      <Version>0.32</Version>
     </PackageReference>
     <PackageReference Include="Fabulous.CustomControls">
-      <Version>0.31</Version>
+      <Version>0.32</Version>
     </PackageReference>
     <PackageReference Include="Fabulous.LiveUpdate">
-      <Version>0.31</Version>
+      <Version>0.32</Version>
     </PackageReference>
+    <PackageReference Include="Dap.Platform">
+      <Version>0.6.4</Version>
+    </PackageReference>
+    <!--
+    <PackageReference Include="Dap.Gui">
+      <Version>0.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="Dap.Fabulous">
+      <Version>0.6.0</Version>
+    </PackageReference>
+    -->
+    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
+    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
+    <!--
+    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
+    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
+    -->
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Gui\Dap.Gui.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous\Dap.Fabulous.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.iOS\Dap.iOS.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.iOS\Dap.Fabulous.iOS.fsproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj">
-      <Project>{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}</Project>
-      <Name>SuperClip.Forms</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.FSharp.targets')"/>
 </Project>

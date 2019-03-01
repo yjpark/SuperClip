@@ -44,16 +44,12 @@ type IApp with
             NoLink
     member this.Gui = this.AsGuiPack.AppGui.Context
 
-(*
-    new (onAppStarted : IApp -> unit, ?consoleLogLevel : LogLevel, ?logFile : string) =
-        let logFile = logFile |> Option.defaultValue "super-clip-.log"
-    #if FEATURE_DAP_FORMS
-        let loggingArgs = LoggingArgs.FormsCreate (?consoleLogLevel = consoleLogLevel, filename = logFile, rolling = RollingInterval.Daily)
-    #else
-        let loggingArgs = LoggingArgs.LocalCreate (?consoleLogLevel = consoleLogLevel, filename = logFile, rolling = RollingInterval.Daily)
-    #endif
+
+type App with
+    static member Create (logFile, ?scope : string, ?consoleMinLevel : LogLevel) =
+        let scope = defaultArg scope Scope
+        let loggingArgs = LoggingArgs.CreateBoth (logFile, ?consoleMinLevel = consoleMinLevel)
         let args =
             AppArgs.Create ()
-            |> AppArgs.SetSetup onAppStarted
+            |> fun a -> a.WithScope scope
         new App (loggingArgs, args)
-*)

@@ -1,5 +1,5 @@
 ﻿// Copyright 2018 EFabulous.Corecontributors. See LICENSE.md for license.
-namespace SuperClip.Droid
+namespace SuperClip.Android
 
 open System
 

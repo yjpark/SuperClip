@@ -14,7 +14,7 @@ let ClipJson = parseJson """
 {
     "prefab": "clip",
     "styles": [],
-    "layout": "vertical_stack",
+    "container": "h_box",
     "children": {
         "content": {
             "prefab": "",
@@ -24,6 +24,7 @@ let ClipJson = parseJson """
         "delete": {
             "prefab": "",
             "styles": [],
+            "disabled": false,
             "text": "Delete"
         },
         "copy": {
@@ -36,33 +37,33 @@ let ClipJson = parseJson """
 }
 """
 
-type ClipProps = StackProps
+type ClipProps = ComboProps
 
 type IClip =
-    inherit IPrefab<ClipProps>
-    abstract Target : IStack with get
+    inherit IComboPrefab<ClipProps>
+    inherit IGroupPrefab<IHBox>
     abstract Content : ILabel with get
-    abstract Delete : ILabel with get
+    abstract Delete : IButton with get
     abstract Copy : IButton with get
 
 type Clip (logging : ILogging) =
-    inherit WrapCombo<Clip, ClipProps, IStack> (ClipKind, ClipProps.Create, logging)
-    let content : ILabel = base.AsComboLayout.Add "content" Feature.create<ILabel>
-    let delete : ILabel = base.AsComboLayout.Add "delete" Feature.create<ILabel>
-    let copy : IButton = base.AsComboLayout.Add "copy" Feature.create<IButton>
+    inherit BaseCombo<Clip, ClipProps, IHBox> (ClipKind, ClipProps.Create, logging)
+    let content : ILabel = base.AsComboPrefab.Add "content" Feature.create<ILabel>
+    let delete : IButton = base.AsComboPrefab.Add "delete" Feature.create<IButton>
+    let copy : IButton = base.AsComboPrefab.Add "copy" Feature.create<IButton>
     do (
-        base.Model.AsProperty.LoadJson ClipJson
+        base.LoadJson' ClipJson
     )
     static member Create l = new Clip (l)
     static member Create () = new Clip (getLogging ())
     override this.Self = this
     override __.Spawn l = Clip.Create l
     member __.Content : ILabel = content
-    member __.Delete : ILabel = delete
+    member __.Delete : IButton = delete
     member __.Copy : IButton = copy
     interface IFallback
     interface IClip with
-        member this.Target = this.Target
+        member this.Container = this.AsGroupPrefab.Container
         member __.Content : ILabel = content
-        member __.Delete : ILabel = delete
+        member __.Delete : IButton = delete
         member __.Copy : IButton = copy

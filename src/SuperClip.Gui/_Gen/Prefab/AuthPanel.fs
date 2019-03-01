@@ -17,7 +17,7 @@ let AuthPanelJson = parseJson """
         "style1",
         "style2"
     ],
-    "layout": "vertical_stack",
+    "container": "v_box",
     "children": {
         "title": {
             "prefab": "",
@@ -29,7 +29,7 @@ let AuthPanelJson = parseJson """
             "styles": [
                 "style3"
             ],
-            "layout": "horizontal_stack",
+            "container": "h_box",
             "children": {
                 "label": {
                     "prefab": "",
@@ -49,7 +49,7 @@ let AuthPanelJson = parseJson """
             "styles": [
                 "style3"
             ],
-            "layout": "horizontal_stack",
+            "container": "h_box",
             "children": {
                 "label": {
                     "prefab": "",
@@ -69,7 +69,7 @@ let AuthPanelJson = parseJson """
             "styles": [
                 "style3"
             ],
-            "layout": "horizontal_stack",
+            "container": "h_box",
             "children": {
                 "label": {
                     "prefab": "",
@@ -100,11 +100,11 @@ let AuthPanelJson = parseJson """
 }
 """
 
-type AuthPanelProps = StackProps
+type AuthPanelProps = ComboProps
 
 type IAuthPanel =
-    inherit IPrefab<AuthPanelProps>
-    abstract Target : IStack with get
+    inherit IComboPrefab<AuthPanelProps>
+    inherit IGroupPrefab<IVBox>
     abstract Title : ILabel with get
     abstract Name : IInputField with get
     abstract Device : IInputField with get
@@ -113,15 +113,15 @@ type IAuthPanel =
     abstract Auth : IButton with get
 
 type AuthPanel (logging : ILogging) =
-    inherit WrapCombo<AuthPanel, AuthPanelProps, IStack> (AuthPanelKind, AuthPanelProps.Create, logging)
-    let title : ILabel = base.AsComboLayout.Add "title" Feature.create<ILabel>
-    let name : IInputField = base.AsComboLayout.Add "name" Feature.create<IInputField>
-    let device : IInputField = base.AsComboLayout.Add "device" Feature.create<IInputField>
-    let password : IInputField = base.AsComboLayout.Add "password" Feature.create<IInputField>
-    let cancel : IButton = base.AsComboLayout.Add "cancel" Feature.create<IButton>
-    let auth : IButton = base.AsComboLayout.Add "auth" Feature.create<IButton>
+    inherit BaseCombo<AuthPanel, AuthPanelProps, IVBox> (AuthPanelKind, AuthPanelProps.Create, logging)
+    let title : ILabel = base.AsComboPrefab.Add "title" Feature.create<ILabel>
+    let name : IInputField = base.AsComboPrefab.Add "name" Feature.create<IInputField>
+    let device : IInputField = base.AsComboPrefab.Add "device" Feature.create<IInputField>
+    let password : IInputField = base.AsComboPrefab.Add "password" Feature.create<IInputField>
+    let cancel : IButton = base.AsComboPrefab.Add "cancel" Feature.create<IButton>
+    let auth : IButton = base.AsComboPrefab.Add "auth" Feature.create<IButton>
     do (
-        base.Model.AsProperty.LoadJson AuthPanelJson
+        base.LoadJson' AuthPanelJson
     )
     static member Create l = new AuthPanel (l)
     static member Create () = new AuthPanel (getLogging ())
@@ -135,7 +135,7 @@ type AuthPanel (logging : ILogging) =
     member __.Auth : IButton = auth
     interface IFallback
     interface IAuthPanel with
-        member this.Target = this.Target
+        member this.Container = this.AsGroupPrefab.Container
         member __.Title : ILabel = title
         member __.Name : IInputField = name
         member __.Device : IInputField = device

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <Compile Include="..\SuperClip.Fabulous\Feature/AppGui.fs" />
+    <Compile Include="..\SuperClip.Fabulous\View/Types.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Widget/Item.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Widget/Items.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Widget/Link.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Dialog/Info.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Page/Auth.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Page/Home.fs" />
+    <Compile Include="..\SuperClip.Fabulous\View/Logic.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Helper.fs" />
+  </ItemGroup>
+</Project>

@@ -26,6 +26,7 @@ module SessionTypes = SuperClip.App.Session.Types
 type App (param : EnvParam, args : AppArgs) =
     let env = Env.create param
     let mutable setupResult : Result<bool, exn> option = None
+    let onSetup = new Bus<Result<bool, exn>> (env, "App.OnSetup")
     let mutable (* ITickingPack *) ticker : TickerTypes.Agent option = None
     let mutable (* ILocalPack *) localClipboard : Context.Agent<ILocalClipboard> option = None
     let mutable (* ICorePack *) primaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> option = None
@@ -75,9 +76,11 @@ type App (param : EnvParam, args : AppArgs) =
             logInfo env "App.setupAsync" "Setup_Succeed" (encodeJson 4 args)
             args.Setup this.AsApp
             setupResult <- Some (Ok true)
+            onSetup.Trigger setupResult.Value
         with e ->
             setupResult <- Some (Error e)
             logException env "App.setupAsync" "Setup_Failed" (encodeJson 4 args) e
+            onSetup.Trigger setupResult.Value
             raise e
     }
     abstract member SetupAsync' : unit -> Task<unit>
@@ -87,10 +90,12 @@ type App (param : EnvParam, args : AppArgs) =
     member __.Args : AppArgs = args
     member __.Env : IEnv = env
     member __.SetupResult : Result<bool, exn> option = setupResult
+    member __.OnSetup : IBus<Result<bool, exn>> = onSetup.Publish
     interface IApp<IApp>
     interface INeedSetupAsync with
         member this.SetupResult = this.SetupResult
         member this.SetupAsync () = this.SetupAsync ()
+        member this.OnSetup = this.OnSetup
     interface IRunner<IApp> with
         member this.Runner = this.AsApp
         member this.RunFunc func = runFunc' this func

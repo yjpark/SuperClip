@@ -1,4 +1,4 @@
-version 5.193.0
+version 5.196.2
 
 source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
@@ -9,21 +9,8 @@ nuget FSharp.Core
 
 nuget Argu
 
-nuget Dap.Forms
-nuget Dap.Forms.Fabulous
-
-nuget Dap.Local
-nuget Dap.Context
-nuget Dap.Gui
-nuget Dap.Eto
-nuget Dap.Eto.Gtk
-nuget Dap.Remote.FSharpData
-
-# nuget Xamarin.Forms 3.1.0.637273
-# nuget Xamarin.Essentials
-
-# Ooui
-nuget Ooui.Forms
+# Build
+nuget Dap.Build
 
 # Server
 nuget Dap.Local.Farango
@@ -32,5 +19,13 @@ nuget Dap.Remote.Dashboard
 
 nuget Dap.Remote.Web
 
-# Build
-nuget Dap.Build
+# Client
+nuget Dap.Remote
+nuget Dap.Remote.FSharpData
+
+nuget Dap.Gui
+nuget Dap.Fabulous
+nuget Dap.Fabulous.Ooui
+
+# TODO
+# nuget Dap.Fabulous.Mac

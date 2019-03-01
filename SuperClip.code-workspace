@@ -19,35 +19,26 @@
 			"path": "src/SuperClip.Gui"
 		},
 		{
-			"path": "src/SuperClip.Eto"
-		},
-		{
-			"path": "src/SuperClip.Gtk"
-		},
-		{
-			"path": "src/SuperClip.Mac"
-		},
-		{
-			"path": "src/SuperClip.Wpf"
-		},
-		{
-			"path": "src/SuperClip.Forms"
-		},
-		{
-			"path": "src/SuperClip.Ooui"
-		},
-		{
-			"path": "src/SuperClip.UWP"
-		},
-		{
-			"path": "src/SuperClip.macOS"
+			"path": "src/SuperClip.Fabulous"
 		},
 		{
 			"path": "src/SuperClip.iOS"
 		},
 		{
-			"path": "src/SuperClip.Droid"
-		}
+			"path": "src/SuperClip.Android"
+		},
+		{
+			"path": "src/SuperClip.Mac"
+		},
+		{
+			"path": "src/SuperClip.Ooui"
+		},
+		{
+			"path": "src/SuperClip.Tools"
+		},
+		{
+			"path": "old"
+		},
 	],
     "settings": {
         "files.exclude": {

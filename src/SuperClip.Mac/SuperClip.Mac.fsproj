@@ -81,34 +81,42 @@
     <ImageAsset Include="Assets.xcassets\Contents.json" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
+  </ItemGroup>
+  <Import Project="..\SuperClip.Gui\SuperClip.Gui.props" />
+  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.props" />
+  <ItemGroup>
     <Compile Include="Feature/LocalClipboard.fs" />
-    <Compile Include="AppDelegate.fs" />
     <Compile Include="Program.fs" />
-    <PackageReference Include="FSharp.Core">
-      <Version>4.5.2</Version>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms">
+      <Version>3.5.0.169047</Version>
     </PackageReference>
-    <PackageReference Include="Eto.Platform.XamMac2">
-      <Version>2.4.1</Version>
+    <PackageReference Include="Xamarin.Essentials">
+      <Version>1.0.1</Version>
     </PackageReference>
-    <PackageReference Include="Dap.Eto.Mac">
-      <Version>0.6.0</Version>
+    <PackageReference Include="Fabulous.Core">
+      <Version>0.32</Version>
     </PackageReference>
-    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj">
-      <Project>{363A252D-9D4C-4607-98A7-D11F1A460EA2}</Project>
-      <Name>SuperClip.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj">
-      <Project>{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}</Project>
-      <Name>SuperClip.App</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj">
-      <Project>{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}</Project>
-      <Name>SuperClip.Gui</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperClip.Eto\SuperClip.Eto.fsproj">
-      <Project>{C18689F2-614C-4FA6-A57C-531770650B4E}</Project>
-      <Name>SuperClip.Eto</Name>
-    </ProjectReference>
+    <PackageReference Include="Fabulous.CustomControls">
+      <Version>0.32</Version>
+    </PackageReference>
+    <PackageReference Include="Fabulous.LiveUpdate">
+      <Version>0.32</Version>
+    </PackageReference>
+    <PackageReference Include="Dap.Platform">
+      <Version>0.6.4</Version>
+    </PackageReference>
+    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
+    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
+    <!--
+    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
+    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
+    -->
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Gui\Dap.Gui.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous\Dap.Fabulous.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Mac\Dap.Mac.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.Mac\Dap.Fabulous.Mac.fsproj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.FSharp.targets" />
 </Project>

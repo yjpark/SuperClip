@@ -1,3 +1,4 @@
+(* FAKE: 5.12.1 *)
 #r "paket: groupref Main //"
 #load ".fake/build.fsx/intellisense.fsx"
 
@@ -26,9 +27,7 @@ let allProjects =
     ++ "src/SuperClip.Web/*.fsproj"
     ++ "src/SuperClip.App/*.fsproj"
     ++ "src/SuperClip.Gui/*.fsproj"
-    ++ "src/SuperClip.Eto/*.fsproj"
-    ++ "src/SuperClip.Gtk/*.fsproj"
-    ++ "src/SuperClip.Forms/*.fsproj"
+    ++ "src/SuperClip.Fabulous/*.fsproj"
     ++ "src/SuperClip.Ooui/*.fsproj"
     ++ "src/SuperClip.Tools/*.fsproj"
 

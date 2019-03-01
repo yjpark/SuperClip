@@ -5,11 +5,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Feature/LocalClipboard.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj" />
+    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

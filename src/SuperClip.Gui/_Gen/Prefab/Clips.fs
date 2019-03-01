@@ -14,24 +14,22 @@ let ClipsJson = parseJson """
 {
     "prefab": "clips",
     "styles": [],
-    "layout": "full_table",
+    "container": "table",
     "item_prefab": "clip",
     "items": []
 }
 """
 
-type ClipsProps = ListProps<ClipProps>
+type ClipsProps = ListProps
 
 type IClips =
-    inherit IListPrefab<ClipsProps, ClipProps>
-    inherit IListLayout<ClipsProps, IClip>
-    abstract Target : IFullTable with get
-    abstract ResizeItems : int -> unit
+    inherit IListPrefab<ClipsProps, IClip>
+    inherit IGroupPrefab<ITable>
 
 type Clips (logging : ILogging) =
-    inherit WrapList<Clips, ClipsProps, IClip, ClipProps, IFullTable> (ClipsKind, ClipsProps.CreateOf ClipProps.Create, logging)
+    inherit BaseList<Clips, ClipsProps, IClip, ClipProps, ITable> (ClipsKind, ClipsProps.Create, logging)
     do (
-        base.Model.AsProperty.LoadJson ClipsJson
+        base.LoadJson' ClipsJson
     )
     static member Create l = new Clips (l)
     static member Create () = new Clips (getLogging ())
@@ -39,5 +37,4 @@ type Clips (logging : ILogging) =
     override __.Spawn l = Clips.Create l
     interface IFallback
     interface IClips with
-        member this.Target = this.Target
-        member this.ResizeItems size = this.ResizeItems size
+        member this.Container = this.AsGroupPrefab.Container

@@ -17,14 +17,14 @@ let inputField labelText =
     }
 
 let Clip =
-    v_stack {
+    combo_h_box {
         child "content" (
             label {
                 text "..."
             }
         )
         child "delete" (
-            label {
+            button {
                 text "Delete"
             }
         )
@@ -36,12 +36,12 @@ let Clip =
     }
 
 let Clips =
-    f_table {
+    list_table {
         item <@ Clip @>
     }
 
 let LinkStatus =
-    h_stack {
+    combo_h_box {
         child "link" (
             label {
                 text "..."
@@ -60,13 +60,13 @@ let LinkStatus =
     }
 
 let HomePanel =
-    v_stack {
+    combo_v_box {
         child "link_status" <@ LinkStatus @>
         child "history" <@ Clips @>
     }
 
 let AuthPanel =
-    v_stack {
+    combo_v_box {
         styles ["style1" ; "style2"]
         child "title" (
             label {
