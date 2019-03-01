@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+cd ../src/Superclip.Android
+
+adb install -r bin/Debug/com.pettyfun.superclip-Signed.apk
