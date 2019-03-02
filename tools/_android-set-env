@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+PROJ='../src/SuperClip.Android'
+APP='com.pettyfun.superclip'
+

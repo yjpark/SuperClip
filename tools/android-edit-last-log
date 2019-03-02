@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+. ./_android-set-env
+
+./android-fetch-cache
+
+cd $PROJ/cache/log
+cd `ls -1Ft | head -1`
+$EDITOR *.log

@@ -3,4 +3,4 @@
 cd `dirname $0`
 . ./_android-set-env
 
-adb exec-out run-as $APP ls -R cache/
+adb exec-out run-as $APP rm -rf cache

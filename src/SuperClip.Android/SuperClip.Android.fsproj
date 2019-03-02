@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidSupportedAbis>arm64-v8a;armeabi-v7a;x86</AndroidSupportedAbis>
+    <!--May remove after know how to install shared runtime with command line -->
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -52,7 +55,6 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
     <Compile Include="Properties\AssemblyInfo.fs" />
-    <Compile Include="MainActivity.fs" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Resources\AboutResources.txt" />
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
@@ -88,31 +90,47 @@
       <HintPath>lib\Xamarin.Android.FSharp.ResourceProvider.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)/Xamarin/Android/Xamarin.Android.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)/Xamarin/Android/Xamarin.Android.FSharp.targets')" />
+  <Import Project="..\SuperClip.Gui\SuperClip.Gui.props" />
+  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.props" />
   <ItemGroup>
-    <PackageReference Include="Dap.Forms">
-      <Version>0.6.0</Version>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Got issue when restore, use dll for now
+    <PackageReference Include="Xamarin.Android.FSharp.ResourceProvider">
+      <Version>1.0.0.25</Version>
     </PackageReference>
-    <PackageReference Include="Dap.Forms.Fabulous">
-      <Version>0.6.0</Version>
-    </PackageReference>
+    -->
     <PackageReference Include="Xamarin.Forms">
-      <Version>3.5.0.129452</Version>
+      <Version>3.5.0.169047</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Essentials">
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Fabulous.Core">
-      <Version>0.31</Version>
+      <Version>0.32</Version>
     </PackageReference>
     <PackageReference Include="Fabulous.CustomControls">
-      <Version>0.31</Version>
+      <Version>0.32</Version>
     </PackageReference>
     <PackageReference Include="Fabulous.LiveUpdate">
-      <Version>0.31</Version>
+      <Version>0.32</Version>
+    </PackageReference>
+    <PackageReference Include="Dap.Platform">
+      <Version>0.6.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Forms\SuperClip.Forms.fsproj">
-      <Project>{AFE5F2CF-DF19-46CA-A19B-EAE158C9FA66}</Project>
-      <Name>SuperClip.Forms</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
+    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
+    <!--
+    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
+    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
+    -->
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Gui\Dap.Gui.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous\Dap.Fabulous.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Android\Dap.Android.fsproj" />
+    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.Android\Dap.Fabulous.Android.fsproj" />
   </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets" />
 </Project>

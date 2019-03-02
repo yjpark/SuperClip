@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 cd `dirname $0`
-cd ../src/Superclip.Android
+. ./_android-set-env
 
-adb install -r bin/Debug/com.pettyfun.superclip-Signed.apk
+#./android-clear-cache
+
+cd $PROJ
+ls -lh bin/Debug/$APP-Signed.apk
+adb install -r bin/Debug/$APP-Signed.apk
+

@@ -1,4 +1,4 @@
-﻿namespace Demo.Android
+﻿namespace SuperClip.Android
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -6,17 +6,17 @@ open System.Runtime.InteropServices
 open Android.App
 
 // the name of the type here needs to match the name inside the ResourceDesigner attribute
-type Resources = SuperClip.Droid.Resource
-[<assembly: Android.Runtime.ResourceDesigner("SuperClip.Droid.Resources", IsApplication=true)>]
+type Resources = SuperClip.Android.Resource
+[<assembly: Android.Runtime.ResourceDesigner("SuperClip.Android.Resources", IsApplication=true)>]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("SuperClip.Droid")>]
+[<assembly: AssemblyTitle("SuperClip.Android")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("SuperClip.Droid")>]
+[<assembly: AssemblyProduct("SuperClip.Android")>]
 [<assembly: AssemblyCopyright("Copyright ©  2014")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
