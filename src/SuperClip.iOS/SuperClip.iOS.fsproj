@@ -14,7 +14,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SuperClip.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>SuperClip.iOS</AssemblyName>
+    <AssemblyName>com.pettyfun.superclip</AssemblyName>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

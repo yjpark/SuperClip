@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+. ./_ios-set-env
+
+xcrun simctl spawn booted log stream --predicate 'eventMessage contains "$APP"'
