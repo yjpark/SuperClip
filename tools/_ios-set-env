@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 PROJ='../src/SuperClip.iOS'
-APP='SuperClip.iOS'
+APP='com.pettyfun.superclip'
 

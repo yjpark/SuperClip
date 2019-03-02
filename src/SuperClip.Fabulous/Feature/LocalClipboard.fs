@@ -19,28 +19,22 @@ type Fallback = SuperClip.Core.Feature.LocalClipboard.Context
 
 type Context (logging : ILogging) =
     inherit BaseLocalClipboard<Context> (logging)
-    let fallback : Fallback option =
-        if hasEssentials () then
-            None
-        else
-            Some <| new Fallback (logging)
+    let fallback = new Fallback (logging)
     do (
         base.SetSupportOnChanged false
         base.GetAsync.SetupGuiHandler (fun () -> task {
-            match fallback with
-            | Some fallback ->
-                return! fallback.GetAsync.Handle ()
-            | None ->
+            if hasEssentials () then
                 let! text = Provider.GetTextAsync ()
                 return Base.textToContent text
+            else
+                return! fallback.GetAsync.Handle ()
         })
         base.SetAsync.SetupGuiHandler (fun (content : Content) -> task {
-            match fallback with
-            | Some fallback ->
-                return! fallback.SetAsync.Handle content
-            | None ->
+            if hasEssentials () then
                 do! Provider.SetTextAsync <| Base.contentToText content
                 return ()
+            else
+                return! fallback.SetAsync.Handle content
         })
     )
     override this.Self = this

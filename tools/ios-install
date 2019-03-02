@@ -4,5 +4,5 @@ cd `dirname $0`
 . ./_ios-set-env
 
 cd $PROJ
-
+du -sh bin/iPhoneSimulator/Debug/$APP.app
 xcrun simctl install booted bin/iPhoneSimulator/Debug/$APP.app
