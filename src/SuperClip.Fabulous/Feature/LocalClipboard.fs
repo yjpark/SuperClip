@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module SuperClip.Forms.Feature.LocalClipboard
+module SuperClip.Fabulous.Feature.LocalClipboard
 
 open FSharp.Control.Tasks.V2
 
@@ -7,7 +7,7 @@ open Dap.Prelude
 open Dap.Context
 open Dap.Platform
 open Dap.Gui
-open Dap.Gui.Fabulous
+open Dap.Fabulous
 
 open SuperClip.Core
 open SuperClip.Core.Primary.Types
