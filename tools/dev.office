@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+
+BRANCH=$1
+
+ssh office.yjpark.zerotier 'cd ~/projects/pettyfun/SuperClip ; git co $BRANCH ; git add . ; git ci -m wip'
+git fetch office
+git merge office/$BRANCH
+
+./ios-build-and-install

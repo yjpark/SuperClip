@@ -44,7 +44,6 @@ type IApp with
             NoLink
     member this.Gui = this.AsGuiPack.AppGui.Context
 
-
 type App with
     static member Create (logFile, ?scope : string, ?consoleMinLevel : LogLevel) =
         let scope = defaultArg scope Scope
@@ -52,4 +51,5 @@ type App with
         let args =
             AppArgs.Create ()
             |> fun a -> a.WithScope scope
+            |> fun a -> a.WithSetup (fun app -> app.SetupSecureStorage ())
         new App (loggingArgs, args)

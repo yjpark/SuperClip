@@ -26,7 +26,7 @@ type ICorePack =
     inherit IPack
     inherit ILocalPack
     abstract Args : ICorePackArgs with get
-    abstract PrimaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> with get
+    abstract PrimaryClipboard : PrimaryTypes.Agent with get
     abstract LocalHistory : HistoryTypes.Agent with get
     abstract GetHistoryAsync : Key -> Task<HistoryTypes.Agent * bool>
     abstract AsLocalPack : ILocalPack with get

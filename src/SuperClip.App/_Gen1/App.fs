@@ -29,7 +29,7 @@ type App (param : EnvParam, args : AppArgs) =
     let onSetup = new Bus<Result<bool, exn>> (env, "App.OnSetup")
     let mutable (* ITickingPack *) ticker : TickerTypes.Agent option = None
     let mutable (* ILocalPack *) localClipboard : Context.Agent<ILocalClipboard> option = None
-    let mutable (* ICorePack *) primaryClipboard : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> option = None
+    let mutable (* ICorePack *) primaryClipboard : PrimaryTypes.Agent option = None
     let mutable (* ICorePack *) localHistory : HistoryTypes.Agent option = None
     let mutable (* ICloudStubPack *) cloudStub : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> option = None
     let mutable (* IAppPack *) preferences : Context.Agent<IPreferences> option = None
@@ -55,7 +55,7 @@ type App (param : EnvParam, args : AppArgs) =
             let! (* ILocalPack *) localClipboard' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.LocalClipboard) AppKinds.LocalClipboard AppKeys.LocalClipboard
             localClipboard <- Some localClipboard'
             let! (* ICorePack *) primaryClipboard' = env |> Env.addServiceAsync (SuperClip.Core.Primary.Logic.spec this.AsLocalPack args.PrimaryClipboard) AppKinds.PrimaryClipboard AppKeys.PrimaryClipboard
-            primaryClipboard <- Some (primaryClipboard' :> IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>)
+            primaryClipboard <- Some primaryClipboard'
             let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args.LocalHistory) AppKinds.LocalHistory AppKeys.LocalHistory
             localHistory <- Some localHistory'
             do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args.History) AppKinds.History
@@ -130,7 +130,7 @@ type App (param : EnvParam, args : AppArgs) =
     member this.AsLocalPack = this :> ILocalPack
     interface ICorePack with
         member this.Args = this.Args.AsCorePackArgs
-        member __.PrimaryClipboard (* ICorePack *) : IAgent<PrimaryTypes.Req, PrimaryTypes.Evt> = primaryClipboard |> Option.get
+        member __.PrimaryClipboard (* ICorePack *) : PrimaryTypes.Agent = primaryClipboard |> Option.get
         member __.LocalHistory (* ICorePack *) : HistoryTypes.Agent = localHistory |> Option.get
         member __.GetHistoryAsync (key : Key) (* ICorePack *) : Task<HistoryTypes.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "History" key

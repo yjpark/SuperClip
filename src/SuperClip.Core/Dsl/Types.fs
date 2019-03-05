@@ -93,7 +93,7 @@ type M with
     static member primaryClipboard () =
         let alias = "PrimaryTypes", "SuperClip.Core.Primary.Types"
         let args = JsonArgs "PrimaryTypes.Args"
-        let type' = "IAgent<PrimaryTypes.Req, PrimaryTypes.Evt>"
+        let type' = "PrimaryTypes.Agent"
         let spec = "SuperClip.Core.Primary.Logic.spec"
         M.agent (args, type', spec, kind = "Clipboard", key = "Primary", aliases = [alias])
     static member history (?key : Key) =

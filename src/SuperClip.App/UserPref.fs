@@ -17,11 +17,11 @@ let setup (storage : ISecureStorage) (runner : Context.Agent<IUserPref>) =
     runner.Context.Properties.Credential.OnChanged.AddWatcher runner "DoSave" (fun c ->
         match c.New with
         | None ->
-            logWarn runner "DoSave" "Remove_Credential" ()
+            logWarn runner "UserPref.setup" "Remove_Credential" ()
             storage.Remove.Handle CredentialLuid
         | Some c ->
             let text = encodeJson 4 c
-            logWarn runner "DoSave" "Save_Credential" text
+            logWarn runner "UserPref.setup" "Save_Credential" text
             runner.RunTask ignoreOnFailed (fun _ -> task {
                 let req = SetTextReq.Create (path = CredentialLuid, text = text)
                 do! storage.SetAsync.Handle req
@@ -29,6 +29,7 @@ let setup (storage : ISecureStorage) (runner : Context.Agent<IUserPref>) =
     )
     runner.RunTask ignoreOnFailed (fun _ -> task {
         let! credential = storage.GetAsync.Handle CredentialLuid
+        logWarn runner "UserPref.setup" "Load_Credential" credential
         let credential =
             if System.String.IsNullOrEmpty credential then
                 None

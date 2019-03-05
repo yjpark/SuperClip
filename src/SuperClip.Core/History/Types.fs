@@ -6,14 +6,16 @@ open SuperClip.Core
 type Args = HistoryArgs
 
 and Model = {
+    PinnedItems : Item list
     RecentItems : Item list
-    AllItems : Map<string, Item>
 }
 
 and Req =
-    | DoAdd of Item * Callback<bool>      // ~> isNew
-    | DoRemoveOne of Content * Callback<Item option>
-    | DoRemoveMany of (Item -> bool) * Callback<Item list>
+    | DoPin of Item * Callback<unit>
+    | DoUnpin of Item * Callback<unit>
+    | DoAdd of Item * Callback<unit>
+    | DoRemove of Item * Callback<unit>
+    | DoClear of Callback<Item list>
 with interface IReq
 
 and Evt =

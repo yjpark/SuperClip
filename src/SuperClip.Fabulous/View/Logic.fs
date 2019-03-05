@@ -15,6 +15,7 @@ open SuperClip.Core
 open SuperClip.App
 open SuperClip.Fabulous
 open SuperClip.Fabulous.View.Types
+open Xamarin.Forms.PlatformConfiguration.iOSSpecific
 
 module HistoryTypes = SuperClip.Core.History.Types
 module SessionTypes = SuperClip.App.Session.Types
@@ -36,7 +37,7 @@ let private update : Update<View, Model, Msg> =
         let model = {model with Ver = model.Ver + 1}
         match msg with
         | SetPrimary content ->
-            runner.Pack.Primary.Actor2.Handle <| Clipboard.DoSet content None
+            runner.Pack.Primary.Actor.Handle <| Clipboard.DoSet content None
             (model, noCmd)
         | HistoryEvt _evt ->
             (model, noCmd)
@@ -58,6 +59,10 @@ let private setInfoDialog (runner : View) title (kind, content, devInfo) =
 
 let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
     match evt with
+    | SessionTypes.OnJoinSucceed res ->
+        runner.React <| DoSetPage HomePage
+    | SessionTypes.OnAuthSucceed res ->
+        runner.React <| DoSetPage HomePage
     | SessionTypes.OnJoinFailed reason ->
         Stub.getReasonContent reason
         |> setInfoDialog runner "Login Failed"
@@ -79,22 +84,26 @@ let private subscribe : Subscribe<View, Model, Msg> =
 
 let private render : Render =
     fun runner model ->
-        logWarn runner "View" "render" model.Page
-        let page =
-            match model.Page with
-            | HomePage ->
-                Page.Home.render runner model
-            | AuthPage ->
-                Page.Auth.render runner model
-        if model.Info.IsSome then
-            View.NavigationPage (
-                pages = [
-                    page
-                    Dialog.Info.render runner (Option.get model.Info)
-                ]
-            )
-        else
-            page
+        View.NavigationPage (
+            popped = (fun args ->
+                //TODO: Remove hard-coded title check
+                match args.Page.Title with
+                | "Auth" ->
+                    runner.React <| DoSetPage HomePage
+                | "Error" ->
+                    runner.React <| DoSetInfo None
+            ),
+            pages = [
+                yield Page.Home.render runner model
+                match model.Page with
+                | HomePage ->
+                    ()
+                | AuthPage ->
+                    yield Page.Auth.render runner model
+                if model.Info.IsSome then
+                    yield Dialog.Info.render runner (Option.get model.Info)
+            ]
+        )
 
 let newArgs () =
     Args.Create init update subscribe render

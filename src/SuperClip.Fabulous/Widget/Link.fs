@@ -20,45 +20,54 @@ let private button text command =
         command = command
     )
 
-let render (runner : View) (session : SessionTypes.Agent) =
-    View.FlexLayout (
-        direction=FlexDirection.Row,
-        children = [
-            yield View.Label (
-                text = sprintf "Link Status : %A" runner.Pack.Stub.Status
-            )
-            if runner.Pack.Stub.Status = LinkStatus.Linked then
-                match session.Actor.State.Auth with
+let private addMenuItem (text : string) (command : unit -> unit) (v : TextCell) =
+    let menuItem = new MenuItem (Text = text)
+    menuItem.Clicked.Add (fun _ ->
+        command ()
+    )
+    v.ContextActions.Add menuItem
+    v
+
+let render (runner : View) (session : SessionTypes.Model) =
+    let text, color, detail =
+        match session.Auth, session.Channel with
+        | None, None ->
+            runner.Pack.Stub.Status.ToString (), Color.Red, None
+        | None, Some channel ->
+            runner.Pack.Stub.Status.ToString (), Color.Red, Some channel.Channel.Name
+        | Some auth, None ->
+            "Logging in ...", Color.BlueViolet, Some auth.Device.Name
+        | Some auth, Some channel ->
+            channel.Channel.Name, Color.Green, Some auth.Device.Name
+    let actionText, actionCommand =
+        if runner.Pack.Stub.Status = LinkStatus.Linked then
+            match session.Auth with
                 | Some auth ->
-                    let statusLabel = fun status ->
-                        View.Label (sprintf "[%s] %s (%s)" status auth.Channel.Name auth.Device.Name)
-                    match session.Actor.State.Channel with
-                    | Some channel ->
-                        match session.Actor.State.Syncing with
-                        | true ->
-                            yield statusLabel "Syncing"
-                            yield button "Pause" (fun () ->
-                                session.Post <| SessionTypes.DoSetSyncing (false, None)
-                            )
-                            yield button "Logout" (fun () ->
-                                session.Post <| SessionTypes.DoResetAuth None
-                            )
-                        | false ->
-                            yield statusLabel "Not Syncing"
-                            yield button "Resume" (fun () ->
-                                session.Post <| SessionTypes.DoSetSyncing (true, None)
-                            )
-                        (*
-                        yield button "Logout" (fun () ->
-                            Pref.clearCredential ()
-                            runner.React <| DoRepaint
-                        )
-                        *)
-                    | None ->
-                        yield statusLabel "Logging On Server"
+                    "Logout", (fun () ->
+                        runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
+                    )
                 | None ->
-                    yield button "Login" (fun () ->
+                    "Login", (fun () ->
                         runner.React <| DoSetPage AuthPage
                     )
-        ]
-    )
+        else
+            ".", ignore
+    [
+        yield View.TextActionCell (
+            text = text,
+            textColor = color,
+            ?detail = detail,
+            detailColor = Color.Gray,
+            actionText = actionText,
+            actionCommand = actionCommand
+        )
+        if session.Channel.IsSome then
+            let syncing = session.Syncing
+            yield View.SwitchCell (
+                text = "Sync to others",
+                on = syncing,
+                onChanged = (fun _ ->
+                    runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)
+                )
+            )
+    ]

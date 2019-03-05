@@ -181,7 +181,7 @@ let private update : Update<Agent, Model, Msg> =
 let private subscribe : Subscribe<Agent, Model, Msg> =
     fun runner model ->
         Cmd.batch [
-            subscribeBus runner model PrimaryEvt runner.Pack.Primary.Actor2.OnEvent
+            subscribeBus runner model PrimaryEvt runner.Pack.Primary.Actor.OnEvent
             subscribeBus runner model StubRes runner.Pack.Stub.OnResponse
             subscribeBus runner model StubEvt runner.Pack.Stub.Actor.OnEvent
             subscribeBus runner model StubStatus runner.Pack.Stub.OnStatus

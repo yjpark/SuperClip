@@ -31,14 +31,14 @@ let doAuth (runner : View) (model : Model) : unit =
 
 let render (runner : View) (model : Model) : Widget =
     let setAuth = runner.React << DoSetAuth
-    View.ScrollingContentPage (
+    let view = View.ScrollingContentPage (
         "Auth",
         [
             View.Label (
                 text = "User Name:"
             )
             View.Entry (
-                text = "",
+                text = model.Auth.ChannelName,
                 horizontalOptions = LayoutOptions.FillAndExpand,
                 textChanged = (fun args ->
                     setAuth {model.Auth with ChannelName = args.NewTextValue}
@@ -51,7 +51,7 @@ let render (runner : View) (model : Model) : Widget =
                 text = "Device Name:"
             )
             View.Entry (
-                text = "",
+                text = model.Auth.DeviceName,
                 horizontalOptions = LayoutOptions.FillAndExpand,
                 textChanged = (fun args ->
                     setAuth {model.Auth with DeviceName = args.NewTextValue}
@@ -97,10 +97,20 @@ let render (runner : View) (model : Model) : Widget =
                         verticalOptions = LayoutOptions.Center,
                         command = (fun () ->
                             doAuth runner model
-                            runner.React <| DoSetPage HomePage
+                            //runner.React <| DoSetPage HomePage
                         )
                     )
                 ]
             )
         ]
     )
+    view.HasNavigationBar(true).HasBackButton(false) |> ignore
+    view.ToolbarItems ([
+        View.ToolbarItem (
+            text = "Help",
+            command = (fun () ->
+                () //TODO
+            )
+        )
+    ])
+
