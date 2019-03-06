@@ -14,19 +14,19 @@ open Dap.Platform
 open SuperClip.App.Types
 open SuperClip.Tools
 
-let onExit (app : App) (exited : AutoResetEvent) =
+let onExit (app : IPack) (exited : AutoResetEvent) =
     fun (_sender : obj) (cancelArgs : ConsoleCancelEventArgs) ->
         logWip app.Env "Quiting ..." cancelArgs
         app.Env.Logging.Close ()
         exited.Set() |> ignore
 
-let waitForExit (app : App) =
+let waitForExit (app : IPack) =
     let exited = new AutoResetEvent(false)
     let onExit' = new ConsoleCancelEventHandler (onExit app exited)
     Console.CancelKeyPress.AddHandler onExit'
     exited.WaitOne() |> ignore
 
-let executeAndWaitForExit (app : App) (task : Task<unit>) =
+let executeAndWaitForExit (app : IPack) (task : Task<unit>) =
     try
         Async.AwaitTask task
         |> Async.RunSynchronously

@@ -5,12 +5,11 @@ open Argu
 open Dap.Prelude
 open Dap.Platform
 
-open SuperClip.Core
-open SuperClip.Clipboard
-
 open Dap.Prelude
 open Dap.Platform
 
+open SuperClip.Core
+open SuperClip.App
 open SuperClip.Server
 open SuperClip.Tools.Misc
 open SuperClip.Tools.Clipboard
@@ -32,17 +31,20 @@ with
 let execute (args : ParseResults<Args>) =
     let verbose = args.Contains Verbose
 
+    (*
     Ooui.UI.Port <- 6061
     Xamarin.Forms.Forms.Init ();
     CrossClipboard.Current <- new ClipboardImplementation ()
+    *)
 
     let consoleLogLevel = if verbose then LogLevelInformation else LogLevelWarning
-    let app = App.Create ("super-clip-tools-.log", consoleLogLevel)
 
     if args.Contains Watch_Primary then
+        let app = ClientApp.Create ("super-clip-tools-.log", consoleMinLevel = consoleLogLevel)
         WatchPrimary.executeAsync app <| args.GetResult Watch_Primary
         |> Util.executeAndWaitForExit app
     elif args.Contains Init_Db then
+        let app = ServerApp.Start ("super-clip-tools-.log", consoleMinLevel = consoleLogLevel)
         InitDb.execute app <| args.GetResult Init_Db
     else
         raise <| ParseException "no command specified"

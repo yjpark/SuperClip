@@ -25,7 +25,7 @@ with
             match this with
             | Force -> "Drop Collections if exist"
 
-let execute (app : App) (args : ParseResults<Args>) =
+let execute (app : IServerApp) (args : ParseResults<Args>) =
     let force = args.Contains Force
     app.Db |> InitDb.createCollectionsAsync' force Collections
     |> Async.RunSynchronously

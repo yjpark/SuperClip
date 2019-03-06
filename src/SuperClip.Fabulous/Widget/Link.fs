@@ -30,15 +30,18 @@ let private addMenuItem (text : string) (command : unit -> unit) (v : TextCell) 
 
 let render (runner : View) (session : SessionTypes.Model) =
     let text, color, detail =
-        match session.Auth, session.Channel with
-        | None, None ->
-            runner.Pack.Stub.Status.ToString (), Color.Red, None
-        | None, Some channel ->
-            runner.Pack.Stub.Status.ToString (), Color.Red, Some channel.Channel.Name
-        | Some auth, None ->
-            "Logging in ...", Color.BlueViolet, Some auth.Device.Name
-        | Some auth, Some channel ->
-            channel.Channel.Name, Color.Green, Some auth.Device.Name
+        if runner.Pack.Stub.Status = LinkStatus.Linked then
+            match session.Auth, session.Channel with
+            | None, None ->
+                runner.Pack.Stub.Status.ToString (), Color.Red, None
+            | None, Some channel ->
+                runner.Pack.Stub.Status.ToString (), Color.Red, Some channel.Channel.Name
+            | Some auth, None ->
+                "Logging in ...", Color.BlueViolet, Some auth.Device.Name
+            | Some auth, Some channel ->
+                channel.Channel.Name, Color.Green, Some auth.Device.Name
+        else
+            runner.Pack.Stub.Status.ToString (), Color.Red, Some runner.Pack.Stub.Actor.Args.Uri
     let actionText, actionCommand =
         if runner.Pack.Stub.Status = LinkStatus.Linked then
             match session.Auth with
@@ -51,7 +54,7 @@ let render (runner : View) (session : SessionTypes.Model) =
                         runner.React <| DoSetPage AuthPage
                     )
         else
-            ".", ignore
+            "Retry", ignore
     [
         yield View.TextActionCell (
             text = text,
@@ -61,7 +64,7 @@ let render (runner : View) (session : SessionTypes.Model) =
             actionText = actionText,
             actionCommand = actionCommand
         )
-        if session.Channel.IsSome then
+        if runner.Pack.Stub.Status = LinkStatus.Linked && session.Channel.IsSome then
             let syncing = session.Syncing
             yield View.SwitchCell (
                 text = "Sync to others",

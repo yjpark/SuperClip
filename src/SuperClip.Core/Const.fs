@@ -12,6 +12,7 @@ let CryptoKeySalt = "shoo4ree3daiH9go4Yeir8rah4ua7fei"
 
 [<Literal>]
 //let CloudServerUri = "ws://localhost:5700/ws_user"
+//let CloudServerUri = "ws://10.0.2.13:5700/ws_user"
 let CloudServerUri = "ws://yjpark.org:5700/ws_user"
 
 let getCloudServerUri () = CloudServerUri

@@ -11,7 +11,7 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Ooui\SuperClip.Ooui.fsproj" />
+    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
     <ProjectReference Include="..\SuperClip.Server\SuperClip.Server.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
