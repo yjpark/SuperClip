@@ -1,6 +1,7 @@
 module SuperClip.Core.History.Logic
 
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 
 open SuperClip.Core
@@ -18,6 +19,14 @@ let private withoutItem (item : Item) (items : Item list) =
 let private withItem (item : Item) (items : Item list) =
     item :: (withoutItem item items)
 
+let private addItem (item : Item) (items : Item list) =
+    let hash = item.Hash
+    let item' =
+        items
+        |> List.tryFind (fun item' -> item'.Hash = hash)
+        |> Option.defaultValue item
+    item' :: (withoutItem item items)
+
 let private hasItem (item : Item) (items : Item list) =
     let hash = item.Hash
     items
@@ -33,7 +42,7 @@ let private doAdd req ((item, callback) : Item * Callback<unit>) : ActorOperate 
             |=|> addSubCmd Evt OnHistoryChanged
         else
             replyAfter runner callback <| ack req ()
-            let recentItems = withItem item model.RecentItems
+            let recentItems = addItem item model.RecentItems
             (runner, model, cmd)
             |-|> updateModel (fun m -> {m with RecentItems = recentItems})
             |=|> addSubCmd Evt OnHistoryChanged
