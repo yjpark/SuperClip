@@ -51,6 +51,7 @@ type Content with
 
 type Device with
     static member New name : Device =
+        let name = name.Trim ()
         {
             Guid = (System.Guid.NewGuid()) .ToString ()
             Name = name
