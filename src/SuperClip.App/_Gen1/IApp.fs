@@ -15,6 +15,7 @@ module TickerTypes = Dap.Platform.Ticker.Types
 module Context = Dap.Platform.Context
 module PrimaryTypes = SuperClip.Core.Primary.Types
 module HistoryTypes = SuperClip.Core.History.Types
+module ChannelTypes = SuperClip.Core.Channel.Types
 module Proxy = Dap.Remote.WebSocketProxy.Proxy
 module Cloud = SuperClip.Core.Cloud
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
@@ -30,6 +31,7 @@ type AppKinds () =
     static member PrimaryClipboard (* ICorePack *) = "Clipboard"
     static member LocalHistory (* ICorePack *) = "History"
     static member History (* ICorePack *) = "History"
+    static member Channel (* ICorePack *) = "Channel"
     static member CloudStub (* ICloudStubPack *) = "CloudStub"
     static member PacketClient (* ICloudStubPack *) = "PacketClient"
     static member Preferences (* IAppPack *) = "Preferences"
@@ -70,6 +72,7 @@ and AppArgs = {
     PrimaryClipboard : (* ICorePack *) PrimaryTypes.Args
     LocalHistory : (* ICorePack *) HistoryTypes.Args
     History : (* ICorePack *) HistoryTypes.Args
+    Channel : (* ICorePack *) ChannelTypes.Args
     CloudStub : (* ICloudStubPack *) Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>
     PacketClient : (* ICloudStubPack *) PacketClient.Args
     Preferences : (* IAppPack *) Context.Args<IPreferences>
@@ -87,6 +90,7 @@ and AppArgs = {
             ?primaryClipboard : (* ICorePack *) PrimaryTypes.Args,
             ?localHistory : (* ICorePack *) HistoryTypes.Args,
             ?history : (* ICorePack *) HistoryTypes.Args,
+            ?channel : (* ICorePack *) ChannelTypes.Args,
             ?cloudStub : (* ICloudStubPack *) Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>,
             ?packetClient : (* ICloudStubPack *) PacketClient.Args,
             ?preferences : (* IAppPack *) Context.Args<IPreferences>,
@@ -110,6 +114,8 @@ and AppArgs = {
                 |> Option.defaultWith (fun () -> (HistoryTypes.Args.Create ()))
             History = (* ICorePack *) history
                 |> Option.defaultWith (fun () -> (HistoryTypes.Args.Create ()))
+            Channel = (* ICorePack *) channel
+                |> Option.defaultWith (fun () -> (ChannelTypes.Args.Create ()))
             CloudStub = (* ICloudStubPack *) cloudStub
                 |> Option.defaultWith (fun () -> (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true))
             PacketClient = (* ICloudStubPack *) packetClient
@@ -139,6 +145,8 @@ and AppArgs = {
         {this with LocalHistory = localHistory}
     static member SetHistory ((* ICorePack *) history : HistoryTypes.Args) (this : AppArgs) =
         {this with History = history}
+    static member SetChannel ((* ICorePack *) channel : ChannelTypes.Args) (this : AppArgs) =
+        {this with Channel = channel}
     static member SetCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>) (this : AppArgs) =
         {this with CloudStub = cloudStub}
     static member SetPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) (this : AppArgs) =
@@ -161,6 +169,7 @@ and AppArgs = {
                 "primary_clipboard", PrimaryTypes.Args.JsonEncoder (* ICorePack *) this.PrimaryClipboard
                 "local_history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.LocalHistory
                 "history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.History
+                "channel", ChannelTypes.Args.JsonEncoder (* ICorePack *) this.Channel
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
         D.object (fun get ->
@@ -177,6 +186,8 @@ and AppArgs = {
                     |> Option.defaultValue (HistoryTypes.Args.Create ())
                 History = get.Optional.Field (* ICorePack *) "history" HistoryTypes.Args.JsonDecoder
                     |> Option.defaultValue (HistoryTypes.Args.Create ())
+                Channel = get.Optional.Field (* ICorePack *) "channel" ChannelTypes.Args.JsonDecoder
+                    |> Option.defaultValue (ChannelTypes.Args.Create ())
                 CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
                 PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
                 Preferences = (* (* IAppPack *)  *) Feature.addToAgent<IPreferences>
@@ -205,6 +216,8 @@ and AppArgs = {
         this |> AppArgs.SetLocalHistory localHistory
     member this.WithHistory ((* ICorePack *) history : HistoryTypes.Args) =
         this |> AppArgs.SetHistory history
+    member this.WithChannel ((* ICorePack *) channel : ChannelTypes.Args) =
+        this |> AppArgs.SetChannel channel
     member this.WithCloudStub ((* ICloudStubPack *) cloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>) =
         this |> AppArgs.SetCloudStub cloudStub
     member this.WithPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) =
@@ -230,6 +243,7 @@ and AppArgs = {
         member this.PrimaryClipboard (* ICorePack *) : PrimaryTypes.Args = this.PrimaryClipboard
         member this.LocalHistory (* ICorePack *) : HistoryTypes.Args = this.LocalHistory
         member this.History (* ICorePack *) : HistoryTypes.Args = this.History
+        member this.Channel (* ICorePack *) : ChannelTypes.Args = this.Channel
         member this.AsLocalPackArgs = this.AsLocalPackArgs
     member this.AsCorePackArgs = this :> ICorePackArgs
     interface ICloudStubPackArgs with
@@ -282,6 +296,9 @@ type AppArgsBuilder () =
     [<CustomOperation("history")>]
     member __.History (target : AppArgs, (* ICorePack *) history : HistoryTypes.Args) =
         target.WithHistory history
+    [<CustomOperation("channel")>]
+    member __.Channel (target : AppArgs, (* ICorePack *) channel : ChannelTypes.Args) =
+        target.WithChannel channel
     [<CustomOperation("cloud_stub")>]
     member __.CloudStub (target : AppArgs, (* ICloudStubPack *) cloudStub : Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>) =
         target.WithCloudStub cloudStub

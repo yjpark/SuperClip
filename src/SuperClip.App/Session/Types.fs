@@ -7,14 +7,14 @@ open Dap.Remote
 open SuperClip.Core
 open SuperClip.App
 
-type ChannelService = SuperClip.Core.Channel.Service.Service
+type ChannelAgent = SuperClip.Core.Channel.Types.Agent
 type CloudStub = IProxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt>
 
 type Args = NoArgs
 
 and Model = {
     Auth : Credential option
-    Channel : ChannelService option
+    Channel : ChannelAgent option
     Syncing : bool
     mutable LastCloudItem : Item option
 } with
@@ -43,7 +43,7 @@ and Evt =
 with interface IEvt
 
 and InternalEvt =
-    | SetChannel of Cloud.AuthRes * ChannelService
+    | SetChannel of Cloud.AuthRes * ChannelAgent
 
 and Msg =
     | Req of Req

@@ -14,7 +14,7 @@ open SuperClip.Server.CloudHub.Types
 open SuperClip.Server.CloudHub.Tasks
 
 module ChannelTypes = SuperClip.Core.Channel.Types
-type ChannelService = SuperClip.Core.Channel.Service.Service
+type ChannelAgent = SuperClip.Core.Channel.Types.Agent
 
 type ActorOperate = Operate<Agent, Model, Msg>
 
@@ -52,7 +52,7 @@ let private handleReq (req : Req) : ActorOperate =
             (runner, model, cmd)
             |=|> doSetItem req (r, callback)
 
-let private doRemoveDeviceFromChannel runner (channel : ChannelService) (device : Device) =
+let private doRemoveDeviceFromChannel runner (channel : ChannelAgent) (device : Device) =
     channel.Actor.OnEvent.RemoveWatcher runner
     channel.Post <| ChannelTypes.DoRemoveDevice device None
 
@@ -80,10 +80,10 @@ let private removeDeviceFromChannel runner (model : Model) (channelKey : string)
         let devices =
             model.Devices
             |> Map.remove channelKey
-        (devices, Some (channel, device))
+        (devices, Some (channel,  device))
     )|> Option.defaultValue (model.Devices, None)
 
-let private addDevice ((channel, device) : ChannelService * Device) : ActorOperate =
+let private addDevice ((channel,  device) : ChannelAgent * Device) : ActorOperate =
     fun runner (model, cmd) ->
         let devices, _ = removeDeviceFromChannel runner model channel.Ident.Key
         channel.Post <| ChannelTypes.DoAddDevice device None
@@ -116,7 +116,7 @@ let private handleInternalEvt (evt : InternalEvt) : ActorOperate =
     | AddDevice (a, b) -> addDevice (a, b)
     | RemoveDevice (a, b) -> removeDevice (a, b)
 
-let private handleChannelEvt (channel : ChannelService) (evt : ChannelTypes.Evt) : ActorOperate =
+let private handleChannelEvt (channel : ChannelAgent) (evt : ChannelTypes.Evt) : ActorOperate =
     match evt with
     | ChannelTypes.OnChanged item ->
         addSubCmd HubEvt <| Cloud.OnItemChanged item

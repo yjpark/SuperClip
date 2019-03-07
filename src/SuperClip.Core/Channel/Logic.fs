@@ -13,6 +13,21 @@ module TickerTypes = Dap.Platform.Ticker.Types
 
 type ActorOperate = Operate<Agent, Model, Msg>
 
+let private doInit req ((channel, callback) : Channel * Callback<unit>) : ActorOperate =
+    fun runner (model, cmd) ->
+        match model.Channel with
+        | None ->
+            if runner.Ident.Key = channel.Key then
+                replyAfter runner callback <| ack req ()
+                (runner, model, cmd)
+                |=|> updateModel (fun m -> {m with Channel = Some channel})
+            else
+                reply runner callback <| nak req "Invalid_Channel" (channel)
+                (model, cmd)
+        | Some channel' ->
+            reply runner callback <| nak req "Already_Init" (channel', channel)
+            (model, cmd)
+
 let private doSet req ((item, callback) : Item * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         replyAfter runner callback <| ack req ()
@@ -71,6 +86,7 @@ let private update : Update<Agent, Model, Msg> =
         match msg with
         | Req req ->
             match req with
+            | DoInit (a, b) -> doInit req (a, b)
             | DoSet (a, b) -> doSet req (a, b)
             | DoAddDevice (a, b) -> doAddDevice req (a, b)
             | DoRemoveDevice (a, b) -> doRemoveDevice req (a, b)
@@ -81,6 +97,7 @@ let private update : Update<Agent, Model, Msg> =
 let private init : ActorInit<Args, Model, Msg> =
     fun runner args ->
         ({
+            Channel = None
             Current = Item.Empty
             Devices = []
         }, noCmd)

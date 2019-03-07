@@ -63,14 +63,10 @@ type Channel with
         name
         |> fun n -> n.Trim ()
         |> calcSha256Sum2WithSalt "chiepuyiawaeR9aij6fiech7osh8kesh"
-    static member CreateWithName name =
+    static member CreateWithName (name : string) =
+        let name = name.Trim ()
         {
             Guid = Channel.CalcGuid name
-            Name = name
-        }
-    static member New name =
-        {
-            Guid = ""
             Name = name
         }
     member this.Key : ChannelKey =

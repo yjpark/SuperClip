@@ -13,6 +13,7 @@ open Dap.Remote.Dashboard
 open SuperClip.Core
 
 module FarangoDb = Dap.Local.Farango.Db
+module ChannelTypes = SuperClip.Core.Channel.Types
 module TickerTypes = Dap.Platform.Ticker.Types
 module PacketConn = Dap.Remote.WebSocketGateway.PacketConn
 module OperatorHubTypes = Dap.Remote.Dashboard.OperatorHub.Types
@@ -25,6 +26,7 @@ module CloudHubTypes = SuperClip.Server.CloudHub.Types
 
 type AppKinds () =
     static member FarangoDb (* IDbPack *) = "FarangoDb"
+    static member Channel (* IServerPack *) = "Channel"
     static member Ticker (* ITickingPack *) = "Ticker"
     static member PacketConn (* IDashboardPack *) = "PacketConn"
     static member OperatorHub (* IDashboardPack *) = "OperatorHub"
@@ -39,10 +41,12 @@ type AppKeys () =
 type IApp =
     inherit IApp<IApp>
     inherit IDbPack
+    inherit IServerPack
     inherit IDashboardPack
     inherit ICloudHubPack
     abstract Args : AppArgs with get
     abstract AsDbPack : IDbPack with get
+    abstract AsServerPack : IServerPack with get
     abstract AsDashboardPack : IDashboardPack with get
     abstract AsCloudHubPack : ICloudHubPack with get
 
@@ -54,6 +58,7 @@ and AppArgs = {
     Scope : (* AppArgs *) Scope
     Setup : (* AppArgs *) IApp -> unit
     FarangoDb : (* IDbPack *) FarangoDb.Args
+    Channel : (* IServerPack *) ChannelTypes.Args
     Ticker : (* ITickingPack *) TickerTypes.Args
     PacketConn : (* IDashboardPack *) PacketConn.Args
     OperatorHub : (* IDashboardPack *) OperatorHubTypes.Args
@@ -66,6 +71,7 @@ and AppArgs = {
             ?scope : (* AppArgs *) Scope,
             ?setup : (* AppArgs *) IApp -> unit,
             ?farangoDb : (* IDbPack *) FarangoDb.Args,
+            ?channel : (* IServerPack *) ChannelTypes.Args,
             ?ticker : (* ITickingPack *) TickerTypes.Args,
             ?packetConn : (* IDashboardPack *) PacketConn.Args,
             ?operatorHub : (* IDashboardPack *) OperatorHubTypes.Args,
@@ -80,6 +86,8 @@ and AppArgs = {
                 |> Option.defaultWith (fun () -> ignore)
             FarangoDb = (* IDbPack *) farangoDb
                 |> Option.defaultWith (fun () -> (FarangoDb.Args.Create ()))
+            Channel = (* IServerPack *) channel
+                |> Option.defaultWith (fun () -> (ChannelTypes.Args.Create ()))
             Ticker = (* ITickingPack *) ticker
                 |> Option.defaultWith (fun () -> (TickerTypes.Args.Create ()))
             PacketConn = (* IDashboardPack *) packetConn
@@ -99,6 +107,8 @@ and AppArgs = {
         {this with Setup = setup}
     static member SetFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) (this : AppArgs) =
         {this with FarangoDb = farangoDb}
+    static member SetChannel ((* IServerPack *) channel : ChannelTypes.Args) (this : AppArgs) =
+        {this with Channel = channel}
     static member SetTicker ((* ITickingPack *) ticker : TickerTypes.Args) (this : AppArgs) =
         {this with Ticker = ticker}
     static member SetPacketConn ((* IDashboardPack *) packetConn : PacketConn.Args) (this : AppArgs) =
@@ -116,6 +126,7 @@ and AppArgs = {
             E.object [
                 "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
                 "farango_db", FarangoDb.Args.JsonEncoder (* IDbPack *) this.FarangoDb
+                "channel", ChannelTypes.Args.JsonEncoder (* IServerPack *) this.Channel
                 "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
                 "operator_hub", OperatorHubTypes.Args.JsonEncoder (* IDashboardPack *) this.OperatorHub
             ]
@@ -127,6 +138,8 @@ and AppArgs = {
                 Setup = (* (* AppArgs *)  *) ignore
                 FarangoDb = get.Optional.Field (* IDbPack *) "farango_db" FarangoDb.Args.JsonDecoder
                     |> Option.defaultValue (FarangoDb.Args.Create ())
+                Channel = get.Optional.Field (* IServerPack *) "channel" ChannelTypes.Args.JsonDecoder
+                    |> Option.defaultValue (ChannelTypes.Args.Create ())
                 Ticker = get.Optional.Field (* ITickingPack *) "ticker" TickerTypes.Args.JsonDecoder
                     |> Option.defaultValue (TickerTypes.Args.Create ())
                 PacketConn = (* (* IDashboardPack *)  *) (PacketConn.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
@@ -148,6 +161,8 @@ and AppArgs = {
         this |> AppArgs.SetSetup setup
     member this.WithFarangoDb ((* IDbPack *) farangoDb : FarangoDb.Args) =
         this |> AppArgs.SetFarangoDb farangoDb
+    member this.WithChannel ((* IServerPack *) channel : ChannelTypes.Args) =
+        this |> AppArgs.SetChannel channel
     member this.WithTicker ((* ITickingPack *) ticker : TickerTypes.Args) =
         this |> AppArgs.SetTicker ticker
     member this.WithPacketConn ((* IDashboardPack *) packetConn : PacketConn.Args) =
@@ -163,6 +178,10 @@ and AppArgs = {
     interface IDbPackArgs with
         member this.FarangoDb (* IDbPack *) : FarangoDb.Args = this.FarangoDb
     member this.AsDbPackArgs = this :> IDbPackArgs
+    interface IServerPackArgs with
+        member this.Channel (* IServerPack *) : ChannelTypes.Args = this.Channel
+        member this.AsDbPackArgs = this.AsDbPackArgs
+    member this.AsServerPackArgs = this :> IServerPackArgs
     interface ITickingPackArgs with
         member this.Ticker (* ITickingPack *) : TickerTypes.Args = this.Ticker
     member this.AsTickingPackArgs = this :> ITickingPackArgs
@@ -175,7 +194,7 @@ and AppArgs = {
     interface ICloudHubPackArgs with
         member this.CloudHub (* ICloudHubPack *) : NoArgs = this.CloudHub
         member this.CloudHubGateway (* ICloudHubPack *) : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> = this.CloudHubGateway
-        member this.AsTickingPackArgs = this.AsTickingPackArgs
+        member this.AsServerPackArgs = this.AsServerPackArgs
     member this.AsCloudHubPackArgs = this :> ICloudHubPackArgs
 
 (*
@@ -193,6 +212,9 @@ type AppArgsBuilder () =
     [<CustomOperation("farango_db")>]
     member __.FarangoDb (target : AppArgs, (* IDbPack *) farangoDb : FarangoDb.Args) =
         target.WithFarangoDb farangoDb
+    [<CustomOperation("channel")>]
+    member __.Channel (target : AppArgs, (* IServerPack *) channel : ChannelTypes.Args) =
+        target.WithChannel channel
     [<CustomOperation("ticker")>]
     member __.Ticker (target : AppArgs, (* ITickingPack *) ticker : TickerTypes.Args) =
         target.WithTicker ticker
@@ -238,12 +260,13 @@ type App (param : EnvParam, args : AppArgs) =
             setupResult <- Some (Ok false)
             let! (* IDbPack *) farangoDb' = env |> Env.addServiceAsync (FarangoDb.spec args.FarangoDb) AppKinds.FarangoDb AppKeys.FarangoDb
             farangoDb <- Some farangoDb'
+            do! env |> Env.registerAsync (SuperClip.Core.Channel.Logic.spec (* IServerPack *) args.Channel) AppKinds.Channel
             let! (* ITickingPack *) ticker' = env |> Env.addServiceAsync (Dap.Platform.Ticker.Logic.spec args.Ticker) AppKinds.Ticker AppKeys.Ticker
             ticker <- Some ticker'
             do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* IDashboardPack *) this.AsTickingPack args.PacketConn) AppKinds.PacketConn
             do! env |> Env.registerAsync (Dap.Remote.Dashboard.OperatorHub.Logic.spec (* IDashboardPack *) this.AsTickingPack args.OperatorHub) AppKinds.OperatorHub
             do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* IDashboardPack *) args.OperatorHubGateway) AppKinds.OperatorHubGateway
-            do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsDbPack args.CloudHub) AppKinds.CloudHub
+            do! env |> Env.registerAsync (SuperClip.Server.CloudHub.Logic.spec (* ICloudHubPack *) this.AsServerPack args.CloudHub) AppKinds.CloudHub
             do! env |> Env.registerAsync (Dap.Remote.WebSocketGateway.Logic.spec (* ICloudHubPack *) args.CloudHubGateway) AppKinds.CloudHubGateway
             do! this.SetupAsync' ()
             logInfo env "App.setupAsync" "Setup_Succeed" (encodeJson 4 args)
@@ -296,6 +319,14 @@ type App (param : EnvParam, args : AppArgs) =
         member this.Args = this.Args.AsDbPackArgs
         member __.FarangoDb (* IDbPack *) : FarangoDb.Agent = farangoDb |> Option.get
     member this.AsDbPack = this :> IDbPack
+    interface IServerPack with
+        member this.Args = this.Args.AsServerPackArgs
+        member __.GetChannelAsync (key : Key) (* IServerPack *) : Task<ChannelTypes.Agent * bool> = task {
+            let! (agent, isNew) = env.HandleAsync <| DoGetAgent "Channel" key
+            return (agent :?> ChannelTypes.Agent, isNew)
+        }
+        member this.AsDbPack = this.AsDbPack
+    member this.AsServerPack = this :> IServerPack
     interface ITickingPack with
         member this.Args = this.Args.AsTickingPackArgs
         member __.Ticker (* ITickingPack *) : TickerTypes.Agent = ticker |> Option.get
@@ -326,11 +357,12 @@ type App (param : EnvParam, args : AppArgs) =
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "CloudHubGateway" key
             return (agent :?> Gateway.Gateway, isNew)
         }
-        member this.AsTickingPack = this.AsTickingPack
+        member this.AsServerPack = this.AsServerPack
     member this.AsCloudHubPack = this :> ICloudHubPack
     interface IApp with
         member this.Args : AppArgs = this.Args
         member this.AsDbPack = this.AsDbPack
+        member this.AsServerPack = this.AsServerPack
         member this.AsDashboardPack = this.AsDashboardPack
         member this.AsCloudHubPack = this.AsCloudHubPack
     member this.AsApp = this :> IApp

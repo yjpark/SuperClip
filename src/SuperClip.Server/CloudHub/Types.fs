@@ -21,25 +21,25 @@ let GatewayKind = "CloudHubGateway"
 type Req = Cloud.ServerReq
 type Evt = Cloud.Evt
 
-type ChannelService = SuperClip.Core.Channel.Service.Service
+type ChannelAgent = SuperClip.Core.Channel.Types.Agent
 type ChannelAuth = SuperClip.Server.Service.ChannelAuth.Record
 
 and Args = NoArgs
 
 and Model = {
-    Devices : Map<ChannelKey, ChannelService * Device>
+    Devices : Map<ChannelKey, ChannelAgent * Device>
 }
 
 and InternalEvt =
     | OnStatusChanged of LinkStatus
-    | AddDevice of ChannelService * Device
+    | AddDevice of ChannelAgent * Device
     | RemoveDevice of ChannelKey * Device
 
 and Msg =
     | HubReq of Req
     | HubEvt of Evt
     | InternalEvt of InternalEvt
-    | ChannelEvt of ChannelService * ChannelTypes.Evt
+    | ChannelEvt of ChannelAgent * ChannelTypes.Evt
 with interface IMsg
 
 let castEvt : CastEvt<Msg, Evt> =
@@ -48,7 +48,7 @@ let castEvt : CastEvt<Msg, Evt> =
     | _ -> None
 
 type Agent (pack, param) =
-    inherit PackAgent<IDbPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
+    inherit PackAgent<IServerPack, Agent, Args, Model, Msg, Req, Evt> (pack, param)
     override this.Runner = this
     static member Spawn k m = new Agent (k, m)
 

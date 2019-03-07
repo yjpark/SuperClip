@@ -102,6 +102,12 @@ type M with
         let type' = "HistoryTypes.Agent"
         let spec = "SuperClip.Core.History.Logic.spec"
         M.agent (args, type', spec, kind = "History", ?key = key, aliases = [alias])
+    static member channel (?key : Key) =
+        let alias = "ChannelTypes", "SuperClip.Core.Channel.Types"
+        let args = JsonArgs "ChannelTypes.Args"
+        let type' = "ChannelTypes.Agent"
+        let spec = "SuperClip.Core.Channel.Logic.spec"
+        M.agent (args, type', spec, kind = "Channel", ?key = key, aliases = [alias])
 
 let ILocalPack =
     pack [ <@ ITickingPack @> ] {

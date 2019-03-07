@@ -11,6 +11,7 @@ open Dap.Platform
 
 module PrimaryTypes = SuperClip.Core.Primary.Types
 module HistoryTypes = SuperClip.Core.History.Types
+module ChannelTypes = SuperClip.Core.Channel.Types
 
 (*
  * Generated: <Pack>
@@ -20,6 +21,7 @@ type ICorePackArgs =
     abstract PrimaryClipboard : PrimaryTypes.Args with get
     abstract LocalHistory : HistoryTypes.Args with get
     abstract History : HistoryTypes.Args with get
+    abstract Channel : ChannelTypes.Args with get
     abstract AsLocalPackArgs : ILocalPackArgs with get
 
 type ICorePack =
@@ -29,4 +31,5 @@ type ICorePack =
     abstract PrimaryClipboard : PrimaryTypes.Agent with get
     abstract LocalHistory : HistoryTypes.Agent with get
     abstract GetHistoryAsync : Key -> Task<HistoryTypes.Agent * bool>
+    abstract GetChannelAsync : Key -> Task<ChannelTypes.Agent * bool>
     abstract AsLocalPack : ILocalPack with get

@@ -16,6 +16,7 @@ let ICorePack =
         add_pack <@ ILocalPack @> (M.primaryClipboard ())
         add (M.history (key = "Local"))
         register (M.history ())
+        register (M.channel ())
     }
 
 let compile segments =

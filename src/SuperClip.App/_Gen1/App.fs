@@ -15,6 +15,7 @@ module TickerTypes = Dap.Platform.Ticker.Types
 module Context = Dap.Platform.Context
 module PrimaryTypes = SuperClip.Core.Primary.Types
 module HistoryTypes = SuperClip.Core.History.Types
+module ChannelTypes = SuperClip.Core.Channel.Types
 module Proxy = Dap.Remote.WebSocketProxy.Proxy
 module Cloud = SuperClip.Core.Cloud
 module PacketClient = Dap.Remote.WebSocketProxy.PacketClient
@@ -59,6 +60,7 @@ type App (param : EnvParam, args : AppArgs) =
             let! (* ICorePack *) localHistory' = env |> Env.addServiceAsync (SuperClip.Core.History.Logic.spec args.LocalHistory) AppKinds.LocalHistory AppKeys.LocalHistory
             localHistory <- Some localHistory'
             do! env |> Env.registerAsync (SuperClip.Core.History.Logic.spec (* ICorePack *) args.History) AppKinds.History
+            do! env |> Env.registerAsync (SuperClip.Core.Channel.Logic.spec (* ICorePack *) args.Channel) AppKinds.Channel
             let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.Logic.spec args.CloudStub) AppKinds.CloudStub AppKeys.CloudStub
             cloudStub <- Some cloudStub'
             do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) this.AsTickingPack args.PacketClient) AppKinds.PacketClient
@@ -135,6 +137,10 @@ type App (param : EnvParam, args : AppArgs) =
         member __.GetHistoryAsync (key : Key) (* ICorePack *) : Task<HistoryTypes.Agent * bool> = task {
             let! (agent, isNew) = env.HandleAsync <| DoGetAgent "History" key
             return (agent :?> HistoryTypes.Agent, isNew)
+        }
+        member __.GetChannelAsync (key : Key) (* ICorePack *) : Task<ChannelTypes.Agent * bool> = task {
+            let! (agent, isNew) = env.HandleAsync <| DoGetAgent "Channel" key
+            return (agent :?> ChannelTypes.Agent, isNew)
         }
         member this.AsLocalPack = this.AsLocalPack
     member this.AsCorePack = this :> ICorePack

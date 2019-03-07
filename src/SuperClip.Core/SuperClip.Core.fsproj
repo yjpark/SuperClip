@@ -18,7 +18,6 @@
     <Compile Include="Primary\Logic.fs" />
     <Compile Include="Channel\Types.fs" />
     <Compile Include="Channel\Logic.fs" />
-    <Compile Include="Channel\Service.fs" />
     <Compile Include="History\Types.fs" />
     <Compile Include="History\Logic.fs" />
     <Compile Include="_Gen1\Cloud.fs" />

@@ -9,11 +9,12 @@ open Dap.Remote
 open Dap.Remote.Server.Auth
 
 open SuperClip.Core
+open SuperClip.Server
 open SuperClip.Server.CloudHub.Types
 
 module ChannelAuth = SuperClip.Server.Service.ChannelAuth
 module ChannelTypes = SuperClip.Core.Channel.Types
-module ChannelService = SuperClip.Core.Channel.Service
+type ChannelAgent = ChannelTypes.Agent
 
 let getTokenAndChannelAuthAsync (token : string) : GetTask<Agent, Result<Token * Device * ChannelAuth.Record, string>> =
     fun runner -> task {
@@ -79,20 +80,20 @@ let doJoinAsync (join : Cloud.JoinReq) : GetReplyTask<Agent, Result<Cloud.JoinRe
                     reply runner callback <| ack req ^<| Error Cloud.JoinErr.JoinChannelFailed
     }
 
-let getOrAddChannelAsync (channel : Channel) (device : Device) : GetTask<Agent, ChannelService.Service> =
+let getOrAddChannelAsync (channel' : Channel) (device : Device) : GetTask<Agent, ChannelAgent> =
     fun runner -> task {
-        let service =
+        let channelDevice =
             runner.Actor.State.Devices
-            |> Map.tryFind channel.Key
-        match service with
-        | Some (service, existDevice) ->
+            |> Map.tryFind channel'.Key
+        match channelDevice with
+        | Some (channel, existDevice) ->
             if device.Guid <> existDevice.Guid then
-                runner.Deliver <| InternalEvt ^<| AddDevice (service, device)
-            return service
+                runner.Deliver <| InternalEvt ^<| AddDevice (channel, device)
+            return channel
         | None ->
-            let! service = runner |> setupChannelServiceAsync channel
-            runner.Deliver <| InternalEvt ^<| AddDevice (service, device)
-            return service
+            let! channel = runner.Pack.GetChannelAsync channel'
+            runner.Deliver <| InternalEvt ^<| AddDevice (channel, device)
+            return channel
     }
 
 let doAuthAsync (auth : Cloud.AuthReq) : GetReplyTask<Agent, Result<Cloud.AuthRes, Cloud.AuthErr>> =

@@ -7,6 +7,8 @@
     <Compile Include="Meta.fs" />
     <Compile Include="Dsl.fs" />
     <Compile Include="Service/ChannelAuth.fs" />
+    <Compile Include="_Gen/Types.fs" />
+    <Compile Include="Extensions.fs" />
     <Compile Include="CloudHub/Types.fs" />
     <Compile Include="CloudHub/Tasks.fs" />
     <Compile Include="CloudHub/Logic.fs" />

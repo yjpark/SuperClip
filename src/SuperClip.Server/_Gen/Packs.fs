@@ -19,15 +19,15 @@ module Gateway = Dap.Remote.WebSocketGateway.Gateway
  * Generated: <Pack>
  *)
 type ICloudHubPackArgs =
-    inherit ITickingPackArgs
+    inherit IServerPackArgs
     abstract CloudHub : NoArgs with get
     abstract CloudHubGateway : Gateway.Args<CloudHubTypes.Req, CloudHubTypes.Evt> with get
-    abstract AsTickingPackArgs : ITickingPackArgs with get
+    abstract AsServerPackArgs : IServerPackArgs with get
 
 type ICloudHubPack =
     inherit IPack
-    inherit ITickingPack
+    inherit IServerPack
     abstract Args : ICloudHubPackArgs with get
     abstract GetCloudHubAsync : Key -> Task<CloudHubTypes.Agent * bool>
     abstract GetCloudHubGatewayAsync : Key -> Task<Gateway.Gateway * bool>
-    abstract AsTickingPack : ITickingPack with get
+    abstract AsServerPack : IServerPack with get

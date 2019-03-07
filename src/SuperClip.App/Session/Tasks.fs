@@ -11,7 +11,7 @@ open SuperClip.Core
 open SuperClip.App.Session.Types
 
 module ChannelTypes = SuperClip.Core.Channel.Types
-module ChannelService = SuperClip.Core.Channel.Service
+type ChannelAgent = ChannelTypes.Agent
 
 let private isNotSelf (runner : Agent) (device : Device) =
     match runner.Actor.State.Auth with
@@ -20,7 +20,7 @@ let private isNotSelf (runner : Agent) (device : Device) =
 
 let doSetChannelAsync (peers : Peers) : GetTask<Agent, unit> =
     fun runner -> task {
-        let! channel = runner |> setupChannelServiceAsync peers.Channel
+        let! channel = runner.Pack.GetChannelAsync peers.Channel
         runner.Deliver <| InternalEvt ^<| SetChannel (peers, channel)
         let devices =
             peers.Devices
