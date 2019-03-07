@@ -33,14 +33,24 @@ let render (runner : View) (model : Model) =
             View.TableView (
                 intent = TableIntent.Menu,
                 items = [
-                    match session.Channel with
-                    | Some channel ->
-                        yield ("Other Online Devices",
+                    yield ("This Device", [
+                        match session.Auth with
+                        | Some auth ->
+                            yield renderDevice runner auth.Device
+                        | None ->
+                            yield View.TextCell (
+                                text = "Offline",
+                                textColor = Color.Black
+                            )
+                    ])
+                    let devices =
+                        match session.Channel with
+                        | Some channel ->
                             channel.Devices
-                            |> List.map ^<| renderDevice runner
-                        )
-                    | None ->
-                        yield ("Not Online", [])
+                        | None -> []
+                    yield ("Other Online Devices",
+                        devices |> List.map ^<| renderDevice runner
+                    )
                 ]
             )
         ]
