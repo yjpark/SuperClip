@@ -30,32 +30,24 @@ let private addMenuItem (text : string) (command : unit -> unit) (v : TextCell) 
     v
 
 let render (runner : View) (session : SessionTypes.Model) =
-    let text, color, detail =
+    let text, color, detail, actionText, actionCommand =
         if runner.Pack.Stub.Status = LinkStatus.Linked then
             match session.Auth, session.Channel with
             | None, None ->
-                runner.Pack.Stub.Status.ToString (), Color.Red, None
+                runner.Pack.Stub.Status.ToString (), Color.Red, None, Some "Login", Some (fun () ->
+                    runner.React <| DoSetPage AuthPage
+                )
             | None, Some channel ->
-                runner.Pack.Stub.Status.ToString (), Color.Red, Some channel.Channel.Name
+                runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
+                runner.Pack.Stub.Status.ToString (), Color.Red, Some channel.Channel.Name, None, None
             | Some auth, None ->
-                "Logging in ...", Color.BlueViolet, Some auth.Device.Name
+                "Logging in ...", Color.BlueViolet, Some auth.Device.Name, None, None
             | Some auth, Some channel ->
-                channel.Channel.Name, Color.Green, Some auth.Device.Name
+                channel.Channel.Name, Color.Green, Some auth.Device.Name, Some "Logout", Some (fun () ->
+                    runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
+                )
         else
-            runner.Pack.Stub.Status.ToString (), Color.Red, Some runner.Pack.Stub.Actor.Args.Uri
-    let actionText, actionCommand =
-        if runner.Pack.Stub.Status = LinkStatus.Linked then
-            match session.Auth with
-                | Some auth ->
-                    Some "Logout", Some (fun () ->
-                        runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
-                    )
-                | None ->
-                    Some "Login", Some (fun () ->
-                        runner.React <| DoSetPage AuthPage
-                    )
-        else
-            None, None
+            runner.Pack.Stub.Status.ToString (), Color.Red, Some runner.Pack.Stub.Actor.Args.Uri, None, None
     [
         yield View.TextActionCell (
             text = text,
@@ -79,7 +71,9 @@ let render (runner : View) (session : SessionTypes.Model) =
                     detail = detail,
                     detailColor = Color.Gray,
                     actionText = "Details",
-                    actionCommand = ignore
+                    actionCommand = (fun _ ->
+                        runner.React <| DoSetPage DevicesPage
+                    )
                 )
             let syncing = session.Syncing
             yield View.SwitchCell (

@@ -16,11 +16,13 @@ type Page =
     | NoPage
     | AuthPage
     | SettingsPage
+    | DevicesPage
 
 type HelpTopic =
     | HelpHome
     | HelpAuth
     | HelpSettings
+    | HelpDevices
 
 type InfoDialog = {
     Title : string

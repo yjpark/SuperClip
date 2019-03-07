@@ -21,7 +21,7 @@ let render (runner : View) (model : Model) =
     let current = runner.Pack.Primary.Actor.State.Current
     let session = runner.Pack.Session.Actor.State
     let history = runner.Pack.History.Actor.State
-    let view = View.ScrollingContentPage (
+    let view = View.NonScrollingContentPage (
         "Super Clip",
         [
             View.TableView (

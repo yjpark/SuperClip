@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module SuperClip.Fabulous.Page.Settings
+module SuperClip.Fabulous.Page.Devices
 
 open Xamarin.Forms
 open Fabulous.Core
@@ -17,32 +17,36 @@ open SuperClip.Fabulous.View.Types
 module HistoryTypes = SuperClip.Core.History.Types
 module SessionTypes = SuperClip.App.Session.Types
 
+let renderDevice (runner : View) (device : Device) =
+    View.TextCell (
+        text = device.Name,
+        textColor = Color.Black,
+        detail = device.Guid,
+        detailColor = Color.Gray
+    )
+
 let render (runner : View) (model : Model) =
-    let current = runner.Pack.Primary.Actor.State.Current
     let session = runner.Pack.Session.Actor.State
-    let history = runner.Pack.History.Actor.State
     let view = View.NonScrollingContentPage (
-        "Settings",
+        "Devices",
         [
             View.TableView (
                 intent = TableIntent.Menu,
                 items = [
-                    ("Display", [
-                        View.SwitchCell (
-                            text = "Dark Theme",
-                            on = false,
-                            onChanged = (fun _ ->
-                                () //TODO
-                                //runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)
-                            )
+                    match session.Channel with
+                    | Some channel ->
+                        yield ("Other Online Devices",
+                            channel.Devices
+                            |> List.map ^<| renderDevice runner
                         )
-                    ])
+                    | None ->
+                        yield ("Not Online", [])
                 ]
             )
         ]
     )
     view.ToolbarItems([
         yield toolbarItem "Help" (fun () ->
-            runner.React <| DoSetHelp ^<| Some HelpSettings
+            runner.React <| DoSetHelp ^<| Some HelpDevices
         )
     ])

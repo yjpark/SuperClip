@@ -95,6 +95,8 @@ let private render : Render =
                     runner.React <| DoSetPage NoPage
                 | "Settings" ->
                     runner.React <| DoSetPage NoPage
+                | "Devices" ->
+                    runner.React <| DoSetPage NoPage
                 | "Help" ->
                     runner.React <| DoSetHelp None
                 | "Error" ->
@@ -110,6 +112,8 @@ let private render : Render =
                     yield Page.Auth.render runner model
                 | SettingsPage ->
                     yield Page.Settings.render runner model
+                | DevicesPage ->
+                    yield Page.Devices.render runner model
                 if model.Help.IsSome then
                     yield Page.Help.render runner model.Help.Value
                 if model.Info.IsSome then

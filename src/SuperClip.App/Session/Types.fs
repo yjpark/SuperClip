@@ -6,7 +6,6 @@ open Dap.Remote
 
 open SuperClip.Core
 open SuperClip.App
-module History = SuperClip.Core.History.Agent
 
 type ChannelService = SuperClip.Core.Channel.Service.Service
 type CloudStub = IProxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt>

@@ -10,6 +10,7 @@
     <Compile Include="..\SuperClip.Fabulous\Page/Home.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/Auth.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/Settings.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Page/Devices.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/Help.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/Info.fs" />
     <Compile Include="..\SuperClip.Fabulous\View/Logic.fs" />
