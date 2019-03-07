@@ -9,6 +9,7 @@ open Dap.Prelude
 open Dap.Platform
 
 open SuperClip.App
+open SuperClip.Fabulous
 open SuperClip.Fabulous.View.Types
 module SessionTypes = SuperClip.App.Session.Types
 

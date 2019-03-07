@@ -25,9 +25,10 @@ type LayoutOptions = Xamarin.Forms.LayoutOptions
 let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         ({
-            Page = HomePage
+            Page = NoPage
             Auth = AuthForm.Create None
             Info = None
+            Help = None
             Ver = 1
         }, noCmd)
 
@@ -49,6 +50,8 @@ let private update : Update<View, Model, Msg> =
             ({model with Auth = auth}, noCmd)
         | DoSetInfo info ->
             ({model with Info = info}, noCmd)
+        | DoSetHelp help ->
+            ({model with Help = help}, noCmd)
         | DoDismissInfo ->
             ({model with Info = None}, noCmd)
 
@@ -60,9 +63,9 @@ let private setInfoDialog (runner : View) title (kind, content, devInfo) =
 let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
     match evt with
     | SessionTypes.OnJoinSucceed res ->
-        runner.React <| DoSetPage HomePage
+        runner.React <| DoSetPage NoPage
     | SessionTypes.OnAuthSucceed res ->
-        runner.React <| DoSetPage HomePage
+        runner.React <| DoSetPage NoPage
     | SessionTypes.OnJoinFailed reason ->
         Stub.getReasonContent reason
         |> setInfoDialog runner "Login Failed"
@@ -89,19 +92,28 @@ let private render : Render =
                 //TODO: Remove hard-coded title check
                 match args.Page.Title with
                 | "Auth" ->
-                    runner.React <| DoSetPage HomePage
+                    runner.React <| DoSetPage NoPage
+                | "Settings" ->
+                    runner.React <| DoSetPage NoPage
+                | "Help" ->
+                    runner.React <| DoSetHelp None
                 | "Error" ->
                     runner.React <| DoSetInfo None
+                | _ -> ()
             ),
             pages = [
                 yield Page.Home.render runner model
                 match model.Page with
-                | HomePage ->
+                | NoPage ->
                     ()
                 | AuthPage ->
                     yield Page.Auth.render runner model
+                | SettingsPage ->
+                    yield Page.Settings.render runner model
+                if model.Help.IsSome then
+                    yield Page.Help.render runner model.Help.Value
                 if model.Info.IsSome then
-                    yield Dialog.Info.render runner (Option.get model.Info)
+                    yield Page.Info.render runner model.Info.Value
             ]
         )
 

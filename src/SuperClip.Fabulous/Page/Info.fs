@@ -1,4 +1,4 @@
-module SuperClip.Fabulous.Dialog.Info
+module SuperClip.Fabulous.Page.Info
 
 open Xamarin.Forms
 open Elmish
@@ -9,6 +9,7 @@ open Dap.Prelude
 open Dap.Platform
 
 open SuperClip.App
+open SuperClip.Fabulous
 open SuperClip.Fabulous.View.Types
 
 let render (runner : View) (info : InfoDialog) =

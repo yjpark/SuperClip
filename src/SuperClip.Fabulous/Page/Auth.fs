@@ -11,8 +11,8 @@ open Dap.Remote
 
 open SuperClip.Core
 open SuperClip.App
+open SuperClip.Fabulous
 open SuperClip.Fabulous.View.Types
-open SuperClip.Fabulous.Widget
 
 module HistoryTypes = SuperClip.Core.History.Types
 module SessionTypes = SuperClip.App.Session.Types
@@ -85,7 +85,7 @@ let render (runner : View) (model : Model) : Widget =
                         horizontalOptions = LayoutOptions.Center,
                         verticalOptions = LayoutOptions.Center,
                         command = (fun () ->
-                            runner.React <| DoSetPage HomePage
+                            runner.React <| DoSetPage NoPage
                         )
                     )
                     View.Label (
@@ -97,7 +97,7 @@ let render (runner : View) (model : Model) : Widget =
                         verticalOptions = LayoutOptions.Center,
                         command = (fun () ->
                             doAuth runner model
-                            //runner.React <| DoSetPage HomePage
+                            //TODO: Show mask to block user interaction
                         )
                     )
                 ]
@@ -106,11 +106,8 @@ let render (runner : View) (model : Model) : Widget =
     )
     view.HasNavigationBar(true).HasBackButton(false) |> ignore
     view.ToolbarItems ([
-        View.ToolbarItem (
-            text = "Help",
-            command = (fun () ->
-                () //TODO
-            )
+        yield toolbarItem "Help" (fun () ->
+            runner.React <| DoSetHelp ^<| Some HelpAuth
         )
     ])
 

@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module SuperClip.Fabulous.Page.Home
+module SuperClip.Fabulous.Page.Settings
 
 open Xamarin.Forms
 open Fabulous.Core
@@ -22,30 +22,27 @@ let render (runner : View) (model : Model) =
     let session = runner.Pack.Session.Actor.State
     let history = runner.Pack.History.Actor.State
     let view = View.ScrollingContentPage (
-        "Super Clip",
+        "Settings",
         [
             View.TableView (
                 intent = TableIntent.Menu,
                 items = [
-                    yield
-                        ("Cloud Link", Widget.Link.render runner session)
-                    if history.PinnedItems.Length > 0 then
-                        yield
-                            ("Pinned Items",
-                                history.PinnedItems
-                                |> List.map ^<| Widget.Item.render runner current true
+                    ("Display", [
+                        View.SwitchCell (
+                            text = "Dark Theme",
+                            on = false,
+                            onChanged = (fun _ ->
+                                () //TODO
+                                //runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)
                             )
-                    yield
-                        ("Recent Items",
-                            history.RecentItems
-                            |> List.map ^<| Widget.Item.render runner current false
                         )
+                    ])
                 ]
             )
         ]
     )
-    view.ToolbarItems ([
-        yield toolbarItem "Settings" (fun () ->
-            runner.React <| DoSetPage SettingsPage
+    view.ToolbarItems([
+        yield toolbarItem "Help" (fun () ->
+            runner.React <| DoSetHelp ^<| Some HelpSettings
         )
     ])
