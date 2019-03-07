@@ -21,7 +21,6 @@
     <Compile Include="Channel\Service.fs" />
     <Compile Include="History\Types.fs" />
     <Compile Include="History\Logic.fs" />
-    <Compile Include="History\Agent.fs" />
     <Compile Include="_Gen1\Cloud.fs" />
     <Compile Include="_Gen1\Packs.fs" />
     <Compile Include="Feature\LocalClipboard.fs" />

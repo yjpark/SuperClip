@@ -11,7 +11,6 @@ open Dap.Archive
 
 module TickerTypes = Dap.Platform.Ticker.Types
 
-module HistoryAgent = SuperClip.Core.History.Agent
 module ChannelService = SuperClip.Core.Channel.Service
 
 let private initChannelServiceAsync (channel : Channel) : GetTask<IAgent, ChannelService.Service> =
