@@ -1146,7 +1146,7 @@ NUGET
       Dap.Local.Farango (>= 0.6)
       Dap.Remote (>= 0.6)
       jose-jwt (>= 2.4)
-    Dap.Remote.Web (0.6.1)
+    Dap.Remote.Web (0.6.2)
       Dap.Remote (>= 0.6)
       Giraffe (>= 3.4)
       Microsoft.AspNetCore.Cors (>= 2.2)

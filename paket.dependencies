@@ -24,7 +24,7 @@ nuget Dap.Local.Farango
 nuget Dap.Remote.Server
 nuget Dap.Remote.Dashboard
 
-nuget Dap.Remote.Web
+nuget Dap.Remote.Web 0.6.2
 
 # Client
 nuget Dap.Remote.FSharpData
