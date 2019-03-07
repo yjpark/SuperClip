@@ -51,7 +51,7 @@ let render (runner : View) (model : Model) =
         ]
     )
     view.ToolbarItems([
-        yield toolbarItem runner "Help" (fun () ->
+        yield toolbarItem runner "Settings" (fun () ->
             () //TODO
         )
     ])

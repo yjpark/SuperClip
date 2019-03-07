@@ -138,12 +138,13 @@ type Fabulous.DynamicViews.View with
                             fontSize = 18,
                             lineBreakMode = LineBreakMode.MiddleTruncation
                         )
-                    yield View.Button (
-                        ?text = actionText,
-                        horizontalOptions = LayoutOptions.End,
-                        verticalOptions = LayoutOptions.Center,
-                        command = defaultArg actionCommand ignore
-                    )
+                    if actionText.IsSome then
+                        yield View.Button (
+                            ?text = actionText,
+                            horizontalOptions = LayoutOptions.End,
+                            verticalOptions = LayoutOptions.Center,
+                            command = defaultArg actionCommand ignore
+                        )
                 ]
             )
         )

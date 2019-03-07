@@ -74,6 +74,10 @@ let private onStubEvt (evt : Cloud.Evt) : ActorOperate =
                     model.LastCloudItem <- Some item
                     runner.Pack.Primary.Post <| Clipboard.DoSet item.Content None
                 )
+            | Cloud.OnPeerJoin peer ->
+                runner.AddTask ignoreOnFailed <| doAddToChannelAsync peer
+            | Cloud.OnPeerLeft peer ->
+                runner.AddTask ignoreOnFailed <| doRemoveFromChannelAsync peer
             | _ -> ()
         (model, cmd)
 
@@ -176,6 +180,7 @@ let private update : Update<Agent, Model, Msg> =
             | SetChannel (peers, channel) ->
                 updateModel (fun m -> {m with Channel = Some channel})
                 |-|- addSubCmd Evt ^<| OnAuthSucceed peers
+                |-|- addSubCmd Evt ^<| OnDevicesChanged peers.Devices
         <| runner <| (model, [])
 
 let private subscribe : Subscribe<Agent, Model, Msg> =

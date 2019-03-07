@@ -46,28 +46,43 @@ let render (runner : View) (session : SessionTypes.Model) =
         if runner.Pack.Stub.Status = LinkStatus.Linked then
             match session.Auth with
                 | Some auth ->
-                    "Logout", (fun () ->
+                    Some "Logout", Some (fun () ->
                         runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
                     )
                 | None ->
-                    "Login", (fun () ->
+                    Some "Login", Some (fun () ->
                         runner.React <| DoSetPage AuthPage
                     )
         else
-            "Retry", ignore
+            None, None
     [
         yield View.TextActionCell (
             text = text,
             textColor = color,
             ?detail = detail,
             detailColor = Color.Gray,
-            actionText = actionText,
-            actionCommand = actionCommand
+            ?actionText = actionText,
+            ?actionCommand = actionCommand
         )
         if runner.Pack.Stub.Status = LinkStatus.Linked && session.Channel.IsSome then
+            if session.Channel.IsSome then
+                let channel = session.Channel.Value.Actor.State
+                let text =
+                    channel.Devices
+                    |> List.map (fun d -> sprintf "'%s'" d.Name)
+                    |> String.concat " "
+                let detail = sprintf "Other Devices: %d" channel.Devices.Length
+                yield View.TextActionCell (
+                    text = text,
+                    textColor = Color.Black,
+                    detail = detail,
+                    detailColor = Color.Gray,
+                    actionText = "Details",
+                    actionCommand = ignore
+                )
             let syncing = session.Syncing
             yield View.SwitchCell (
-                text = "Sync to others",
+                text = "Sync with others",
                 on = syncing,
                 onChanged = (fun _ ->
                     runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)

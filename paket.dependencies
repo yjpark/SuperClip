@@ -15,7 +15,7 @@ nuget Dap.Build
 # Libs
 nuget Dap.Prelude 0.6.0
 nuget Dap.Context 0.6.1
-nuget Dap.Platform 0.6.5
+nuget Dap.Platform 0.6.6
 nuget Dap.WebSocket 0.6.0
 nuget Dap.Remote 0.6.1
 

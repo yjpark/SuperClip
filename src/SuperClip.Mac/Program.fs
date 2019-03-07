@@ -13,7 +13,7 @@ open SuperClip.App
 open SuperClip.Gui
 open SuperClip.Fabulous
 
-let useFabulous = false
+let useFabulous = true
 
 [<EntryPoint>]
 [<STAThread>]

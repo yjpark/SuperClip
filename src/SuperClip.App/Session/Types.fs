@@ -40,6 +40,7 @@ and Evt =
     | OnAuthFailed of Reason<Cloud.AuthErr>
     | OnAuthChanged of Credential option
     | OnSyncingChanged of bool
+    | OnDevicesChanged of Device list
 with interface IEvt
 
 and InternalEvt =

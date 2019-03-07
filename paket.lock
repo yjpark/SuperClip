@@ -21,7 +21,7 @@ NUGET
     Dap.Context (0.6.1)
       Dap.Prelude (>= 0.6)
       Thoth.Json.Net (>= 2.5)
-    Dap.Platform (0.6.5)
+    Dap.Platform (0.6.6)
       Dap.Context (>= 0.6.1)
       Elmish (>= 2.0.3)
       NodaTime (>= 2.4.4)
