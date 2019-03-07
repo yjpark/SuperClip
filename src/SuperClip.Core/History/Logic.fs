@@ -42,7 +42,9 @@ let private doAdd req ((item, callback) : Item * Callback<unit>) : ActorOperate 
             |=|> addSubCmd Evt OnHistoryChanged
         else
             replyAfter runner callback <| ack req ()
-            let recentItems = addItem item model.RecentItems
+            let recentItems =
+                addItem item model.RecentItems
+                |> List.truncate runner.Actor.Args.RecentSize
             (runner, model, cmd)
             |-|> updateModel (fun m -> {m with RecentItems = recentItems})
             |=|> addSubCmd Evt OnHistoryChanged
@@ -66,7 +68,9 @@ let private doUnpin req ((item, callback) : Item * Callback<unit>) : ActorOperat
         else
             replyAfter runner callback <| ack req ()
             let pinnedItems = withoutItem item model.PinnedItems
-            let recentItems = withItem item model.RecentItems
+            let recentItems =
+                withItem item model.RecentItems
+                |> List.truncate runner.Actor.Args.RecentSize
             (runner, model, cmd)
             |-|> updateModel (fun m -> {m with PinnedItems = pinnedItems ; RecentItems = recentItems})
             |=|> addSubCmd Evt OnHistoryChanged
