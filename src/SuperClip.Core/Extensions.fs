@@ -50,7 +50,7 @@ type Content with
             ) |> Option.defaultValue (Asset "")
 
 type Device with
-    static member New name : Device =
+    static member New (name : string) : Device =
         let name = name.Trim ()
         {
             Guid = (System.Guid.NewGuid()) .ToString ()

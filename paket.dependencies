@@ -1,6 +1,5 @@
 version 5.196.2
 
-source https://nuget.yjpark.org/nuget/dap
 source https://www.nuget.org/api/v2
 storage: none
 framework: auto-detect
@@ -15,7 +14,7 @@ nuget Dap.Build
 # Libs
 nuget Dap.Prelude 0.6.0
 nuget Dap.Context 0.6.1
-nuget Dap.Platform 0.6.6
+nuget Dap.Platform 0.6.8
 nuget Dap.WebSocket 0.6.0
 nuget Dap.Remote 0.6.1
 

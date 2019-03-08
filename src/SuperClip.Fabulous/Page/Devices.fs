@@ -8,6 +8,7 @@ open Fabulous.DynamicViews
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Fabulous
 
 open SuperClip.Core
 open SuperClip.App
@@ -20,9 +21,8 @@ module SessionTypes = SuperClip.App.Session.Types
 let renderDevice (runner : View) (device : Device) =
     View.TextCell (
         text = device.Name,
-        textColor = Color.Black,
         detail = device.Guid,
-        detailColor = Color.Gray
+        created = Theme.decorate
     )
 
 let render (runner : View) (model : Model) =
@@ -40,7 +40,7 @@ let render (runner : View) (model : Model) =
                         | None ->
                             yield View.TextCell (
                                 text = "Offline",
-                                textColor = Color.Black
+                                created = Theme.decorate
                             )
                     ])
                     let devices =
@@ -51,7 +51,8 @@ let render (runner : View) (model : Model) =
                     yield ("Other Online Devices",
                         devices |> List.map ^<| renderDevice runner
                     )
-                ]
+                ],
+                created = Theme.decorate
             )
         ]
     )

@@ -42,6 +42,9 @@ let private update : Update<View, Model, Msg> =
             (model, noCmd)
         | HistoryEvt _evt ->
             (model, noCmd)
+        | DoReset ->
+            runner.Reset ()
+            (model, noCmd)
         | DoRepaint ->
             (model, noCmd)
         | DoSetPage page ->

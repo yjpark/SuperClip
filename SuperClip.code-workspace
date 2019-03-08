@@ -31,6 +31,9 @@
 			"path": "src/SuperClip.Mac"
 		},
 		{
+			"path": "src/SuperClip.UWP"
+		},
+		{
 			"path": "src/SuperClip.Ooui"
 		},
 		{

@@ -5,14 +5,35 @@ open Xamarin.Forms
 open Fabulous.DynamicViews
 
 open Dap.Platform
+open Dap.Gui
 open Dap.Fabulous
+
 
 type Fabulous.DynamicViews.View with
     static member ScrollingContentPage(title, children) =
-        View.ContentPage(title=title, content=View.ScrollView(View.StackLayout(padding=20.0, children=children) ), useSafeArea=true)
+        View.ContentPage (
+            title = title,
+            content = View.ScrollView (
+                View.StackLayout (
+                    padding = 20.0,
+                    children = children
+                )
+            ),
+            useSafeArea=true,
+            created = Theme.decorate
+        )
 
     static member NonScrollingContentPage(title, children, ?gestureRecognizers) =
-        View.ContentPage(title=title, content=View.StackLayout(padding=20.0, children=children, ?gestureRecognizers=gestureRecognizers), useSafeArea=true)
+        View.ContentPage (
+            title = title,
+            content = View.StackLayout(
+                padding = 20.0,
+                children = children,
+                ?gestureRecognizers = gestureRecognizers
+            ),
+            useSafeArea=true,
+            created = Theme.decorate
+        )
 
     static member inline TextActionCell(
                                 ?text: string,
@@ -52,40 +73,44 @@ type Fabulous.DynamicViews.View with
                             children = [
                                 View.Label (
                                     ?text = text,
-                                    ?textColor = textColor,
                                     fontSize = 18,
-                                    lineBreakMode = LineBreakMode.MiddleTruncation
+                                    lineBreakMode = LineBreakMode.MiddleTruncation,
+                                    created = Theme.decorate
                                 )
                                 View.Label (
                                     ?text = detail,
                                     fontSize = 12,
-                                    textColor = defaultArg detailColor Color.Gray,
-                                    lineBreakMode = LineBreakMode.MiddleTruncation
+                                    lineBreakMode = LineBreakMode.MiddleTruncation,
+                                    created = Theme.decorate
                                 )
-                            ]
+                            ],
+                            created = Theme.decorate
                         )
                     else
                         yield View.Label (
                             ?text = text,
-                            ?textColor = textColor,
                             horizontalOptions = LayoutOptions.FillAndExpand,
                             verticalOptions = LayoutOptions.Center,
                             fontSize = 18,
-                            lineBreakMode = LineBreakMode.MiddleTruncation
+                            lineBreakMode = LineBreakMode.MiddleTruncation,
+                            created = Theme.decorate
                         )
                     if actionText.IsSome then
                         yield View.Button (
                             ?text = actionText,
                             horizontalOptions = LayoutOptions.End,
                             verticalOptions = LayoutOptions.Center,
-                            command = defaultArg actionCommand ignore
+                            command = defaultArg actionCommand ignore,
+                            created = Theme.decorate
                         )
-                ]
+                ],
+                created = Theme.decorate
             )
         )
 
 let toolbarItem (text : string) (command : unit -> unit) =
     View.ToolbarItem (
         text = text,
+        //textColor = Theme.getValue (fun t -> t.Fabulous.Colors.Primary),
         command = command
     )

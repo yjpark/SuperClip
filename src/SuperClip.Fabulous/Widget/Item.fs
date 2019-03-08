@@ -7,9 +7,11 @@ open Fabulous.DynamicViews
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Fabulous
 
 open SuperClip.Core
 open SuperClip.App
+open SuperClip.Fabulous
 open SuperClip.Fabulous.View.Types
 
 module HistoryTypes = SuperClip.Core.History.Types
@@ -42,44 +44,18 @@ let private addMenuItem (item : Item) (text : string) (command : Item -> unit) (
     v.ContextActions.Add menuItem
     v
 
-let render' (runner : View) (item : Item) : Widget =
-    View.StackLayout (
-        orientation = StackOrientation.Vertical,
-        horizontalOptions = LayoutOptions.FillAndExpand,
-        padding = 0.0,
-        spacing = 5.0,
-        gestureRecognizers = [
-            View.TapGestureRecognizer (
-                command = (fun () ->
-                    runner.React <| SetPrimary item.Content
-                )
-            )
-        ],
-        children = [
-            View.Label (
-                text = getText item,
-                fontSize = 18,
-                lineBreakMode = LineBreakMode.MiddleTruncation
-            )
-            View.Label (
-                text = getSource item,
-                fontSize = 12,
-                textColor = Color.Gray,
-                lineBreakMode = LineBreakMode.MiddleTruncation
-            )
-        ]
-    )
-let render'' (runner : View) (item : Item) : Widget =
-    render' runner item
-
 let render (runner : View) (current : Item) (pinned : bool) (item : Item) =
-    let color =
-        if current = item || current.Hash = item.Hash then
-            Color.Blue
-        else
-            Color.Black
+    let isCurrent =
+        current = item || current.Hash = item.Hash
     View.TextCell(
+        text = getText item,
+        detail = getSource item,
+        command = (fun () ->
+            runner.React <| SetPrimary item.Content
+        ),
+        classId = (if isCurrent then Theme.TextCell_Current else ""),
         created = (fun v ->
+            Theme.decorate v
             if pinned then
                 v
                 |> addMenuItem item "Unpin" (fun item' ->
@@ -94,12 +70,5 @@ let render (runner : View) (current : Item) (pinned : bool) (item : Item) =
                     runner.Pack.History.Post <| HistoryTypes.DoRemove (item', None)
                 )
             |> ignore
-        ),
-        text = getText item,
-        textColor = color,
-        detail = getSource item,
-        detailColor = Color.Gray,
-        command = (fun () ->
-            runner.React <| SetPrimary item.Content
         )
     )

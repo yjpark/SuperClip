@@ -180,7 +180,7 @@
       <Version>0.6.1</Version>
     </PackageReference>
     <PackageReference Include="Dap.Platform">
-      <Version>0.6.5</Version>
+      <Version>0.6.8</Version>
     </PackageReference>
     <!--
     <PackageReference Include="Dap.Gui">

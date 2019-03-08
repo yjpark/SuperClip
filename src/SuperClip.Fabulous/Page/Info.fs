@@ -18,14 +18,17 @@ let render (runner : View) (info : InfoDialog) =
         [
             yield View.Label (
                 text = info.Title,
-                fontSize = "Large"
+                fontSize = "Large",
+                created = Theme.decorate
             )
             yield View.Label (
-                text = info.Content
+                text = info.Content,
+                created = Theme.decorate
             )
             if info.DevInfo.IsSome then
                 yield View.Label (
-                    text = info.DevInfo.Value
+                    text = info.DevInfo.Value,
+                    created = Theme.decorate
                 )
             yield View.Button (
                 text = "Ok",
@@ -33,7 +36,8 @@ let render (runner : View) (info : InfoDialog) =
                 verticalOptions = LayoutOptions.Center,
                 command = (fun () ->
                     runner.React <| DoSetInfo None
-                )
+                ),
+                created = Theme.decorate
             )
         ]
     )

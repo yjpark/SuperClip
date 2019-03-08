@@ -18,9 +18,6 @@ module HistoryTypes = SuperClip.Core.History.Types
 module SessionTypes = SuperClip.App.Session.Types
 
 let render (runner : View) (model : Model) =
-    let current = runner.Pack.Primary.Actor.State.Current
-    let session = runner.Pack.Session.Actor.State
-    let history = runner.Pack.History.Actor.State
     let view = View.NonScrollingContentPage (
         "Settings",
         [
@@ -30,14 +27,16 @@ let render (runner : View) (model : Model) =
                     ("Display", [
                         View.SwitchCell (
                             text = "Dark Theme",
-                            on = false,
-                            onChanged = (fun _ ->
-                                () //TODO
-                                //runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)
-                            )
+                            on = Theme.isDark (),
+                            onChanged = (fun args ->
+                                Theme.setDark args.Value
+                                runner.React DoReset
+                            ),
+                            created = Theme.decorate
                         )
                     ])
-                ]
+                ],
+                created = Theme.decorate
             )
         ]
     )

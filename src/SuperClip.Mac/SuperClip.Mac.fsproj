@@ -111,7 +111,7 @@
       <Version>0.6.1</Version>
     </PackageReference>
     <PackageReference Include="Dap.Platform">
-      <Version>0.6.5</Version>
+      <Version>0.6.8</Version>
     </PackageReference>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
     <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />

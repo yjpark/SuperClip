@@ -21,6 +21,7 @@ let render (runner : View) (model : Model) =
     let current = runner.Pack.Primary.Actor.State.Current
     let session = runner.Pack.Session.Actor.State
     let history = runner.Pack.History.Actor.State
+
     let view = View.NonScrollingContentPage (
         "Super Clip",
         [
@@ -40,7 +41,8 @@ let render (runner : View) (model : Model) =
                             history.RecentItems
                             |> List.map ^<| Widget.Item.render runner current false
                         )
-                ]
+                ],
+                created = Theme.decorate
             )
         ]
     )

@@ -19,3 +19,8 @@ type App with
         App.Create (logFile, ?scope = scope, ?consoleMinLevel = consoleMinLevel)
         :> IApp
         |> runFabulousApp<IApp, ViewTypes.Model, ViewTypes.Msg>
+
+let runForUwp (logFile) =
+    App.RunFabulous (logFile) |> ignore
+    let fabulousParam = getFabulousParam ()
+    fabulousParam.Application

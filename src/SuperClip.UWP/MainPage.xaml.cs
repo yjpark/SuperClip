@@ -25,7 +25,8 @@ namespace SuperClip.UWP
         public MainPage()
         {
             this.InitializeComponent();
-            LoadApplication(SuperClip.Forms.FormsApp.createApplication());
+            Dap.UWP.Helper.setUWPParam(Dap.UWP.Types.UWPParam.Create ("SuperClip", null, null, null));
+            LoadApplication(SuperClip.Fabulous.Helper.runForUwp ("super-clip-.log"));
         }
     }
 }

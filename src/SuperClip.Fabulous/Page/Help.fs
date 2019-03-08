@@ -22,7 +22,8 @@ let render (runner : View) (topic : HelpTopic) =
         "Help",
         [
             View.Label (
-                text = "TODO"
+                text = "TODO",
+                created = Theme.decorate
             )
         ]
     )

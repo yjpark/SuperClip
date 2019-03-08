@@ -69,6 +69,7 @@ and Model = {
 and Msg =
     | SetPrimary of Content
     | HistoryEvt of HistoryTypes.Evt
+    | DoReset
     | DoRepaint
     | DoDismissInfo
     | DoSetPage of Page

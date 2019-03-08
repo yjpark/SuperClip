@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
+    <Compile Include="..\SuperClip.Fabulous\Theme.fs" />
     <Compile Include="..\SuperClip.Fabulous\Util.fs" />
     <Compile Include="..\SuperClip.Fabulous\Feature/LocalClipboard.fs" />
     <Compile Include="..\SuperClip.Fabulous\Feature/AppGui.fs" />

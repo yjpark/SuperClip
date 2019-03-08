@@ -7,6 +7,7 @@ open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Platform
+open Dap.Fabulous
 
 open SuperClip.App
 open SuperClip.Fabulous
@@ -18,7 +19,8 @@ let private button text command =
         text = text,
         horizontalOptions = LayoutOptions.End,
         verticalOptions = LayoutOptions.Center,
-        command = command
+        command = command,
+        created = Theme.decorate
     )
 
 let private addMenuItem (text : string) (command : unit -> unit) (v : TextCell) =
@@ -51,9 +53,7 @@ let render (runner : View) (session : SessionTypes.Model) =
     [
         yield View.TextActionCell (
             text = text,
-            textColor = color,
             ?detail = detail,
-            detailColor = Color.Gray,
             ?actionText = actionText,
             ?actionCommand = actionCommand
         )
@@ -67,9 +67,7 @@ let render (runner : View) (session : SessionTypes.Model) =
                 let detail = sprintf "Other Devices: %d" channel.Devices.Length
                 yield View.TextActionCell (
                     text = text,
-                    textColor = Color.Black,
                     detail = detail,
-                    detailColor = Color.Gray,
                     actionText = "Details",
                     actionCommand = (fun _ ->
                         runner.React <| DoSetPage DevicesPage
@@ -81,6 +79,7 @@ let render (runner : View) (session : SessionTypes.Model) =
                 on = syncing,
                 onChanged = (fun _ ->
                     runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)
-                )
+                ),
+                created = Theme.decorate
             )
     ]
