@@ -59,6 +59,7 @@ type AuthForm = {
 type Args = ViewTypes.Args<ISessionPack, Model, Msg>
 
 and Model = {
+    Resetting : bool
     Page : Page
     Auth : AuthForm
     Info : InfoDialog option
@@ -69,7 +70,7 @@ and Model = {
 and Msg =
     | SetPrimary of Content
     | HistoryEvt of HistoryTypes.Evt
-    | DoReset
+    | DoSetResetting of bool
     | DoRepaint
     | DoDismissInfo
     | DoSetPage of Page

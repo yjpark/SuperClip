@@ -25,6 +25,7 @@ type LayoutOptions = Xamarin.Forms.LayoutOptions
 let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         ({
+            Resetting = false
             Page = NoPage
             Auth = AuthForm.Create None
             Info = None
@@ -42,9 +43,9 @@ let private update : Update<View, Model, Msg> =
             (model, noCmd)
         | HistoryEvt _evt ->
             (model, noCmd)
-        | DoReset ->
+        | DoSetResetting v ->
             runner.Reset ()
-            (model, noCmd)
+            ({model with Resetting = v ; Page = NoPage}, noCmd)
         | DoRepaint ->
             (model, noCmd)
         | DoSetPage page ->
@@ -107,20 +108,24 @@ let private render : Render =
                 | _ -> ()
             ),
             pages = [
-                yield Page.Home.render runner model
-                match model.Page with
-                | NoPage ->
-                    ()
-                | AuthPage ->
-                    yield Page.Auth.render runner model
-                | SettingsPage ->
-                    yield Page.Settings.render runner model
-                | DevicesPage ->
-                    yield Page.Devices.render runner model
-                if model.Help.IsSome then
-                    yield Page.Help.render runner model.Help.Value
-                if model.Info.IsSome then
-                    yield Page.Info.render runner model.Info.Value
+                if model.Resetting then
+                    yield Page.Resetting.render runner model
+                else
+                    yield Page.About.render runner model
+                    yield Page.Home.render runner model
+                    match model.Page with
+                    | NoPage ->
+                        ()
+                    | AuthPage ->
+                        yield Page.Auth.render runner model
+                    | SettingsPage ->
+                        yield Page.Settings.render runner model
+                    | DevicesPage ->
+                        yield Page.Devices.render runner model
+                    if model.Help.IsSome then
+                        yield Page.Help.render runner model.Help.Value
+                    if model.Info.IsSome then
+                        yield Page.Info.render runner model.Info.Value
             ]
         )
 

@@ -30,7 +30,7 @@ let render (runner : View) (model : Model) =
                             on = Theme.isDark (),
                             onChanged = (fun args ->
                                 Theme.setDark args.Value
-                                runner.React DoReset
+                                runner.React <| DoSetResetting true
                             ),
                             created = Theme.decorate
                         )
