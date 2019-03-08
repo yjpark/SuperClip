@@ -91,26 +91,26 @@ let private subscribe : Subscribe<View, Model, Msg> =
 
 let private render : Render =
     fun runner model ->
-        View.NavigationPage (
-            popped = (fun args ->
-                //TODO: Remove hard-coded title check
-                match args.Page.Title with
-                | "Auth" ->
-                    runner.React <| DoSetPage NoPage
-                | "Settings" ->
-                    runner.React <| DoSetPage NoPage
-                | "Devices" ->
-                    runner.React <| DoSetPage NoPage
-                | "Help" ->
-                    runner.React <| DoSetHelp None
-                | "Error" ->
-                    runner.React <| DoSetInfo None
-                | _ -> ()
-            ),
-            pages = [
-                if model.Resetting then
-                    yield Page.Resetting.render runner model
-                else
+        if model.Resetting then
+            Page.Resetting.render runner model
+        else
+            View.NavigationPage (
+                popped = (fun args ->
+                    //TODO: Remove hard-coded title check
+                    match args.Page.Title with
+                    | "Auth" ->
+                        runner.React <| DoSetPage NoPage
+                    | "Settings" ->
+                        runner.React <| DoSetPage NoPage
+                    | "Devices" ->
+                        runner.React <| DoSetPage NoPage
+                    | "Help" ->
+                        runner.React <| DoSetHelp None
+                    | "Error" ->
+                        runner.React <| DoSetInfo None
+                    | _ -> ()
+                ),
+                pages = [
                     yield Page.About.render runner model
                     yield Page.Home.render runner model
                     match model.Page with
@@ -126,8 +126,8 @@ let private render : Render =
                         yield Page.Help.render runner model.Help.Value
                     if model.Info.IsSome then
                         yield Page.Info.render runner model.Info.Value
-            ]
-        )
+                ]
+            )
 
 let newArgs () =
     Args.Create init update subscribe render

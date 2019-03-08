@@ -18,6 +18,10 @@ let render (runner : View) (model : Model) =
     View.NonScrollingContentPage (
         "Resetting",
         [
+            View.Label (
+                text = "Theme has been changed",
+                created = Theme.decorate
+            )
             View.Button (
                 text = "Ok",
                 horizontalOptions = LayoutOptions.CenterAndExpand,
