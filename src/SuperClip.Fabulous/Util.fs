@@ -15,7 +15,6 @@ type Fabulous.DynamicViews.View with
             title = title,
             content = View.ScrollView (
                 View.StackLayout (
-                    padding = 20.0,
                     children = children
                 )
             ),
@@ -27,7 +26,6 @@ type Fabulous.DynamicViews.View with
         View.ContentPage (
             title = title,
             content = View.StackLayout(
-                padding = 20.0,
                 children = children,
                 ?gestureRecognizers = gestureRecognizers
             ),
@@ -37,9 +35,8 @@ type Fabulous.DynamicViews.View with
 
     static member inline TextActionCell(
                                 ?text: string,
+                                ?textClassId: string,
                                 ?detail: string,
-                                ?textColor: Xamarin.Forms.Color,
-                                ?detailColor: Xamarin.Forms.Color,
                                 ?command: unit -> unit,
                                 ?canExecute: bool,
                                 ?commandParameter: System.Object,
@@ -75,12 +72,14 @@ type Fabulous.DynamicViews.View with
                                     ?text = text,
                                     fontSize = 18,
                                     lineBreakMode = LineBreakMode.MiddleTruncation,
+                                    ?classId = textClassId,
                                     created = Theme.decorate
                                 )
                                 View.Label (
                                     ?text = detail,
                                     fontSize = 12,
                                     lineBreakMode = LineBreakMode.MiddleTruncation,
+                                    classId = Theme.Label_Dimmed,
                                     created = Theme.decorate
                                 )
                             ],
@@ -93,6 +92,7 @@ type Fabulous.DynamicViews.View with
                             verticalOptions = LayoutOptions.Center,
                             fontSize = 18,
                             lineBreakMode = LineBreakMode.MiddleTruncation,
+                            ?classId = textClassId,
                             created = Theme.decorate
                         )
                     if actionText.IsSome then

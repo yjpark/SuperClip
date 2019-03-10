@@ -20,11 +20,12 @@ let render (runner : View) (model : Model) =
         [
             View.Button (
                 text = "Ok",
-                horizontalOptions = LayoutOptions.CenterAndExpand,
+                horizontalOptions = LayoutOptions.FillAndExpand,
                 verticalOptions = LayoutOptions.Center,
                 command = (fun _ ->
                     runner.React <| DoSetResetting false
                 ),
+                classId = Theme.Button_Big,
                 created = Theme.decorate
             )
         ]

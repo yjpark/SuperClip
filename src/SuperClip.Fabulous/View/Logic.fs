@@ -69,7 +69,8 @@ let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
     | SessionTypes.OnJoinSucceed res ->
         runner.React <| DoSetPage NoPage
     | SessionTypes.OnAuthSucceed res ->
-        runner.React <| DoSetPage NoPage
+        if runner.ViewState.Page = AuthPage then
+            runner.React <| DoSetPage NoPage
     | SessionTypes.OnJoinFailed reason ->
         Stub.getReasonContent reason
         |> setInfoDialog runner "Login Failed"
@@ -111,7 +112,7 @@ let private render : Render =
                     | _ -> ()
                 ),
                 pages = [
-                    yield Page.About.render runner model
+                    //yield Page.About.render runner model
                     yield Page.Home.render runner model
                     match model.Page with
                     | NoPage ->
@@ -126,7 +127,8 @@ let private render : Render =
                         yield Page.Help.render runner model.Help.Value
                     if model.Info.IsSome then
                         yield Page.Info.render runner model.Info.Value
-                ]
+                ],
+                created = Theme.decorate
             )
 
 let newArgs () =

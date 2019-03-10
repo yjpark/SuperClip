@@ -16,7 +16,9 @@ module ViewLogic = SuperClip.Fabulous.View.Logic
 type App with
     static member RunFabulous (logFile, ?scope : string, ?consoleMinLevel : LogLevel) : int =
         setFabulousParam <| ViewLogic.newArgs ()
-        App.Create (logFile, ?scope = scope, ?consoleMinLevel = consoleMinLevel)
+        let app = App.Create (logFile, ?scope = scope, ?consoleMinLevel = consoleMinLevel)
+        Theme.init ()
+        app
         :> IApp
         |> runFabulousApp<IApp, ViewTypes.Model, ViewTypes.Msg>
 

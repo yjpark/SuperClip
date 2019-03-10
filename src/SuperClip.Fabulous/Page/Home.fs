@@ -50,4 +50,7 @@ let render (runner : View) (model : Model) =
         yield toolbarItem "Settings" (fun () ->
             runner.React <| DoSetPage SettingsPage
         )
+        yield toolbarItem "Help" (fun () ->
+            runner.React <| DoSetHelp None
+        )
     ])

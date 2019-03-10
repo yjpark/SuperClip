@@ -5,78 +5,100 @@ module SuperClip.Fabulous.Theme
 open Xamarin.Forms
 open Fabulous.DynamicViews
 
+open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Gui
 open Dap.Fabulous
 open Dap.Fabulous.Decorator
-open Dap.Fabulous.Theme
+open Dap.Fabulous.Palette
+
+[<Literal>]
+let LightTheme = "Light"
+
+[<Literal>]
+let DarkTheme = "Dark"
 
 [<Literal>]
 let TextCell_Current = "text_cell_current"
 
-type SuperClipColors = {
+[<Literal>]
+let Label_Dimmed = "label_dimmed"
+
+[<Literal>]
+let Label_Linked = "label_linked"
+
+[<Literal>]
+let Label_Linking = "label_linking"
+
+[<Literal>]
+let Label_NoLink = "label_no_link"
+
+[<Literal>]
+let Button_Big = "button_big"
+
+type SuperClipColorScheme = {
+    Fabulous : ColorScheme
     Current : Color
     Linked : Color
     Linking : Color
     NoLink : Color
 }
 
-type SuperClipTheme = {
-    Fabulous : FabulousTheme
-    Colors : SuperClipColors
+let lightParam : SuperClipColorScheme = {
+    Fabulous = Material.LightScheme
+    Current = Material.Palettes.Blue.Normal600
+    Linked = Material.Palettes.Green.Normal600
+    Linking = Material.Palettes.Orange.Normal900
+    NoLink = Material.Palettes.Red.Normal500
 }
 
-type Theme with
-    member this.WithSuperClip (param : SuperClipTheme) =
-        this.WithFabulous param.Fabulous |> ignore
-        this.AddDecorator TextCell_Current
-            (new TextCell.Decorator (textColor = param.Colors.Current, detailColor = param.Fabulous.Colors.Secondary))
-        this
-
-let getSuperClipTheme (param : SuperClipTheme) =
-    (new Theme ()) .WithSuperClip param
-
-let lightParam : SuperClipTheme = {
-    Fabulous = Light.param
-    Colors = {
-        Current = Color.Blue
-        Linked = Color.Green
-        Linking = Color.Yellow
-        NoLink = Color.Red
-    }
+let darkParam : SuperClipColorScheme = {
+    Fabulous = Material.DarkScheme
+    Current = Material.Palettes.Blue.Normal500
+    Linked = Material.Palettes.Green.Normal500
+    Linking = Material.Palettes.Orange.Normal700
+    NoLink = Material.Palettes.Red.Normal300
 }
 
-let darkParam : SuperClipTheme = {
-    Fabulous = Dark.param
-    Colors = {
-        Current = Color.Blue
-        Linked = Color.Green
-        Linking = Color.Yellow
-        NoLink = Color.Red
-    }
-}
+let private setup (theme : ITheme) (param : SuperClipColorScheme) =
+    theme.AddFabulousColorScheme param.Fabulous
+    theme.AddDecorator TextCell_Current
+        (new TextCell.Decorator
+            (textColor = param.Current, ?detailColor = param.Fabulous.Label.Dimmed))
+    theme.AddDecorator Label_Dimmed
+        (new Label.Decorator
+            (?textColor = param.Fabulous.Label.Dimmed))
+    theme.AddDecorator Label_Linked
+        (new Label.Decorator
+            (textColor = param.Linked))
+    theme.AddDecorator Label_Linking
+        (new Label.Decorator
+            (textColor = param.Linking))
+    theme.AddDecorator Label_NoLink
+        (new Label.Decorator
+            (textColor = param.NoLink))
+    theme.AddDecorator Button_Big
+        (new Button.Decorator
+            (?backgroundColor = param.Fabulous.Panel.Surface))
 
-let lightTheme : Theme = getSuperClipTheme lightParam
-let darkTheme : Theme = getSuperClipTheme darkParam
+let init () =
+    Theme.create LightTheme lightParam setup
+    Theme.create DarkTheme darkParam setup
 
-let mutable private theme : Theme = darkTheme
-
-let isDark () =
-    theme = darkTheme
+let isDark () : bool =
+    (Theme.get None) .Key = DarkTheme
 
 let setDark (dark : bool) =
-    theme <-
-        if dark then
-            darkTheme
-        else
-            lightTheme
+    if dark then
+        Theme.switch (DarkTheme)
+    else
+        Theme.switch (LightTheme)
 
 let decorate<'widget when 'widget :> Element> (widget : 'widget) =
-    theme.DecorateFabulous<'widget> widget
+    (Theme.get None) .DecorateFabulous<'widget> widget
 
-let getValue (get : SuperClipTheme -> 'v) =
-    if isDark () then
-        darkParam
-    else
-        lightParam
+let getValue (get : SuperClipColorScheme -> 'v) =
+    ((Theme.get None) .Param)
+    :?> SuperClipColorScheme
     |> get

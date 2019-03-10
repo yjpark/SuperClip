@@ -32,27 +32,28 @@ let private addMenuItem (text : string) (command : unit -> unit) (v : TextCell) 
     v
 
 let render (runner : View) (session : SessionTypes.Model) =
-    let text, color, detail, actionText, actionCommand =
+    let text, textClassId, detail, actionText, actionCommand =
         if runner.Pack.Stub.Status = LinkStatus.Linked then
             match session.Auth, session.Channel with
             | None, None ->
-                runner.Pack.Stub.Status.ToString (), Color.Red, None, Some "Login", Some (fun () ->
+                runner.Pack.Stub.Status.ToString (), Theme.Label_NoLink, None, Some "Login", Some (fun () ->
                     runner.React <| DoSetPage AuthPage
                 )
             | None, Some channel ->
                 runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
-                runner.Pack.Stub.Status.ToString (), Color.Red, Some channel.Channel.Name, None, None
+                runner.Pack.Stub.Status.ToString (), Theme.Label_NoLink, Some channel.Channel.Name, None, None
             | Some auth, None ->
-                "Logging in ...", Color.BlueViolet, Some auth.Device.Name, None, None
+                "Logging in ...", Theme.Label_Linking, Some auth.Device.Name, None, None
             | Some auth, Some channel ->
-                channel.Channel.Name, Color.Green, Some auth.Device.Name, Some "Logout", Some (fun () ->
+                channel.Channel.Name, Theme.Label_Linked, Some auth.Device.Name, Some "Logout", Some (fun () ->
                     runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
                 )
         else
-            runner.Pack.Stub.Status.ToString (), Color.Red, Some runner.Pack.Stub.Actor.Args.Uri, None, None
+            runner.Pack.Stub.Status.ToString (), Theme.Label_NoLink, Some runner.Pack.Stub.Actor.Args.Uri, None, None
     [
         yield View.TextActionCell (
             text = text,
+            textClassId = textClassId,
             ?detail = detail,
             ?actionText = actionText,
             ?actionCommand = actionCommand

@@ -27,37 +27,40 @@ let renderDevice (runner : View) (device : Device) =
 
 let render (runner : View) (model : Model) =
     let session = runner.Pack.Session.Actor.State
-    let view = View.NonScrollingContentPage (
-        "Devices",
-        [
-            View.TableView (
-                intent = TableIntent.Menu,
-                items = [
-                    yield ("This Device", [
-                        match session.Auth with
-                        | Some auth ->
-                            yield renderDevice runner auth.Device
-                        | None ->
-                            yield View.TextCell (
-                                text = "Offline",
-                                created = Theme.decorate
-                            )
-                    ])
-                    let devices =
-                        match session.Channel with
-                        | Some channel ->
-                            channel.Devices
-                        | None -> []
-                    yield ("Other Online Devices",
-                        devices |> List.map ^<| renderDevice runner
-                    )
-                ],
-                created = Theme.decorate
-            )
-        ]
-    )
-    view.ToolbarItems([
-        yield toolbarItem "Help" (fun () ->
-            runner.React <| DoSetHelp ^<| Some HelpDevices
+    View.NonScrollingContentPage
+        (
+            "Devices",
+            [
+                View.TableView (
+                    intent = TableIntent.Menu,
+                    items = [
+                        yield ("This Device", [
+                            match session.Auth with
+                            | Some auth ->
+                                yield renderDevice runner auth.Device
+                            | None ->
+                                yield View.TextCell (
+                                    text = "Offline",
+                                    created = Theme.decorate
+                                )
+                        ])
+                        let devices =
+                            match session.Channel with
+                            | Some channel ->
+                                channel.Devices
+                            | None -> []
+                        yield ("Other Online Devices",
+                            devices |> List.map ^<| renderDevice runner
+                        )
+                    ],
+                    created = Theme.decorate
+                )
+            ]
         )
-    ])
+    |> (fun view ->
+        view.ToolbarItems([
+            yield toolbarItem "Help" (fun () ->
+                runner.React <| DoSetHelp ^<| Some HelpDevices
+            )
+        ])
+    )
