@@ -82,23 +82,26 @@ let private setup (theme : ITheme) (param : SuperClipColorScheme) =
         (new Button.Decorator
             (?backgroundColor = param.Fabulous.Panel.Surface))
 
-let init () =
-    Theme.create LightTheme lightParam setup
-    Theme.create DarkTheme darkParam setup
+type ThemeHook (logging : ILogging) =
+    inherit EmptyContext(logging, "ThemeHook")
+    interface IGuiAppHook with
+        member __.Init (app : IGuiApp) =
+            app.AddTheme LightTheme lightParam setup
+            app.AddTheme DarkTheme darkParam setup
 
 let isDark () : bool =
-    (Theme.get None) .Key = DarkTheme
+    IGuiApp.Instance.Theme.Key = DarkTheme
 
 let setDark (dark : bool) =
     if dark then
-        Theme.switch (DarkTheme)
+        IGuiApp.Instance.SwitchTheme DarkTheme
     else
-        Theme.switch (LightTheme)
+        IGuiApp.Instance.SwitchTheme LightTheme
 
 let decorate<'widget when 'widget :> Element> (widget : 'widget) =
-    (Theme.get None) .DecorateFabulous<'widget> widget
+    IGuiApp.Instance.Theme.DecorateFabulous<'widget> widget
 
 let getValue (get : SuperClipColorScheme -> 'v) =
-    ((Theme.get None) .Param)
+    IGuiApp.Instance.Theme.Param
     :?> SuperClipColorScheme
     |> get

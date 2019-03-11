@@ -101,31 +101,8 @@
       <Version>1.0.0.25</Version>
     </PackageReference>
     -->
-    <PackageReference Include="Xamarin.Forms">
-      <Version>3.5.0.169047</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Essentials">
-      <Version>1.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Fabulous.Core">
-      <Version>0.32</Version>
-    </PackageReference>
-    <PackageReference Include="Fabulous.CustomControls">
-      <Version>0.32</Version>
-    </PackageReference>
-    <PackageReference Include="Fabulous.LiveUpdate">
-      <Version>0.32</Version>
-    </PackageReference>
-    <PackageReference Include="Dap.Prelude">
-      <Version>0.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="Dap.Context">
-      <Version>0.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="Dap.Platform">
-      <Version>0.6.8</Version>
-    </PackageReference>
   </ItemGroup>
+  <Import Project="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.Android\Dap.Fabulous.Android.reference" />
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
     <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
@@ -133,10 +110,6 @@
     <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
     <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
     -->
-    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Gui\Dap.Gui.fsproj" />
-    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous\Dap.Fabulous.fsproj" />
-    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Android\Dap.Android.fsproj" />
-    <ProjectReference Include="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.Android\Dap.Fabulous.Android.fsproj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets" />
 </Project>

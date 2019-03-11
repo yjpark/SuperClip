@@ -13,6 +13,7 @@ open Xamarin.Forms.Platform.Android
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
+open Dap.Gui
 open Dap.Android
 open Dap.Fabulous.Android
 
@@ -23,8 +24,13 @@ open SuperClip.Fabulous
 let useFabulous = true
 
 [<Activity (Label = "SuperClip", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
-type MainActivity () =
+type MainActivity () as self =
     inherit FabulousActivity ()
+    static let mutable instance : MainActivity option = None
+    do (
+        instance <- Some self
+    )
+    static member Instance = instance.Value
     override this.UseFabulous () = useFabulous
     override this.DoSetup (bundle : Bundle) =
         let param = AndroidParam.Create ("SuperClip.Android", this, backgroundColor = Android.Graphics.Color.Black)
@@ -36,3 +42,15 @@ type MainActivity () =
             setAndroidParam param
             App.RunGui ("super-clip-.log")
         |> ignore
+
+type AndroidThemeHook (logging : ILogging) =
+    inherit EmptyContext(logging, "AndroidThemeHook")
+    interface IGuiAppHook with
+        member this.Init (app : IGuiApp) =
+            app.OnWillSwitchTheme.AddWatcher this "OnWillSwitchTheme" (fun theme ->
+                if theme.Key = Theme.DarkTheme then
+                    MainActivity.Instance.SwitchDarkTheme ()
+                else
+                    MainActivity.Instance.SwitchLightTheme ()
+            )
+
