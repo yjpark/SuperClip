@@ -136,7 +136,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
+    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj">
+      <Project>{D7B1F5DC-7316-496C-B0A4-1C31BDBD4AEF}</Project>
+      <Name>SuperClip.Fabulous</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

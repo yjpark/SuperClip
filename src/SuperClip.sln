@@ -4,11 +4,11 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Mac", "SuperClip.Mac\SuperClip.Mac.fsproj", "{D056F368-E045-4738-BB64-E957B193E594}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Core", "SuperClip.Core\SuperClip.Core.fsproj", "{363A252D-9D4C-4607-98A7-D11F1A460EA2}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.Core", "SuperClip.Core\SuperClip.Core.fsproj", "{363A252D-9D4C-4607-98A7-D11F1A460EA2}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.App", "SuperClip.App\SuperClip.App.fsproj", "{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.App", "SuperClip.App\SuperClip.App.fsproj", "{592A1D39-841F-4E03-A199-D2C2DFCD9F7A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Gui", "SuperClip.Gui\SuperClip.Gui.fsproj", "{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SuperClip.Gui", "SuperClip.Gui\SuperClip.Gui.fsproj", "{A2B4F517-50CD-46EF-9CFD-7DD01C7C6D5F}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.iOS", "SuperClip.iOS\SuperClip.iOS.fsproj", "{B4FFA9E8-C9B3-4E7B-85ED-B0604AFADDFD}"
 EndProject
@@ -17,6 +17,10 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Android", "SuperClip.Android\SuperClip.Android.fsproj", "{751F1582-12DB-4BB7-ADBA-F38F15A74B75}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperClip.UWP", "SuperClip.UWP\SuperClip.UWP.csproj", "{97F120C8-F064-4450-9CE3-6E3EE8262BD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gui", "gui", "{E2896B26-A13E-490C-A7F5-C08C2F34DD1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dap.Fabulous.UWP", "..\..\dap.gui.fsharp\src\Dap.Fabulous.UWP\Dap.Fabulous.UWP.csproj", "{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -372,9 +376,60 @@ Global
 		{97F120C8-F064-4450-9CE3-6E3EE8262BD8}.Release|x86.ActiveCfg = Release|x86
 		{97F120C8-F064-4450-9CE3-6E3EE8262BD8}.Release|x86.Build.0 = Release|x86
 		{97F120C8-F064-4450-9CE3-6E3EE8262BD8}.Release|x86.Deploy.0 = Release|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|ARM.ActiveCfg = Release|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|ARM.Build.0 = Release|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|x64.ActiveCfg = Release|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|x64.Build.0 = Release|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|x86.ActiveCfg = Release|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Ad-Hoc|x86.Build.0 = Release|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|ARM.ActiveCfg = Release|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|ARM.Build.0 = Release|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|iPhoneSimulator.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|x64.ActiveCfg = Release|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|x64.Build.0 = Release|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|x86.ActiveCfg = Release|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.AppStore|x86.Build.0 = Release|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|ARM.ActiveCfg = Debug|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|ARM.Build.0 = Debug|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|x64.ActiveCfg = Debug|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|x64.Build.0 = Debug|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|x86.ActiveCfg = Debug|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Debug|x86.Build.0 = Debug|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|ARM.ActiveCfg = Release|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|ARM.Build.0 = Release|ARM
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|iPhone.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|x64.ActiveCfg = Release|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|x64.Build.0 = Release|x64
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|x86.ActiveCfg = Release|x86
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9C683C0A-D74A-4023-A1A7-6D9876AA6B0B} = {E2896B26-A13E-490C-A7F5-C08C2F34DD1B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71FE21D0-1EF3-45A5-A33D-CEFC6052C791}
