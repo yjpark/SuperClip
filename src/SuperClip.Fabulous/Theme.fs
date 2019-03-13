@@ -82,9 +82,9 @@ let private setup (theme : ITheme) (param : SuperClipColorScheme) =
 type ThemeHook (logging : ILogging) =
     inherit EmptyContext(logging, "ThemeHook")
     interface IGuiAppHook with
-        member __.Init (app : IGuiApp) =
-            app.AddTheme LightTheme lightParam setup
+        member __.OnInit (app : IGuiApp) =
             app.AddTheme DarkTheme darkParam setup
+            app.AddTheme LightTheme lightParam setup
 
 let isDark () : bool =
     IGuiApp.Instance.Theme.Key = DarkTheme

@@ -46,7 +46,7 @@ type MainActivity () as self =
 type AndroidThemeHook (logging : ILogging) =
     inherit EmptyContext(logging, "AndroidThemeHook")
     interface IGuiAppHook with
-        member this.Init (app : IGuiApp) =
+        member this.OnInit (app : IGuiApp) =
             app.OnWillSwitchTheme.AddWatcher this "OnWillSwitchTheme" (fun theme ->
                 if theme.Key = Theme.DarkTheme then
                     MainActivity.Instance.SwitchDarkTheme ()
