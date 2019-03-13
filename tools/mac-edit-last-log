@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+. ./_mac-set-env
+
+cd $PROJ
+
+cd bin/Debug/$APP.app/Contents/
+
+cd log
+cd `ls -1Ft | head -1`
+$EDITOR *.log

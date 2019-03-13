@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+. ./_mac-set-env
+
+cd $PROJ
+
+open bin/Debug/$APP.app/Contents/

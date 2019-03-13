@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+. ./_mac-set-env
+
+cd $PROJ
+
+msbuild /t:restore && \
+msbuild && \
+    ../../tools/mac-run

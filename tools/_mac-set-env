@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+PROJ='../src/SuperClip.Mac'
+APP='SuperClip'
+
