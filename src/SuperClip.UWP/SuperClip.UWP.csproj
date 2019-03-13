@@ -175,6 +175,7 @@
     <PackageReference Include="Dap.UWP">
       <Version>0.6.0</Version>
     </PackageReference>
+    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
   </ItemGroup>
   <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.reference" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
