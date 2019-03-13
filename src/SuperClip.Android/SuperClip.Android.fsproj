@@ -90,8 +90,7 @@
       <HintPath>lib\Xamarin.Android.FSharp.ResourceProvider.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Import Project="..\SuperClip.Gui\SuperClip.Gui.props" />
-  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.props" />
+  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.reference" />
   <ItemGroup>
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -103,13 +102,5 @@
     -->
   </ItemGroup>
   <Import Project="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.Android\Dap.Fabulous.Android.reference" />
-  <ItemGroup>
-    <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
-    <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
-    <!--
-    <ProjectReference Include="..\SuperClip.Gui\SuperClip.Gui.fsproj" />
-    <ProjectReference Include="..\SuperClip.Fabulous\SuperClip.Fabulous.fsproj" />
-    -->
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets" />
 </Project>
