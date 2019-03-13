@@ -2,12 +2,12 @@
 module SuperClip.Fabulous.Page.Auth
 
 open Xamarin.Forms
-open Fabulous.Core
 open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Fabulous.Builder
 
 open SuperClip.Core
 open SuperClip.App
@@ -31,79 +31,79 @@ let doAuth (runner : View) (model : Model) : unit =
 
 let render (runner : View) (model : Model) : Widget =
     let setAuth = runner.React << DoSetAuth
-    let view = View.ScrollingContentPage (
-        "Auth",
-        [
-            View.Label (
-                text = "User Name:"
-            )
-            View.Entry (
-                text = model.Auth.ChannelName,
-                horizontalOptions = LayoutOptions.FillAndExpand,
-                textChanged = (fun args ->
-                    setAuth {model.Auth with ChannelName = args.NewTextValue}
-                ),
-                completed = (fun text ->
-                    setAuth {model.Auth with ChannelName = text}
+    let view =
+        v_box {
+            children [
+                View.Label (
+                    text = "User Name:"
                 )
-            )
-            View.Label (
-                text = "Device Name:"
-            )
-            View.Entry (
-                text = model.Auth.DeviceName,
-                horizontalOptions = LayoutOptions.FillAndExpand,
-                textChanged = (fun args ->
-                    setAuth {model.Auth with DeviceName = args.NewTextValue}
-                ),
-                completed = (fun text ->
-                    setAuth {model.Auth with ChannelName = text}
+                View.Entry (
+                    text = model.Auth.ChannelName,
+                    horizontalOptions = LayoutOptions.FillAndExpand,
+                    textChanged = (fun args ->
+                        setAuth {model.Auth with ChannelName = args.NewTextValue}
+                    ),
+                    completed = (fun text ->
+                        setAuth {model.Auth with ChannelName = text}
+                    )
                 )
-            )
-            View.Label (
-                text = "Password:"
-            )
-            View.Entry (
-                text = "",
-                isPassword = true,
-                horizontalOptions = LayoutOptions.FillAndExpand,
-                textChanged = (fun args ->
-                    setAuth {model.Auth with Password = args.NewTextValue}
-                ),
-                completed = (fun text ->
-                    setAuth {model.Auth with Password = text}
+                View.Label (
+                    text = "Device Name:"
                 )
-            )
-            View.Label (
-                text = ""
-            )
-            View.FlexLayout (
-                direction=FlexDirection.Row,
-                children = [
-                    View.Button (
-                        text = "Cancel",
-                        horizontalOptions = LayoutOptions.Center,
-                        verticalOptions = LayoutOptions.Center,
-                        command = (fun () ->
-                            runner.React <| DoSetPage NoPage
+                View.Entry (
+                    text = model.Auth.DeviceName,
+                    horizontalOptions = LayoutOptions.FillAndExpand,
+                    textChanged = (fun args ->
+                        setAuth {model.Auth with DeviceName = args.NewTextValue}
+                    ),
+                    completed = (fun text ->
+                        setAuth {model.Auth with ChannelName = text}
+                    )
+                )
+                View.Label (
+                    text = "Password:"
+                )
+                View.Entry (
+                    text = "",
+                    isPassword = true,
+                    horizontalOptions = LayoutOptions.FillAndExpand,
+                    textChanged = (fun args ->
+                        setAuth {model.Auth with Password = args.NewTextValue}
+                    ),
+                    completed = (fun text ->
+                        setAuth {model.Auth with Password = text}
+                    )
+                )
+                View.Label (
+                    text = ""
+                )
+                View.FlexLayout (
+                    direction=FlexDirection.Row,
+                    children = [
+                        View.Button (
+                            text = "Cancel",
+                            horizontalOptions = LayoutOptions.Center,
+                            verticalOptions = LayoutOptions.Center,
+                            command = (fun () ->
+                                runner.React <| DoSetPage NoPage
+                            )
                         )
-                    )
-                    View.Label (
-                        text = "    "
-                    )
-                    View.Button (
-                        text = "Login",
-                        horizontalOptions = LayoutOptions.Center,
-                        verticalOptions = LayoutOptions.Center,
-                        command = (fun () ->
-                            doAuth runner model
-                            //TODO: Show mask to block user interaction
+                        View.Label (
+                            text = "    "
                         )
-                    )
-                ]
-            )
-        ]
-    )
+                        View.Button (
+                            text = "Login",
+                            horizontalOptions = LayoutOptions.Center,
+                            verticalOptions = LayoutOptions.Center,
+                            command = (fun () ->
+                                doAuth runner model
+                                //TODO: Show mask to block user interaction
+                            )
+                        )
+                    ]
+                )
+            ]
+        }|> scrollPage "Auth"
     view.HasNavigationBar(true).HasBackButton(false) |> ignore
     view.ToolbarItems ([
         yield toolbarItem "Help" (fun () ->

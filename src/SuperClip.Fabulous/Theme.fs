@@ -20,19 +20,16 @@ let LightTheme = "Light"
 let DarkTheme = "Dark"
 
 [<Literal>]
-let TextCell_Current = "text_cell_current"
+let TextCell_Current = "TextCell_Current"
 
 [<Literal>]
-let Label_Dimmed = "label_dimmed"
+let TextActionCell_Linked = "TextActionCell_Linked"
 
 [<Literal>]
-let Label_Linked = "label_linked"
+let TextActionCell_Linking = "TextActionCell_Linking"
 
 [<Literal>]
-let Label_Linking = "label_linking"
-
-[<Literal>]
-let Label_NoLink = "label_no_link"
+let TextActionCell_NoLink = "TextActionCell_NoLink"
 
 [<Literal>]
 let Button_Big = "button_big"
@@ -66,21 +63,21 @@ let private setup (theme : ITheme) (param : SuperClipColorScheme) =
     theme.AddDecorator TextCell_Current
         (new TextCell.Decorator
             (textColor = param.Current, ?detailColor = param.Fabulous.Label.Dimmed))
-    theme.AddDecorator Label_Dimmed
-        (new Label.Decorator
-            (?textColor = param.Fabulous.Label.Dimmed))
-    theme.AddDecorator Label_Linked
-        (new Label.Decorator
+    theme.AddDecorator TextActionCell_Linked
+        (new TextActionCell.Decorator
             (textColor = param.Linked))
-    theme.AddDecorator Label_Linking
-        (new Label.Decorator
+    theme.AddDecorator TextActionCell_Linking
+        (new TextActionCell.Decorator
             (textColor = param.Linking))
-    theme.AddDecorator Label_NoLink
-        (new Label.Decorator
+    theme.AddDecorator TextActionCell_NoLink
+        (new TextActionCell.Decorator
             (textColor = param.NoLink))
     theme.AddDecorator Button_Big
         (new Button.Decorator
-            (?backgroundColor = param.Fabulous.Panel.Surface))
+            (?backgroundColor = param.Fabulous.Panel.Surface, update = (fun button ->
+                button.HorizontalOptions <- LayoutOptions.FillAndExpand
+                button.VerticalOptions <- LayoutOptions.Center
+            )))
 
 type ThemeHook (logging : ILogging) =
     inherit EmptyContext(logging, "ThemeHook")
@@ -97,9 +94,6 @@ let setDark (dark : bool) =
         IGuiApp.Instance.SwitchTheme DarkTheme
     else
         IGuiApp.Instance.SwitchTheme LightTheme
-
-let decorate<'widget when 'widget :> Element> (widget : 'widget) =
-    IGuiApp.Instance.Theme.DecorateFabulous<'widget> widget
 
 let getValue (get : SuperClipColorScheme -> 'v) =
     IGuiApp.Instance.Theme.Param

@@ -3,13 +3,10 @@ module SuperClip.Fabulous.View.Logic
 
 open FSharp.Control.Tasks.V2
 
-open Elmish
-open Fabulous.Core
-open Fabulous.DynamicViews
-
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Fabulous.Builder
 
 open SuperClip.Core
 open SuperClip.App
@@ -86,7 +83,7 @@ let private subscribe : Subscribe<View, Model, Msg> =
             runner.React DoRepaint
         )
         runner.Pack.Session.Actor.OnEvent.AddWatcher runner "onSessionEvt" <| onSessionEvt runner
-        Cmd.batch [
+        batchCmd [
             subscribeBus runner model HistoryEvt runner.Pack.History.Actor.OnEvent
         ]
 
@@ -95,23 +92,8 @@ let private render : Render =
         if model.Resetting then
             Page.Resetting.render runner model
         else
-            View.NavigationPage (
-                popped = (fun args ->
-                    //TODO: Remove hard-coded title check
-                    match args.Page.Title with
-                    | "Auth" ->
-                        runner.React <| DoSetPage NoPage
-                    | "Settings" ->
-                        runner.React <| DoSetPage NoPage
-                    | "Devices" ->
-                        runner.React <| DoSetPage NoPage
-                    | "Help" ->
-                        runner.React <| DoSetHelp None
-                    | "Error" ->
-                        runner.React <| DoSetInfo None
-                    | _ -> ()
-                ),
-                pages = [
+            navigation_page {
+                pages [
                     //yield Page.About.render runner model
                     yield Page.Home.render runner model
                     match model.Page with
@@ -127,9 +109,23 @@ let private render : Render =
                         yield Page.Help.render runner model.Help.Value
                     if model.Info.IsSome then
                         yield Page.Info.render runner model.Info.Value
-                ],
-                created = Theme.decorate
-            )
+                ]
+                popped (fun args ->
+                    //TODO: Remove hard-coded title check
+                    match args.Page.Title with
+                    | "Auth" ->
+                        runner.React <| DoSetPage NoPage
+                    | "Settings" ->
+                        runner.React <| DoSetPage NoPage
+                    | "Devices" ->
+                        runner.React <| DoSetPage NoPage
+                    | "Help" ->
+                        runner.React <| DoSetHelp None
+                    | "Error" ->
+                        runner.React <| DoSetInfo None
+                    | _ -> ()
+                )
+            }
 
 let newArgs () =
     Args.Create init update subscribe render

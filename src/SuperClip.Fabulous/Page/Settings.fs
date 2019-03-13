@@ -2,12 +2,12 @@
 module SuperClip.Fabulous.Page.Settings
 
 open Xamarin.Forms
-open Fabulous.Core
 open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Fabulous.Builder
 
 open SuperClip.Core
 open SuperClip.App
@@ -18,30 +18,25 @@ module HistoryTypes = SuperClip.Core.History.Types
 module SessionTypes = SuperClip.App.Session.Types
 
 let render (runner : View) (model : Model) =
-    let view = View.NonScrollingContentPage (
-        "Settings",
-        [
-            View.TableView (
-                intent = TableIntent.Menu,
-                items = [
-                    ("Display", [
-                        View.SwitchCell (
-                            text = "Dark Theme",
-                            on = Theme.isDark (),
-                            onChanged = (fun args ->
-                                Theme.setDark args.Value
-                                runner.React <| DoSetResetting true
-                            ),
-                            created = Theme.decorate
-                        )
-                    ])
-                ],
-                created = Theme.decorate
-            )
+    table_view {
+        intent TableIntent.Menu
+        items [
+            ("Display", [
+                switch_cell {
+                    text "Dark Theme"
+                    on (Theme.isDark ())
+                    onChanged (fun args ->
+                        Theme.setDark args.Value
+                        runner.React <| DoSetResetting true
+                    )
+                }
+            ])
         ]
+    }|> contentPage "Settings"
+    |> (fun view ->
+        view.ToolbarItems([
+            yield toolbarItem "Help" (fun () ->
+                runner.React <| DoSetHelp ^<| Some HelpSettings
+            )
+        ])
     )
-    view.ToolbarItems([
-        yield toolbarItem "Help" (fun () ->
-            runner.React <| DoSetHelp ^<| Some HelpSettings
-        )
-    ])

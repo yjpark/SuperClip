@@ -2,12 +2,12 @@
 module SuperClip.Fabulous.Widget.Item
 
 open Xamarin.Forms
-open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
 open Dap.Fabulous
+open Dap.Fabulous.Builder
 
 open SuperClip.Core
 open SuperClip.App
@@ -47,22 +47,21 @@ let private addMenuItem (item : Item) (text : string) (command : Item -> unit) (
 let render (runner : View) (current : Item) (pinned : bool) (item : Item) =
     let isCurrent =
         current = item || current.Hash = item.Hash
-    View.TextCell(
-        text = getText item,
-        detail = getSource item,
-        command = (fun () ->
+    text_cell {
+        classId (if isCurrent then Theme.TextCell_Current else "")
+        text (getText item)
+        detail (getSource item)
+        command (fun () ->
             runner.React <| SetPrimary item.Content
-        ),
-        classId = (if isCurrent then Theme.TextCell_Current else ""),
-        created = (fun v ->
-            Theme.decorate v
+        )
+        callback (fun cell ->
             if pinned then
-                v
+                cell
                 |> addMenuItem item "Unpin" (fun item' ->
                     runner.Pack.History.Post <| HistoryTypes.DoUnpin (item', None)
                 )
             else
-                v
+                cell
                 |> addMenuItem item "Pin" (fun item' ->
                     runner.Pack.History.Post <| HistoryTypes.DoPin (item', None)
                 )
@@ -71,4 +70,4 @@ let render (runner : View) (current : Item) (pinned : bool) (item : Item) =
                 )
             |> ignore
         )
-    )
+    }
