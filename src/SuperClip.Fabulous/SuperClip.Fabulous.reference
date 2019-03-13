@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <Import Project="..\SuperClip.Gui\SuperClip.Gui.props" />
-  <Import Project="..\SuperClip.Fabulous\Dap.Fabulous.props" />
+  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.props" />
   <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
     <ProjectReference Include="..\SuperClip.App\SuperClip.App.fsproj" />
