@@ -83,8 +83,9 @@ type ThemeHook (logging : ILogging) =
     inherit EmptyContext(logging, "ThemeHook")
     interface IGuiAppHook with
         member __.OnInit (app : IGuiApp) =
-            app.AddTheme DarkTheme darkParam setup
             app.AddTheme LightTheme lightParam setup
+            app.AddTheme DarkTheme darkParam setup
+            //TODO Switch to Dark if needed
 
 let isDark () : bool =
     IGuiApp.Instance.Theme.Key = DarkTheme
