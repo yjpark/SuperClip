@@ -51,6 +51,7 @@
             "log" : true,
             ".vs": true,
             ".vscode": true,
+            "cache": true,
             "node_modules": true
 		},
 		"cSpell.language": "en",
