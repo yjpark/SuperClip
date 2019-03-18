@@ -69,7 +69,7 @@ let PrimaryClipboardArgs =
 
 let HistoryArgs =
     combo {
-        var (M.int ("max_size", 400))
+        var (M.int ("pinned_size", 100))
         var (M.int ("recent_size", 20))
     }
 

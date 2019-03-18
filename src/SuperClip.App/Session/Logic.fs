@@ -78,7 +78,6 @@ let private onStubEvt (evt : Cloud.Evt) : ActorOperate =
                 runner.AddTask ignoreOnFailed <| doAddToChannelAsync peer
             | Cloud.OnPeerLeft peer ->
                 runner.AddTask ignoreOnFailed <| doRemoveFromChannelAsync peer
-            | _ -> ()
         (model, cmd)
 
 let private onStubRes (res : Cloud.ClientRes) : ActorOperate =

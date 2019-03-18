@@ -364,34 +364,34 @@ type PrimaryClipboardArgs = {
  *     IsJson
  *)
 type HistoryArgs = {
-    MaxSize : (* HistoryArgs *) int
+    PinnedSize : (* HistoryArgs *) int
     RecentSize : (* HistoryArgs *) int
 } with
     static member Create
         (
-            ?maxSize : (* HistoryArgs *) int,
+            ?pinnedSize : (* HistoryArgs *) int,
             ?recentSize : (* HistoryArgs *) int
         ) : HistoryArgs =
         {
-            MaxSize = (* HistoryArgs *) maxSize
-                |> Option.defaultWith (fun () -> 400)
+            PinnedSize = (* HistoryArgs *) pinnedSize
+                |> Option.defaultWith (fun () -> 100)
             RecentSize = (* HistoryArgs *) recentSize
                 |> Option.defaultWith (fun () -> 20)
         }
-    static member SetMaxSize ((* HistoryArgs *) maxSize : int) (this : HistoryArgs) =
-        {this with MaxSize = maxSize}
+    static member SetPinnedSize ((* HistoryArgs *) pinnedSize : int) (this : HistoryArgs) =
+        {this with PinnedSize = pinnedSize}
     static member SetRecentSize ((* HistoryArgs *) recentSize : int) (this : HistoryArgs) =
         {this with RecentSize = recentSize}
     static member JsonEncoder : JsonEncoder<HistoryArgs> =
         fun (this : HistoryArgs) ->
             E.object [
-                "max_size", E.int (* HistoryArgs *) this.MaxSize
+                "pinned_size", E.int (* HistoryArgs *) this.PinnedSize
                 "recent_size", E.int (* HistoryArgs *) this.RecentSize
             ]
     static member JsonDecoder : JsonDecoder<HistoryArgs> =
         D.object (fun get ->
             {
-                MaxSize = get.Required.Field (* HistoryArgs *) "max_size" D.int
+                PinnedSize = get.Required.Field (* HistoryArgs *) "pinned_size" D.int
                 RecentSize = get.Required.Field (* HistoryArgs *) "recent_size" D.int
             }
         )
@@ -400,8 +400,8 @@ type HistoryArgs = {
     interface IJson with
         member this.ToJson () = HistoryArgs.JsonEncoder this
     interface IObj
-    member this.WithMaxSize ((* HistoryArgs *) maxSize : int) =
-        this |> HistoryArgs.SetMaxSize maxSize
+    member this.WithPinnedSize ((* HistoryArgs *) pinnedSize : int) =
+        this |> HistoryArgs.SetPinnedSize pinnedSize
     member this.WithRecentSize ((* HistoryArgs *) recentSize : int) =
         this |> HistoryArgs.SetRecentSize recentSize
 

@@ -49,13 +49,39 @@ let private doAdd req ((item, callback) : Item * Callback<unit>) : ActorOperate 
             |-|> updateModel (fun m -> {m with RecentItems = recentItems})
             |=|> addSubCmd Evt OnHistoryChanged
 
+let private doMerge req ((data, callback) : Model * Callback<unit>) : ActorOperate =
+    fun runner (model, cmd) ->
+        replyAfter runner callback <| ack req ()
+        let pinnedItems =
+            data.PinnedItems
+            |> List.filter (fun item ->
+                not (hasItem item model.PinnedItems)
+            )
+        let pinnedItems =
+            model.PinnedItems @ pinnedItems
+            |> List.truncate runner.Actor.Args.PinnedSize
+        let recentItems =
+            data.RecentItems
+            |> List.filter (fun item ->
+                not (hasItem item model.RecentItems)
+            )
+        let recentItems =
+            model.RecentItems @ recentItems
+            |> List.truncate runner.Actor.Args.RecentSize
+        (runner, model, cmd)
+        |-|> updateModel (fun m ->
+            {m with PinnedItems = pinnedItems ; RecentItems = recentItems}
+        )|=|> addSubCmd Evt OnHistoryChanged
+
 let private doPin req ((item, callback) : Item * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         if item.IsEmpty then
             (model, cmd)
         else
             replyAfter runner callback <| ack req ()
-            let pinnedItems = withItem item model.PinnedItems
+            let pinnedItems =
+                withItem item model.PinnedItems
+                |> List.truncate runner.Actor.Args.PinnedSize
             let recentItems = withoutItem item model.RecentItems
             (runner, model, cmd)
             |-|> updateModel (fun m -> {m with PinnedItems = pinnedItems ; RecentItems = recentItems})
@@ -95,6 +121,7 @@ let private update : Update<Agent, Model, Msg> =
         match msg with
         | Req req ->
             match req with
+            | DoMerge (a, b) -> doMerge req (a, b)
             | DoPin (a, b) -> doPin req (a, b)
             | DoUnpin (a, b) -> doUnpin req (a, b)
             | DoAdd (a, b) -> doAdd req (a, b)

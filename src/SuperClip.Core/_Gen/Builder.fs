@@ -26,9 +26,9 @@ let primary_clipboard_args = new PrimaryClipboardArgsBuilder ()
 type HistoryArgsBuilder () =
     inherit ObjBuilder<HistoryArgs> ()
     override __.Zero () = HistoryArgs.Create ()
-    [<CustomOperation("max_size")>]
-    member __.MaxSize (target : HistoryArgs, (* HistoryArgs *) maxSize : int) =
-        target.WithMaxSize maxSize
+    [<CustomOperation("pinned_size")>]
+    member __.PinnedSize (target : HistoryArgs, (* HistoryArgs *) pinnedSize : int) =
+        target.WithPinnedSize pinnedSize
     [<CustomOperation("recent_size")>]
     member __.RecentSize (target : HistoryArgs, (* HistoryArgs *) recentSize : int) =
         target.WithRecentSize recentSize

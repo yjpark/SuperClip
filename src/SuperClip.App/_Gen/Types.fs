@@ -98,6 +98,7 @@ type Credential = {
 type UserProps (owner : IOwner, key : Key) =
     inherit WrapProperties<UserProps, IComboProperty> ()
     let target' = Properties.combo (owner, key)
+    let historyChangedCount = target'.AddVar<(* UserProps *) int> (E.int, D.int, "history_changed_count", 0, None)
     let credential = target'.AddVar<(* UserProps *) Credential option> ((E.option Credential.JsonEncoder), (D.option Credential.JsonDecoder), "credential", None, None)
     do (
         base.Setup (target')
@@ -109,6 +110,7 @@ type UserProps (owner : IOwner, key : Key) =
     override this.Self = this
     override __.Spawn (o, k) = UserProps.Create (o, k)
     override __.SyncTo t = target'.SyncTo t.Target
+    member __.HistoryChangedCount (* UserProps *) : IVarProperty<int> = historyChangedCount
     member __.Credential (* UserProps *) : IVarProperty<Credential option> = credential
 
 (*

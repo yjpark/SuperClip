@@ -28,6 +28,7 @@ let Credential =
 
 let UserProps =
     combo {
+        var (M.int ("history_changed_count"))
         option (M.custom (<@ Credential @>, "credential"))
     }
 

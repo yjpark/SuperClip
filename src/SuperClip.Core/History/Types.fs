@@ -1,5 +1,7 @@
 module SuperClip.Core.History.Types
 
+open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open SuperClip.Core
 
@@ -8,9 +10,29 @@ type Args = HistoryArgs
 and Model = {
     PinnedItems : Item list
     RecentItems : Item list
-}
+} with
+    static member JsonEncoder : JsonEncoder<Model> =
+        fun (this : Model) ->
+            E.object [
+                "pinned_items", (E.list Item.JsonEncoder) this.PinnedItems
+                "recent_items", (E.list Item.JsonEncoder) this.RecentItems
+            ]
+    static member JsonDecoder : JsonDecoder<Model> =
+        D.object (fun get ->
+            {
+                PinnedItems = get.Optional.Field "pinned_items" (D.list Item.JsonDecoder)
+                    |> Option.defaultValue []
+                RecentItems = get.Optional.Field "recent_items" (D.list Item.JsonDecoder)
+                    |> Option.defaultValue []
+            }
+        )
+    static member JsonSpec =
+        FieldSpec.Create<Model> (Model.JsonEncoder, Model.JsonDecoder)
+    interface IJson with
+        member this.ToJson () = Model.JsonEncoder this
 
 and Req =
+    | DoMerge of Model * Callback<unit>
     | DoPin of Item * Callback<unit>
     | DoUnpin of Item * Callback<unit>
     | DoAdd of Item * Callback<unit>
