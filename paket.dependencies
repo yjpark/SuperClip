@@ -29,9 +29,9 @@ nuget Dap.Remote.Web 0.6.2
 # Client
 nuget Dap.Remote.FSharpData
 
-nuget Dap.Skia 0.6.1
-nuget Dap.Gui 0.6.5
-nuget Dap.Fabulous 0.6.5
+nuget Dap.Skia 0.6.2
+nuget Dap.Gui 0.6.6
+nuget Dap.Fabulous 0.6.6
 nuget Dap.Fabulous.Ooui
 
 # TODO

@@ -21,6 +21,7 @@ type LayoutOptions = Xamarin.Forms.LayoutOptions
 
 let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
+        ensureIcons ()
         ({
             Resetting = false
             Page = NoPage

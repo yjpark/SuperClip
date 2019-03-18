@@ -1,7 +1,7 @@
 [<AutoOpen>]
 module SuperClip.Fabulous.Util
 
-open Xamarin.Forms
+open Xamarin.Essentials
 open Fabulous.DynamicViews
 
 open Dap.Platform
@@ -21,9 +21,34 @@ let scrollPage (title' : string) (content' : ViewElement) =
         content content'
     }|> contentPage title'
 
-let toolbarItem (text : string) (command : unit -> unit) =
-    View.ToolbarItem (
-        text = text,
-        //textColor = Theme.getValue (fun t -> t.Fabulous.Colors.Primary),
-        command = command
-    )
+let useToolbarItemIcon () =
+    //iOS has align issue
+    //Android generated empty images
+    DeviceInfo.Platform = DevicePlatform.UWP
+    // || DeviceInfo.Platform = DevicePlatform.Android
+    // || DeviceInfo.Platform = DevicePlatform.iOS
+
+let alwaysRefreshIcons = true //For testing
+
+let ensureIcons () =
+    if useToolbarItemIcon () then
+        if alwaysRefreshIcons then
+            Theme.lightParam.Icons.RefreshAll ()
+            Theme.darkParam.Icons.RefreshAll ()
+        else
+            Theme.lightParam.Icons.EnsureAll ()
+            Theme.darkParam.Icons.EnsureAll ()
+
+let toolbarItem (text' : string) (iconGlyph : string) (command' : unit -> unit) =
+    if useToolbarItemIcon () then
+        let icon' = IGuiApp.Instance.Theme.Param.Icons.GetCachedPathIfCached iconGlyph
+        toolbar_item {
+            text text'
+            icon icon'
+            command command'
+        }
+    else
+        toolbar_item {
+            text text'
+            command command'
+        }

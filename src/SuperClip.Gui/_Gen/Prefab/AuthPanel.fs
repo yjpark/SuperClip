@@ -13,6 +13,7 @@ let AuthPanelKind = "AuthPanel"
 let AuthPanelJson = parseJson """
 {
     "prefab": "auth_panel",
+    "theme": null,
     "styles": [
         "style1",
         "style2"
@@ -21,11 +22,13 @@ let AuthPanelJson = parseJson """
     "children": {
         "title": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "text": "Please Provide Authentication Details"
         },
         "name": {
             "prefab": "input_field",
+            "theme": null,
             "styles": [
                 "style3"
             ],
@@ -33,11 +36,13 @@ let AuthPanelJson = parseJson """
             "children": {
                 "label": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "text": "User Name"
                 },
                 "value": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "disabled": false,
                     "text": ""
@@ -46,6 +51,7 @@ let AuthPanelJson = parseJson """
         },
         "device": {
             "prefab": "input_field",
+            "theme": null,
             "styles": [
                 "style3"
             ],
@@ -53,11 +59,13 @@ let AuthPanelJson = parseJson """
             "children": {
                 "label": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "text": "Device Name"
                 },
                 "value": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "disabled": false,
                     "text": ""
@@ -66,6 +74,7 @@ let AuthPanelJson = parseJson """
         },
         "password": {
             "prefab": "input_field",
+            "theme": null,
             "styles": [
                 "style3"
             ],
@@ -73,11 +82,13 @@ let AuthPanelJson = parseJson """
             "children": {
                 "label": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "text": "Password"
                 },
                 "value": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "disabled": false,
                     "text": ""
@@ -86,12 +97,14 @@ let AuthPanelJson = parseJson """
         },
         "cancel": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "disabled": false,
             "text": "Cancel"
         },
         "auth": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "disabled": false,
             "text": "Auth"

@@ -13,22 +13,26 @@ let ClipKind = "Clip"
 let ClipJson = parseJson """
 {
     "prefab": "clip",
+    "theme": null,
     "styles": [],
     "container": "h_box",
     "children": {
         "content": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "text": "..."
         },
         "delete": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "disabled": false,
             "text": "Delete"
         },
         "copy": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "disabled": false,
             "text": "Copy"

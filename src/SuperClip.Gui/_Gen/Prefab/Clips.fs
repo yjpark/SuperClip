@@ -13,6 +13,7 @@ let ClipsKind = "Clips"
 let ClipsJson = parseJson """
 {
     "prefab": "clips",
+    "theme": null,
     "styles": [],
     "container": "table",
     "item_prefab": "clip",

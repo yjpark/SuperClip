@@ -13,21 +13,25 @@ let LinkStatusKind = "LinkStatus"
 let LinkStatusJson = parseJson """
 {
     "prefab": "link_status",
+    "theme": null,
     "styles": [],
     "container": "h_box",
     "children": {
         "link": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "text": "..."
         },
         "session": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "text": "..."
         },
         "action": {
             "prefab": "",
+            "theme": null,
             "styles": [],
             "disabled": false,
             "text": "Action"

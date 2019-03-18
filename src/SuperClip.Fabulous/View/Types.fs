@@ -4,6 +4,7 @@ open Xamarin.Forms
 open Fabulous.DynamicViews
 
 open Dap.Platform
+open Dap.Gui
 open Dap.Fabulous
 
 module ViewTypes = Dap.Fabulous.View.Types

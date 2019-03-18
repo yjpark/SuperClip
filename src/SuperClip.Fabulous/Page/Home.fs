@@ -42,10 +42,10 @@ let render (runner : View) (model : Model) =
     }|> scrollPage "Super Clip"
     |> (fun view ->
         view.ToolbarItems ([
-            yield toolbarItem "Settings" (fun () ->
+            yield toolbarItem "Settings" Icons.Settings (fun () ->
                 runner.React <| DoSetPage SettingsPage
             )
-            yield toolbarItem "Help" (fun () ->
+            yield toolbarItem "Help" Icons.Help (fun () ->
                 runner.React <| DoSetHelp ^<| Some HelpHome
             )
         ])

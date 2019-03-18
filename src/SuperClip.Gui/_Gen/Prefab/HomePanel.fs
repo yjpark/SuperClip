@@ -13,26 +13,31 @@ let HomePanelKind = "HomePanel"
 let HomePanelJson = parseJson """
 {
     "prefab": "home_panel",
+    "theme": null,
     "styles": [],
     "container": "v_box",
     "children": {
         "link_status": {
             "prefab": "link_status",
+            "theme": null,
             "styles": [],
             "container": "h_box",
             "children": {
                 "link": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "text": "..."
                 },
                 "session": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "text": "..."
                 },
                 "action": {
                     "prefab": "",
+                    "theme": null,
                     "styles": [],
                     "disabled": false,
                     "text": "Action"
@@ -41,6 +46,7 @@ let HomePanelJson = parseJson """
         },
         "history": {
             "prefab": "clips",
+            "theme": null,
             "styles": [],
             "container": "table",
             "item_prefab": "clip"

@@ -50,7 +50,7 @@ let render (runner : View) (model : Model) =
     }|> contentPage "Devices"
     |> (fun view ->
         view.ToolbarItems([
-            yield toolbarItem "Help" (fun () ->
+            yield toolbarItem "Help" Icons.Help (fun () ->
                 runner.React <| DoSetHelp ^<| Some HelpDevices
             )
         ])

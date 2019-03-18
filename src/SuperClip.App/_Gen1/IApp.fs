@@ -34,6 +34,7 @@ type AppKinds () =
     static member Channel (* ICorePack *) = "Channel"
     static member CloudStub (* ICloudStubPack *) = "CloudStub"
     static member PacketClient (* ICloudStubPack *) = "PacketClient"
+    static member Environment (* IAppPack *) = "Environment"
     static member Preferences (* IAppPack *) = "Preferences"
     static member SecureStorage (* IAppPack *) = "SecureStorage"
     static member UserPref (* IClientPack *) = "UserPref"
@@ -46,6 +47,7 @@ type AppKeys () =
     static member PrimaryClipboard (* ICorePack *) = "Primary"
     static member LocalHistory (* ICorePack *) = "Local"
     static member CloudStub (* ICloudStubPack *) = ""
+    static member Environment (* IAppPack *) = ""
     static member Preferences (* IAppPack *) = ""
     static member SecureStorage (* IAppPack *) = ""
     static member UserPref (* IClientPack *) = ""
@@ -75,6 +77,7 @@ and AppArgs = {
     Channel : (* ICorePack *) ChannelTypes.Args
     CloudStub : (* ICloudStubPack *) Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>
     PacketClient : (* ICloudStubPack *) PacketClient.Args
+    Environment : (* IAppPack *) Context.Args<IEnvironment>
     Preferences : (* IAppPack *) Context.Args<IPreferences>
     SecureStorage : (* IAppPack *) Context.Args<ISecureStorage>
     UserPref : (* IClientPack *) Context.Args<IUserPref>
@@ -93,6 +96,7 @@ and AppArgs = {
             ?channel : (* ICorePack *) ChannelTypes.Args,
             ?cloudStub : (* ICloudStubPack *) Proxy.Args<Cloud.Req, Cloud.ClientRes, Cloud.Evt>,
             ?packetClient : (* ICloudStubPack *) PacketClient.Args,
+            ?environment : (* IAppPack *) Context.Args<IEnvironment>,
             ?preferences : (* IAppPack *) Context.Args<IPreferences>,
             ?secureStorage : (* IAppPack *) Context.Args<ISecureStorage>,
             ?userPref : (* IClientPack *) Context.Args<IUserPref>,
@@ -120,6 +124,8 @@ and AppArgs = {
                 |> Option.defaultWith (fun () -> (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true))
             PacketClient = (* ICloudStubPack *) packetClient
                 |> Option.defaultWith (fun () -> (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
+            Environment = (* IAppPack *) environment
+                |> Option.defaultWith (fun () -> Feature.addToAgent<IEnvironment>)
             Preferences = (* IAppPack *) preferences
                 |> Option.defaultWith (fun () -> Feature.addToAgent<IPreferences>)
             SecureStorage = (* IAppPack *) secureStorage
@@ -151,6 +157,8 @@ and AppArgs = {
         {this with CloudStub = cloudStub}
     static member SetPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) (this : AppArgs) =
         {this with PacketClient = packetClient}
+    static member SetEnvironment ((* IAppPack *) environment : Context.Args<IEnvironment>) (this : AppArgs) =
+        {this with Environment = environment}
     static member SetPreferences ((* IAppPack *) preferences : Context.Args<IPreferences>) (this : AppArgs) =
         {this with Preferences = preferences}
     static member SetSecureStorage ((* IAppPack *) secureStorage : Context.Args<ISecureStorage>) (this : AppArgs) =
@@ -190,6 +198,7 @@ and AppArgs = {
                     |> Option.defaultValue (ChannelTypes.Args.Create ())
                 CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
                 PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
+                Environment = (* (* IAppPack *)  *) Feature.addToAgent<IEnvironment>
                 Preferences = (* (* IAppPack *)  *) Feature.addToAgent<IPreferences>
                 SecureStorage = (* (* IAppPack *)  *) Feature.addToAgent<ISecureStorage>
                 UserPref = (* (* IClientPack *)  *) (fun (agent : IAgent) -> UserPref.Create agent.Env.Logging :> IUserPref)
@@ -222,6 +231,8 @@ and AppArgs = {
         this |> AppArgs.SetCloudStub cloudStub
     member this.WithPacketClient ((* ICloudStubPack *) packetClient : PacketClient.Args) =
         this |> AppArgs.SetPacketClient packetClient
+    member this.WithEnvironment ((* IAppPack *) environment : Context.Args<IEnvironment>) =
+        this |> AppArgs.SetEnvironment environment
     member this.WithPreferences ((* IAppPack *) preferences : Context.Args<IPreferences>) =
         this |> AppArgs.SetPreferences preferences
     member this.WithSecureStorage ((* IAppPack *) secureStorage : Context.Args<ISecureStorage>) =
@@ -252,6 +263,7 @@ and AppArgs = {
         member this.AsTickingPackArgs = this.AsTickingPackArgs
     member this.AsCloudStubPackArgs = this :> ICloudStubPackArgs
     interface IAppPackArgs with
+        member this.Environment (* IAppPack *) : Context.Args<IEnvironment> = this.Environment
         member this.Preferences (* IAppPack *) : Context.Args<IPreferences> = this.Preferences
         member this.SecureStorage (* IAppPack *) : Context.Args<ISecureStorage> = this.SecureStorage
     member this.AsAppPackArgs = this :> IAppPackArgs
@@ -305,6 +317,9 @@ type AppArgsBuilder () =
     [<CustomOperation("packet_client")>]
     member __.PacketClient (target : AppArgs, (* ICloudStubPack *) packetClient : PacketClient.Args) =
         target.WithPacketClient packetClient
+    [<CustomOperation("environment")>]
+    member __.Environment (target : AppArgs, (* IAppPack *) environment : Context.Args<IEnvironment>) =
+        target.WithEnvironment environment
     [<CustomOperation("preferences")>]
     member __.Preferences (target : AppArgs, (* IAppPack *) preferences : Context.Args<IPreferences>) =
         target.WithPreferences preferences

@@ -336,3 +336,5 @@ src/*/log
 src/*/doc
 bin
 obj
+
+src/SuperClip.Android/cache

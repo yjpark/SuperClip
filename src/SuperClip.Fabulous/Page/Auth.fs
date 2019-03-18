@@ -106,7 +106,7 @@ let render (runner : View) (model : Model) : Widget =
         }|> scrollPage "Auth"
     view.HasNavigationBar(true).HasBackButton(false) |> ignore
     view.ToolbarItems ([
-        yield toolbarItem "Help" (fun () ->
+        yield toolbarItem "Help" Icons.Help (fun () ->
             runner.React <| DoSetHelp ^<| Some HelpAuth
         )
     ])

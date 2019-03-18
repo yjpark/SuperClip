@@ -26,7 +26,7 @@ type Context (logging : ILogging) =
             Some <| new Fallback (logging)
     do (
         let owner = base.Owner
-        logInfo owner "SecureStorage" "hasEssentials" (Dap.Fabulous.Util.hasEssentials (), fallback)
+        logInfo owner "SecureStorage" "hasEssentials" (hasEssentials (), fallback)
         base.SetSupportOnChanged false
         base.GetAsync.SetupGuiHandler (fun () -> task {
             match fallback with

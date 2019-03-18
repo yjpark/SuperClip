@@ -2,12 +2,14 @@
 [<RequireQualifiedAccess>]
 module SuperClip.Fabulous.Theme
 
+open SkiaSharp
 open Xamarin.Forms
 open Fabulous.DynamicViews
 
 open Dap.Prelude
 open Dap.Context
 open Dap.Platform
+open Dap.Skia
 open Dap.Gui
 open Dap.Fabulous
 open Dap.Fabulous.Decorator
@@ -32,33 +34,45 @@ let TextActionCell_Linking = "TextActionCell_Linking"
 let TextActionCell_NoLink = "TextActionCell_NoLink"
 
 [<Literal>]
-let Button_Big = "button_big"
+let Button_Big = "Button_Big"
 
-type SuperClipColorScheme = {
+type Icons (folder : string, color : SKColor) =
+    inherit IoniconsCache (folder, [ Icons.Settings ; Icons.Help ], color, Icons.Size)
+    static member Size = 128
+    static member Settings = Ionicons.Icons.Settings
+    static member Help = Ionicons.Icons.Help
+
+type SuperClipThemeParam = {
     Fabulous : ColorScheme
+    Icons : Icons
     Current : Color
     Linked : Color
     Linking : Color
     NoLink : Color
 }
 
-let lightParam : SuperClipColorScheme = {
+type ITheme with
+    member this.Param = this.Param0 :?> SuperClipThemeParam
+
+let lightParam : SuperClipThemeParam = {
     Fabulous = Material.LightScheme
+    Icons = new Icons ("icons_light", SKColors.Black)
     Current = Material.Palettes.Blue.Normal600
     Linked = Material.Palettes.Green.Normal600
     Linking = Material.Palettes.Orange.Normal900
     NoLink = Material.Palettes.Red.Normal500
 }
 
-let darkParam : SuperClipColorScheme = {
+let darkParam : SuperClipThemeParam = {
     Fabulous = Material.DarkScheme
+    Icons = new Icons ("icons_dark", SKColors.White)
     Current = Material.Palettes.Blue.Normal500
     Linked = Material.Palettes.Green.Normal500
     Linking = Material.Palettes.Orange.Normal700
     NoLink = Material.Palettes.Red.Normal300
 }
 
-let private setup (theme : ITheme) (param : SuperClipColorScheme) =
+let private setup (theme : ITheme) (param : SuperClipThemeParam) =
     theme.AddFabulousColorScheme param.Fabulous
     theme.AddDecorator TextCell_Current
         (new TextCell.Decorator
@@ -95,8 +109,3 @@ let setDark (dark : bool) =
         IGuiApp.Instance.SwitchTheme DarkTheme
     else
         IGuiApp.Instance.SwitchTheme LightTheme
-
-let getValue (get : SuperClipColorScheme -> 'v) =
-    IGuiApp.Instance.Theme.Param
-    :?> SuperClipColorScheme
-    |> get

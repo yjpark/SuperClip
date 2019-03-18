@@ -6,6 +6,6 @@ cd `dirname $0`
 cd `dirname $0`
 cd $PROJ
 
-adb exec-out run-as $APP tar c cache/log > /tmp/$APP.cache.tar
+adb exec-out run-as $APP tar c cache > /tmp/$APP.cache.tar
 tar xf /tmp/$APP.cache.tar
 
