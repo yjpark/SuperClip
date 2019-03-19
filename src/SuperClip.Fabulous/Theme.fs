@@ -39,12 +39,13 @@ let Button_Big = "Button_Big"
 type Icons (folder : string, color : SKColor) =
     inherit IoniconsCache (folder, [ Icons.Settings ; Icons.Help ], color, Icons.Size)
     static member Size = 128
-    static member Settings = Ionicons.Icons.Settings
-    static member Help = Ionicons.Icons.Help
+    static member Settings = Ionicons.MD.Settings
+    static member Help = Ionicons.MD.Help
+
+let icons = new Icons ("icons", SKColors.Black)
 
 type SuperClipThemeParam = {
     Fabulous : ColorScheme
-    Icons : Icons
     Current : Color
     Linked : Color
     Linking : Color
@@ -56,7 +57,6 @@ type ITheme with
 
 let lightParam : SuperClipThemeParam = {
     Fabulous = Material.LightScheme
-    Icons = new Icons ("icons_light", SKColors.Black)
     Current = Material.Palettes.Blue.Normal600
     Linked = Material.Palettes.Green.Normal600
     Linking = Material.Palettes.Orange.Normal900
@@ -65,7 +65,6 @@ let lightParam : SuperClipThemeParam = {
 
 let darkParam : SuperClipThemeParam = {
     Fabulous = Material.DarkScheme
-    Icons = new Icons ("icons_dark", SKColors.White)
     Current = Material.Palettes.Blue.Normal500
     Linked = Material.Palettes.Green.Normal500
     Linking = Material.Palettes.Orange.Normal700

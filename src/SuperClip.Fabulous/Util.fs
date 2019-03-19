@@ -4,6 +4,8 @@ module SuperClip.Fabulous.Util
 open Xamarin.Essentials
 open Fabulous.DynamicViews
 
+open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Gui
 open Dap.Fabulous
@@ -25,23 +27,21 @@ let useToolbarItemIcon () =
     //iOS has align issue
     //Android generated empty images
     DeviceInfo.Platform = DevicePlatform.UWP
-    // || DeviceInfo.Platform = DevicePlatform.Android
-    // || DeviceInfo.Platform = DevicePlatform.iOS
+        || DeviceInfo.Platform = DevicePlatform.Android
+    //    || DeviceInfo.Platform = DevicePlatform.iOS
 
-let alwaysRefreshIcons = true //For testing
+let alwaysRefreshIcons = false //For testing
 
 let ensureIcons () =
     if useToolbarItemIcon () then
         if alwaysRefreshIcons then
-            Theme.lightParam.Icons.RefreshAll ()
-            Theme.darkParam.Icons.RefreshAll ()
+            Theme.icons.RefreshAll ()
         else
-            Theme.lightParam.Icons.EnsureAll ()
-            Theme.darkParam.Icons.EnsureAll ()
+            Theme.icons.EnsureAll ()
 
 let toolbarItem (text' : string) (iconGlyph : string) (command' : unit -> unit) =
     if useToolbarItemIcon () then
-        let icon' = IGuiApp.Instance.Theme.Param.Icons.GetCachedPathIfCached iconGlyph
+        let icon' = Theme.icons.GetCachedPathIfCached iconGlyph
         toolbar_item {
             text text'
             icon icon'
