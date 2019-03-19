@@ -32,6 +32,7 @@ nuget Dap.Remote.FSharpData
 
 nuget Dap.Skia 0.6.4
 nuget Dap.Gui 0.6.7
+nuget Dap.Fabulous.Controls 0.6.2
 nuget Dap.Fabulous 0.6.7
 nuget Dap.Fabulous.Ooui
 
