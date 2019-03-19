@@ -57,7 +57,7 @@ type ITheme with
 
 let lightParam : SuperClipThemeParam = {
     Fabulous = Material.LightScheme
-    Icons = new Icons ("icons", SKColors.Black)
+    Icons = new Icons ("icons_black", SKColors.Black)
     Current = Material.Palettes.Blue.Normal600
     Linked = Material.Palettes.Green.Normal600
     Linking = Material.Palettes.Orange.Normal900
@@ -66,7 +66,7 @@ let lightParam : SuperClipThemeParam = {
 
 let getDarkIcons () =
     if DeviceInfo.Platform = DevicePlatform.Android then
-        new Icons ("icons_dark", SKColors.White)
+        new Icons ("icons_white", SKColors.White)
     else
         lightParam.Icons
 
