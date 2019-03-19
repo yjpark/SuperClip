@@ -29,7 +29,7 @@ let doAuth (runner : View) (model : Model) : unit =
         }
     runner.Pack.Session.Post <| SessionTypes.DoSetAuth (auth, None)
 
-let render (runner : View) (model : Model) : Widget =
+let render' (runner : View) (model : Model) : Widget =
     let setAuth = runner.React << DoSetAuth
     let view =
         v_box {
@@ -57,7 +57,7 @@ let render (runner : View) (model : Model) : Widget =
                         setAuth {model.Auth with DeviceName = args.NewTextValue}
                     ),
                     completed = (fun text ->
-                        setAuth {model.Auth with ChannelName = text}
+                        setAuth {model.Auth with DeviceName = text}
                     )
                 )
                 View.Label (
@@ -111,3 +111,64 @@ let render (runner : View) (model : Model) : Widget =
         )
     ])
 
+let render (runner : View) (model : Model) : Widget =
+    let setAuth = runner.React << DoSetAuth
+    v_box {
+        children [
+            label {
+                text "Device"
+            }
+            entry {
+                text model.Auth.DeviceName
+                textChanged (fun args ->
+                    setAuth {model.Auth with DeviceName = args.NewTextValue}
+                )
+                completed (fun text ->
+                    setAuth {model.Auth with DeviceName = text}
+                )
+            }
+            label {
+                text "Channel"
+            }
+            entry {
+                text model.Auth.ChannelName
+                keyboard Keyboard.Email
+                textChanged (fun args ->
+                    setAuth {model.Auth with ChannelName = args.NewTextValue}
+                )
+                completed (fun text ->
+                    setAuth {model.Auth with ChannelName = text}
+                )
+            }
+            label {
+                text "Password"
+            }
+            entry {
+                text ""
+                isPassword true
+                textChanged (fun args ->
+                    setAuth {model.Auth with Password = args.NewTextValue}
+                )
+                completed (fun text ->
+                    setAuth {model.Auth with Password = text}
+                )
+            }
+            label {
+                text ""
+            }
+            button {
+                classId Theme.Button_Big
+                text "Login"
+                command (fun () ->
+                    doAuth runner model
+                )
+            }
+        ]
+    }|> scrollPage "Auth"
+    |> (fun view ->
+        view.ToolbarItems([
+            yield toolbarItem "Help" Icons.Help (fun () ->
+                runner.React <| DoSetHelp ^<| Some HelpAuth
+            )
+        ])
+    )

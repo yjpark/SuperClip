@@ -27,7 +27,7 @@ let renderDevice (device : Device) =
 let render (runner : View) (model : Model) =
     let session = runner.Pack.Session.Actor.State
     table_view {
-        intent TableIntent.Menu
+        intent TableIntent.Data
         items [
             yield ("This Device", [
                 match session.Auth with

@@ -19,7 +19,7 @@ module SessionTypes = SuperClip.App.Session.Types
 
 let render (runner : View) (model : Model) =
     table_view {
-        intent TableIntent.Menu
+        intent TableIntent.Settings
         items [
             ("Display", [
                 switch_cell {
