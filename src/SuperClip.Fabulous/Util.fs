@@ -23,25 +23,9 @@ let scrollPage (title' : string) (content' : ViewElement) =
         content content'
     }|> contentPage title'
 
-let useToolbarItemIcon () =
-    //iOS has align issue
-    //Android generated empty images
-    DeviceInfo.Platform = DevicePlatform.UWP
-        || DeviceInfo.Platform = DevicePlatform.Android
-    //    || DeviceInfo.Platform = DevicePlatform.iOS
-
-let alwaysRefreshIcons = false //For testing
-
-let ensureIcons () =
-    if useToolbarItemIcon () then
-        if alwaysRefreshIcons then
-            Theme.icons.RefreshAll ()
-        else
-            Theme.icons.EnsureAll ()
-
 let toolbarItem (text' : string) (iconGlyph : string) (command' : unit -> unit) =
-    if useToolbarItemIcon () then
-        let icon' = Theme.icons.GetCachedPathIfCached iconGlyph
+    if Theme.useToolbarItemIcon () then
+        let icon' = IGuiApp.Instance.Theme.Param.Icons.GetCachedPathIfCached iconGlyph
         toolbar_item {
             text text'
             icon icon'

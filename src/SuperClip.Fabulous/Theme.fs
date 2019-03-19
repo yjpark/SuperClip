@@ -3,6 +3,7 @@
 module SuperClip.Fabulous.Theme
 
 open SkiaSharp
+open Xamarin.Essentials
 open Xamarin.Forms
 open Fabulous.DynamicViews
 
@@ -42,10 +43,9 @@ type Icons (folder : string, color : SKColor) =
     static member Settings = Ionicons.MD.Settings
     static member Help = Ionicons.MD.Help
 
-let icons = new Icons ("icons", SKColors.Black)
-
 type SuperClipThemeParam = {
     Fabulous : ColorScheme
+    Icons : Icons
     Current : Color
     Linked : Color
     Linking : Color
@@ -57,14 +57,22 @@ type ITheme with
 
 let lightParam : SuperClipThemeParam = {
     Fabulous = Material.LightScheme
+    Icons = new Icons ("icons", SKColors.Black)
     Current = Material.Palettes.Blue.Normal600
     Linked = Material.Palettes.Green.Normal600
     Linking = Material.Palettes.Orange.Normal900
     NoLink = Material.Palettes.Red.Normal500
 }
 
+let getDarkIcons () =
+    if DeviceInfo.Platform = DevicePlatform.Android then
+        new Icons ("icons_dark", SKColors.White)
+    else
+        lightParam.Icons
+
 let darkParam : SuperClipThemeParam = {
     Fabulous = Material.DarkScheme
+    Icons = getDarkIcons ()
     Current = Material.Palettes.Blue.Normal500
     Linked = Material.Palettes.Green.Normal500
     Linking = Material.Palettes.Orange.Normal700
@@ -108,3 +116,24 @@ let setDark (dark : bool) =
         IGuiApp.Instance.SwitchTheme DarkTheme
     else
         IGuiApp.Instance.SwitchTheme LightTheme
+
+let useToolbarItemIcon () =
+    //iOS has align issue
+    //Android generated empty images
+    DeviceInfo.Platform = DevicePlatform.UWP
+        || DeviceInfo.Platform = DevicePlatform.Android
+    //    || DeviceInfo.Platform = DevicePlatform.iOS
+
+let alwaysRefreshIcons = false //For testing
+
+let ensureIcons () =
+    if useToolbarItemIcon () then
+        if alwaysRefreshIcons then
+            lightParam.Icons.RefreshAll ()
+            if darkParam.Icons <> lightParam.Icons then
+                darkParam.Icons.RefreshAll ()
+        else
+            lightParam.Icons.EnsureAll ()
+            if darkParam.Icons <> lightParam.Icons then
+                darkParam.Icons.EnsureAll ()
+
