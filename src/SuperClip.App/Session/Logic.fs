@@ -128,7 +128,7 @@ let private doResetAuth req (callback : Callback<unit>) : ActorOperate =
         runner.Pack.UserProps.Credential.SetValue None
         |> ignore
         (runner, model, cmd)
-        |-|> updateModel (fun m -> {m with Auth = None})
+        |-|> updateModel (fun m -> {m with Auth = None ; Channel = None})
         |=|> addSubCmd Evt ^<| OnAuthChanged None
 
 let private doSetSyncing req ((syncing, callback) : bool * Callback<unit>) : ActorOperate =

@@ -37,35 +37,15 @@ type InfoDialog = {
             DevInfo = devInfo
         }
 
-type AuthForm = {
-    ChannelName : string
-    DeviceName : string
-    Password : string
-} with
-    static member Create (credential : Credential option) =
-        credential
-        |> Option.map (fun c ->
-            {
-                ChannelName = c.Channel.Name
-                DeviceName = c.Device.Name
-                Password = ""
-            }
-        )|> Option.defaultValue
-            {
-                ChannelName = ""
-                DeviceName = getDeviceName ()
-                Password = ""
-            }
-
 type Args = ViewTypes.Args<ISessionPack, Model, Msg>
 
 and Model = {
     Resetting : bool
     Page : Page
-    Auth : AuthForm
     Info : InfoDialog option
     Help : HelpTopic option
     Ver : int
+    mutable Password : string
 }
 
 and Msg =
@@ -75,7 +55,6 @@ and Msg =
     | DoRepaint
     | DoDismissInfo
     | DoSetPage of Page
-    | DoSetAuth of AuthForm
     | DoSetInfo of InfoDialog option
     | DoSetHelp of HelpTopic option
 with interface IMsg

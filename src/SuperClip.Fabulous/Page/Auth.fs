@@ -18,126 +18,45 @@ module HistoryTypes = SuperClip.Core.History.Types
 module SessionTypes = SuperClip.App.Session.Types
 
 let doAuth (runner : View) (model : Model) : unit =
-    let password = model.Auth.Password
+    let password = model.Password
     let auth : Credential =
         {
-            Device = Device.New model.Auth.DeviceName
-            Channel = Channel.CreateWithName model.Auth.ChannelName
+            Device = Device.New (GuiPrefs.getAuthDevice runner)
+            Channel = Channel.CreateWithName (GuiPrefs.getAuthChannel runner)
             PassHash = calcPassHash password
             CryptoKey = calcCryptoKey password
             Token = ""
         }
     runner.Pack.Session.Post <| SessionTypes.DoSetAuth (auth, None)
-
-let render' (runner : View) (model : Model) : Widget =
-    let setAuth = runner.React << DoSetAuth
-    let view =
-        v_box {
-            children [
-                View.Label (
-                    text = "User Name:"
-                )
-                View.Entry (
-                    text = model.Auth.ChannelName,
-                    horizontalOptions = LayoutOptions.FillAndExpand,
-                    textChanged = (fun args ->
-                        setAuth {model.Auth with ChannelName = args.NewTextValue}
-                    ),
-                    completed = (fun text ->
-                        setAuth {model.Auth with ChannelName = text}
-                    )
-                )
-                View.Label (
-                    text = "Device Name:"
-                )
-                View.Entry (
-                    text = model.Auth.DeviceName,
-                    horizontalOptions = LayoutOptions.FillAndExpand,
-                    textChanged = (fun args ->
-                        setAuth {model.Auth with DeviceName = args.NewTextValue}
-                    ),
-                    completed = (fun text ->
-                        setAuth {model.Auth with DeviceName = text}
-                    )
-                )
-                View.Label (
-                    text = "Password:"
-                )
-                View.Entry (
-                    text = "",
-                    isPassword = true,
-                    horizontalOptions = LayoutOptions.FillAndExpand,
-                    textChanged = (fun args ->
-                        setAuth {model.Auth with Password = args.NewTextValue}
-                    ),
-                    completed = (fun text ->
-                        setAuth {model.Auth with Password = text}
-                    )
-                )
-                View.Label (
-                    text = ""
-                )
-                View.FlexLayout (
-                    direction=FlexDirection.Row,
-                    children = [
-                        View.Button (
-                            text = "Cancel",
-                            horizontalOptions = LayoutOptions.Center,
-                            verticalOptions = LayoutOptions.Center,
-                            command = (fun () ->
-                                runner.React <| DoSetPage NoPage
-                            )
-                        )
-                        View.Label (
-                            text = "    "
-                        )
-                        View.Button (
-                            text = "Login",
-                            horizontalOptions = LayoutOptions.Center,
-                            verticalOptions = LayoutOptions.Center,
-                            command = (fun () ->
-                                doAuth runner model
-                                //TODO: Show mask to block user interaction
-                            )
-                        )
-                    ]
-                )
-            ]
-        }|> scrollPage "Auth"
-    view.HasNavigationBar(true).HasBackButton(false) |> ignore
-    view.ToolbarItems ([
-        yield toolbarItem "Help" Icons.Help (fun () ->
-            runner.React <| DoSetHelp ^<| Some HelpAuth
-        )
-    ])
+    model.Password <- ""
 
 let render (runner : View) (model : Model) : Widget =
-    let setAuth = runner.React << DoSetAuth
     v_box {
         children [
-            label {
-                text "Device"
-            }
-            entry {
-                text model.Auth.DeviceName
-                textChanged (fun args ->
-                    setAuth {model.Auth with DeviceName = args.NewTextValue}
-                )
-                completed (fun text ->
-                    setAuth {model.Auth with DeviceName = text}
-                )
-            }
             label {
                 text "Channel"
             }
             entry {
-                text model.Auth.ChannelName
+                text (GuiPrefs.getAuthChannel runner)
                 keyboard Keyboard.Email
                 textChanged (fun args ->
-                    setAuth {model.Auth with ChannelName = args.NewTextValue}
+                    GuiPrefs.setAuthChannel args.NewTextValue runner
                 )
                 completed (fun text ->
-                    setAuth {model.Auth with ChannelName = text}
+                    GuiPrefs.setAuthChannel text runner
+                )
+            }
+            label {
+                text "Device"
+            }
+            entry {
+                text (GuiPrefs.getAuthDevice runner)
+                textChanged (fun args ->
+                    //Can NOT send msg here, which will mess with on screen keyboard
+                    GuiPrefs.setAuthDevice args.NewTextValue runner
+                )
+                completed (fun text ->
+                    GuiPrefs.setAuthDevice text runner
                 )
             }
             label {
@@ -147,10 +66,10 @@ let render (runner : View) (model : Model) : Widget =
                 text ""
                 isPassword true
                 textChanged (fun args ->
-                    setAuth {model.Auth with Password = args.NewTextValue}
+                    model.Password <- args.NewTextValue
                 )
                 completed (fun text ->
-                    setAuth {model.Auth with Password = text}
+                    model.Password <- text
                 )
             }
             label {

@@ -25,10 +25,10 @@ let private init : Init<Initer, unit, Model, Msg> =
         ({
             Resetting = false
             Page = NoPage
-            Auth = AuthForm.Create None
             Info = None
             Help = None
             Ver = 1
+            Password = ""
         }, noCmd)
 
 let private update : Update<View, Model, Msg> =
@@ -48,8 +48,6 @@ let private update : Update<View, Model, Msg> =
             (model, noCmd)
         | DoSetPage page ->
             ({model with Page = page}, noCmd)
-        | DoSetAuth auth ->
-            ({model with Auth = auth}, noCmd)
         | DoSetInfo info ->
             ({model with Info = info}, noCmd)
         | DoSetHelp help ->
@@ -65,10 +63,15 @@ let private setInfoDialog (runner : View) title (kind, content, devInfo) =
 let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
     match evt with
     | SessionTypes.OnJoinSucceed res ->
-        runner.React <| DoSetPage NoPage
+        if runner.ViewState.Page = AuthPage then
+            runner.React <| DoSetPage NoPage
+        else
+            runner.React DoRepaint
     | SessionTypes.OnAuthSucceed res ->
         if runner.ViewState.Page = AuthPage then
             runner.React <| DoSetPage NoPage
+        else
+            runner.React DoRepaint
     | SessionTypes.OnJoinFailed reason ->
         Stub.getReasonContent reason
         |> setInfoDialog runner "Login Failed"
@@ -76,10 +79,19 @@ let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
         Stub.getReasonContent reason
         |> setInfoDialog runner "Auth Failed"
     | _ ->
-        runner.React DoRepaint
+        ()
+    runner.React DoRepaint
 
 let private subscribe : Subscribe<View, Model, Msg> =
     fun runner model ->
+        runner.Pack.UserPref.Context.Properties.Credential.OnChanged.AddWatcher runner "OnCredential" (fun c ->
+            match c.New with
+            | None ->
+                ()
+            | Some c ->
+                runner |> GuiPrefs.setAuthDevice c.Device.Name
+                runner |> GuiPrefs.setAuthChannel c.Channel.Name
+        )
         runner.Pack.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun _status ->
             runner.React DoRepaint
         )

@@ -6,6 +6,7 @@
     <Compile Include="..\SuperClip.Fabulous\Feature/LocalClipboard.fs" />
     <Compile Include="..\SuperClip.Fabulous\Feature/AppGui.fs" />
     <Compile Include="..\SuperClip.Fabulous\View\Types.fs" />
+    <Compile Include="..\SuperClip.Fabulous\GuiPrefs.fs" />
     <Compile Include="..\SuperClip.Fabulous\Widget/Item.fs" />
     <Compile Include="..\SuperClip.Fabulous\Widget/Link.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/About.fs" />

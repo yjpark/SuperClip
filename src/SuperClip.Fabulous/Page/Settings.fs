@@ -21,6 +21,18 @@ let render (runner : View) (model : Model) =
     table_view {
         intent TableIntent.Settings
         items [
+            ("Auth", [
+                text_action_cell {
+                    text (GuiPrefs.getAuthChannel runner)
+                    detail (GuiPrefs.getAuthDevice runner)
+                    action "Reset"
+                    onAction (fun _ ->
+                        runner |> GuiPrefs.setAuthChannel ""
+                        runner |> GuiPrefs.setAuthDevice ""
+                        runner.React DoRepaint
+                    )
+                }
+            ])
             ("Display", [
                 switch_cell {
                     text "Dark Theme"

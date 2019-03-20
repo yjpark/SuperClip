@@ -24,13 +24,10 @@ let render (runner : View) (session : SessionTypes.Model) =
     let text', classId', detail', action' =
         if runner.Pack.Stub.Status = LinkStatus.Linked then
             match session.Auth, session.Channel with
-            | None, None ->
+            | None, _ ->
                 runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, "", Some ("Login", fun _ ->
                     runner.React <| DoSetPage AuthPage
                 )
-            | None, Some channel ->
-                runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
-                runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, channel.Channel.Name, None
             | Some auth, None ->
                 "Logging in ...", Theme.TextActionCell_Linking, auth.Device.Name, None
             | Some auth, Some channel ->
