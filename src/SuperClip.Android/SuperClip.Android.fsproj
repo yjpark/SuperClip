@@ -37,7 +37,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <AndroidSupportedAbis>arm64-v8a;armeabi-v7a;x86</AndroidSupportedAbis>
+    <!--<AndroidSupportedAbis>arm64-v8a;armeabi-v7a;x86</AndroidSupportedAbis>-->
+    <!--
+    Weird bugs on device with arm64, should be fixed by updating xamarin.android
+    https://github.com/mono/mono/issues/11263
+    -->
+    <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
     <!--May remove after know how to install shared runtime with command line -->
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
