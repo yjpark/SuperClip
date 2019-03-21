@@ -22,7 +22,8 @@ let private addMenuItem (text : string) (command : unit -> unit) (v : TextCell) 
 
 let render (runner : View) (session : SessionTypes.Model) =
     let text', classId', detail', action' =
-        if runner.Pack.Stub.Status = LinkStatus.Linked then
+        let stubStatus = runner.Pack.Stub.Status
+        if stubStatus = LinkStatus.Linked then
             match session.Auth, session.Channel with
             | None, _ ->
                 runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, "", Some ("Login", fun _ ->
@@ -35,7 +36,14 @@ let render (runner : View) (session : SessionTypes.Model) =
                     runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
                 )
         else
-            runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, runner.Pack.Stub.Actor.Args.Uri, None
+            let action =
+                if stubStatus = LinkStatus.NoLink then
+                    Some ("Connect", fun _ ->
+                        Dap.Remote.WebSocketProxy.Proxy.doReconnect runner.Pack.Stub
+                    )
+                else
+                    None
+            runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, runner.Pack.Stub.Actor.Args.Uri, action
     [
         yield
             match action' with

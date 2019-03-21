@@ -1,7 +1,6 @@
 [<AutoOpen>]
 module SuperClip.Fabulous.Util
 
-open Xamarin.Essentials
 open Fabulous.DynamicViews
 
 open Dap.Prelude
@@ -10,6 +9,9 @@ open Dap.Platform
 open Dap.Gui
 open Dap.Fabulous
 open Dap.Fabulous.Builder
+
+open SuperClip.App
+open SuperClip.Fabulous.View.Types
 
 let contentPage (title' : string) (content' : ViewElement) =
     content_page {
@@ -36,3 +38,19 @@ let toolbarItem (text' : string) (iconGlyph : string) (command' : unit -> unit) 
             text text'
             command command'
         }
+
+let setInfoDialog (runner : View) title (kind, content, devInfo) =
+    let title = sprintf "%s: %s" title kind
+    let info = InfoDialog.Create title content devInfo
+    runner.React <| DoSetInfo ^<| Some info
+
+let setupCloudMode (runner : View) =
+    if GuiPrefs.getCloudMode runner then
+        runner.Pack.Stub.Actor.Args.RetryDelay <- Some 5.0<second>
+        Dap.Remote.WebSocketProxy.Proxy.doReconnect runner.Pack.Stub
+    else
+        runner.Pack.Stub.Actor.Args.RetryDelay <- None
+        runner.Pack.Stub.Actor.State.Extra.Socket
+        |> Option.iter (fun socket ->
+            socket.Actor.Handle <| Dap.WebSocket.Client.Types.DoDisconnect None
+        )

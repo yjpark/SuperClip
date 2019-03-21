@@ -45,6 +45,7 @@ and Model = {
     Info : InfoDialog option
     Help : HelpTopic option
     Ver : int
+    LoggingIn : bool
     mutable Password : string
 }
 
@@ -57,6 +58,7 @@ and Msg =
     | DoSetPage of Page
     | DoSetInfo of InfoDialog option
     | DoSetHelp of HelpTopic option
+    | DoSetLoggingIn of bool
 with interface IMsg
 
 and View = ViewTypes.View<IApp, Model, Msg>

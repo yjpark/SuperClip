@@ -3,7 +3,7 @@
 module SuperClip.Fabulous.Theme
 
 open SkiaSharp
-open Xamarin.Essentials
+//open Xamarin.Essentials
 open Xamarin.Forms
 open Fabulous.DynamicViews
 
@@ -65,7 +65,8 @@ let lightParam : SuperClipThemeParam = {
 }
 
 let getDarkIcons () =
-    if DeviceInfo.Platform = DevicePlatform.Android then
+    lightParam.Icons
+    if IGuiApp.Instance.Runtime = Xamarin_Android then
         new Icons ("icons_white", SKColors.White)
     else
         lightParam.Icons
@@ -118,11 +119,10 @@ let setDark (dark : bool) =
         IGuiApp.Instance.SwitchTheme LightTheme
 
 let useToolbarItemIcon () =
-    //iOS has align issue
-    //Android generated empty images
-    DeviceInfo.Platform = DevicePlatform.UWP
-        || DeviceInfo.Platform = DevicePlatform.Android
-    //    || DeviceInfo.Platform = DevicePlatform.iOS
+    let runtime = IGuiApp.Instance.Runtime
+    runtime = Xamarin_Android
+        || runtime = Windows_UWP
+        //|| runtime = Windows_iOS //iOS's icons have weird layout, disabled for now
 
 let alwaysRefreshIcons = false //For testing
 

@@ -78,8 +78,16 @@ let render (runner : View) (model : Model) : Widget =
             button {
                 classId Theme.Button_Big
                 text "Login"
+                canExecute (not model.LoggingIn)
                 command (fun () ->
-                    doAuth runner model
+                    if GuiPrefs.getAuthChannel runner = ""
+                        || GuiPrefs.getAuthDevice runner = ""
+                        || model.Password = "" then
+                        ("Error", "Please Fill in All Fields", None)
+                        |> setInfoDialog runner "Auth Failed"
+                    else
+                        doAuth runner model
+                        runner.React <| DoSetLoggingIn true
                 )
             }
         ]

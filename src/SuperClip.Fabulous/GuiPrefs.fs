@@ -11,9 +11,33 @@ open SuperClip.App
 open SuperClip.Fabulous.View.Types
 
 [<Literal>]
+let Luid_CloudMode = "cloud_mode"
+
+[<Literal>]
+let Luid_Theme = "theme"
+
+[<Literal>]
 let Luid_AuthDevice = "auth_device"
 [<Literal>]
 let Luid_AuthChannel= "auth_channel"
+
+let getCloudMode (runner : View) =
+    runner.Pack.Preferences.Context.Get.Handle (Luid_CloudMode)
+    |> Option.map (fun m -> m = "true")
+    |> Option.defaultValue false
+
+let setCloudMode (cloudMode : bool) (runner : View) =
+    let v = if cloudMode then "true" else "false"
+    SetTextReq.Create (path = Luid_CloudMode, text = v)
+    |> runner.Pack.Preferences.Context.Set.Handle
+
+let getTheme (runner : View) =
+    runner.Pack.Preferences.Context.Get.Handle (Luid_Theme)
+    |> Option.defaultValue Theme.LightTheme
+
+let setTheme (v : string) (runner : View) =
+    SetTextReq.Create (path = Luid_Theme, text = v)
+    |> runner.Pack.Preferences.Context.Set.Handle
 
 let getAuthDevice (runner : View) =
     runner.Pack.Preferences.Context.Get.Handle (Luid_AuthDevice)

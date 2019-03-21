@@ -121,7 +121,7 @@ and AppArgs = {
             Channel = (* ICorePack *) channel
                 |> Option.defaultWith (fun () -> (ChannelTypes.Args.Create ()))
             CloudStub = (* ICloudStubPack *) cloudStub
-                |> Option.defaultWith (fun () -> (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true))
+                |> Option.defaultWith (fun () -> (Proxy.args Cloud.StubSpec (getCloudServerUri ()) false (Some 5.000000<second>) true))
             PacketClient = (* ICloudStubPack *) packetClient
                 |> Option.defaultWith (fun () -> (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05""")))
             Environment = (* IAppPack *) environment
@@ -196,7 +196,7 @@ and AppArgs = {
                     |> Option.defaultValue (HistoryTypes.Args.Create ())
                 Channel = get.Optional.Field (* ICorePack *) "channel" ChannelTypes.Args.JsonDecoder
                     |> Option.defaultValue (ChannelTypes.Args.Create ())
-                CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) (Some 5.000000<second>) true)
+                CloudStub = (* (* ICloudStubPack *)  *) (Proxy.args Cloud.StubSpec (getCloudServerUri ()) false (Some 5.000000<second>) true)
                 PacketClient = (* (* ICloudStubPack *)  *) (PacketClient.args true 1048576 (decodeJsonString Duration.JsonDecoder """0:00:00:05"""))
                 Environment = (* (* IAppPack *)  *) Feature.addToAgent<IEnvironment>
                 Preferences = (* (* IAppPack *)  *) Feature.addToAgent<IPreferences>

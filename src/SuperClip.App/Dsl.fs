@@ -45,6 +45,7 @@ let ICloudStubPack =
                 reqResEvt = "Cloud.Req, Cloud.ClientRes, Cloud.Evt",
                 stubSpec = "Cloud.StubSpec",
                 url = "(getCloudServerUri ())",
+                autoConnect = false,
                 retryDelay = 5.0<second>,
                 logTraffic = true,
                 kind = "CloudStub"

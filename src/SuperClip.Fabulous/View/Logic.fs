@@ -6,6 +6,7 @@ open FSharp.Control.Tasks.V2
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Gui
 open Dap.Fabulous.Builder
 
 open SuperClip.Core
@@ -22,12 +23,18 @@ type LayoutOptions = Xamarin.Forms.LayoutOptions
 let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         Theme.ensureIcons ()
+        let runner = initer :?> View
+        let theme = GuiPrefs.getTheme runner
+        if theme <> IGuiApp.Instance.Theme.Key then
+            IGuiApp.Instance.SwitchTheme theme
+        setupCloudMode runner
         ({
             Resetting = false
             Page = NoPage
             Info = None
             Help = None
             Ver = 1
+            LoggingIn = false
             Password = ""
         }, noCmd)
 
@@ -54,11 +61,8 @@ let private update : Update<View, Model, Msg> =
             ({model with Help = help}, noCmd)
         | DoDismissInfo ->
             ({model with Info = None}, noCmd)
-
-let private setInfoDialog (runner : View) title (kind, content, devInfo) =
-    let title = sprintf "%s: %s" title kind
-    let info = InfoDialog.Create title content devInfo
-    runner.React <| DoSetInfo ^<| Some info
+        | DoSetLoggingIn v ->
+            ({model with LoggingIn = v}, noCmd)
 
 let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
     match evt with
@@ -68,14 +72,17 @@ let private onSessionEvt (runner : View) (evt : SessionTypes.Evt) =
         else
             runner.React DoRepaint
     | SessionTypes.OnAuthSucceed res ->
+        runner.React <| DoSetLoggingIn false
         if runner.ViewState.Page = AuthPage then
             runner.React <| DoSetPage NoPage
         else
             runner.React DoRepaint
     | SessionTypes.OnJoinFailed reason ->
+        runner.React <| DoSetLoggingIn false
         Stub.getReasonContent reason
         |> setInfoDialog runner "Login Failed"
     | SessionTypes.OnAuthFailed reason ->
+        runner.React <| DoSetLoggingIn false
         Stub.getReasonContent reason
         |> setInfoDialog runner "Auth Failed"
     | _ ->
@@ -92,7 +99,9 @@ let private subscribe : Subscribe<View, Model, Msg> =
                 runner |> GuiPrefs.setAuthDevice c.Device.Name
                 runner |> GuiPrefs.setAuthChannel c.Channel.Name
         )
-        runner.Pack.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun _status ->
+        runner.Pack.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun status ->
+            if status = LinkStatus.Closed then
+                runner.React <| DoSetLoggingIn false
             runner.React DoRepaint
         )
         runner.Pack.Session.Actor.OnEvent.AddWatcher runner "onSessionEvt" <| onSessionEvt runner
