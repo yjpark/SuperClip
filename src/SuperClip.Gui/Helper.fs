@@ -25,5 +25,6 @@ type SaveLocalHistoryHook (logging : ILogging) =
         member this.OnInit (guiApp : IGuiApp) =
             let app = guiApp.App :?> IApp
             guiApp.OnWillChangeState.AddWatcher this "OnWillChangeState" (fun _state ->
-                app.UserPref.Context.Properties.HistoryChangedCount.SetValue UserPref.HistoryChangedSaveThreshold
+                if app.SetupResult.IsSome then
+                    app.UserPref.Context.Properties.HistoryChangedCount.SetValue UserPref.HistoryChangedSaveThreshold
             )

@@ -17,6 +17,9 @@ let Luid_CloudMode = "cloud_mode"
 let Luid_Theme = "theme"
 
 [<Literal>]
+let Luid_Locale = "locale"
+
+[<Literal>]
 let Luid_AuthDevice = "auth_device"
 [<Literal>]
 let Luid_AuthChannel= "auth_channel"
@@ -24,7 +27,7 @@ let Luid_AuthChannel= "auth_channel"
 let getCloudMode (runner : View) =
     runner.Pack.Preferences.Context.Get.Handle (Luid_CloudMode)
     |> Option.map (fun m -> m = "true")
-    |> Option.defaultValue false
+    |> Option.defaultValue true
 
 let setCloudMode (cloudMode : bool) (runner : View) =
     let v = if cloudMode then "true" else "false"
@@ -37,6 +40,14 @@ let getTheme (runner : View) =
 
 let setTheme (v : string) (runner : View) =
     SetTextReq.Create (path = Luid_Theme, text = v)
+    |> runner.Pack.Preferences.Context.Set.Handle
+
+let getLocale (runner : View) =
+    runner.Pack.Preferences.Context.Get.Handle (Luid_Locale)
+    |> Option.defaultValue Locale.DefaultLocale
+
+let setLocale (v : string) (runner : View) =
+    SetTextReq.Create (path = Luid_Locale, text = v)
     |> runner.Pack.Preferences.Context.Set.Handle
 
 let getAuthDevice (runner : View) =

@@ -24,9 +24,8 @@ let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         Theme.ensureIcons ()
         let runner = initer :?> View
-        let theme = GuiPrefs.getTheme runner
-        if theme <> IGuiApp.Instance.Theme.Key then
-            IGuiApp.Instance.SwitchTheme theme
+        IGuiApp.Instance.SwitchTheme <| GuiPrefs.getTheme runner
+        IGuiApp.Instance.SwitchLocale <| GuiPrefs.getLocale runner
         setupCloudMode runner
         ({
             Resetting = false
@@ -134,18 +133,17 @@ let private render : Render =
                 ]
                 popped (fun args ->
                     //TODO: Remove hard-coded title check
-                    match args.Page.Title with
-                    | "Auth" ->
+                    let title = args.Page.Title
+                    if title = Locale.Text.Auth.Title then
                         runner.React <| DoSetPage NoPage
-                    | "Settings" ->
+                    elif title = Locale.Text.Settings.Title then
                         runner.React <| DoSetPage NoPage
-                    | "Devices" ->
+                    elif title = Locale.Text.Devices.Title then
                         runner.React <| DoSetPage NoPage
-                    | "Help" ->
+                    elif title = Locale.Text.Help.Title then
                         runner.React <| DoSetHelp None
-                    | "Error" ->
+                    elif title = Locale.Text.Error.Title then
                         runner.React <| DoSetInfo None
-                    | _ -> ()
                 )
             }
 

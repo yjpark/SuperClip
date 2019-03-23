@@ -27,10 +27,10 @@ let render (runner : View) (info : InfoDialog) =
                 }
             yield button {
                 classId Theme.Button_Big
-                text "Ok"
+                text Locale.Text.Common.Ok
                 command (fun () ->
                     runner.React <| DoSetInfo None
                 )
             }
         ]
-    }|> scrollPage "Error"
+    }|> scrollPage Locale.Text.Error.Title

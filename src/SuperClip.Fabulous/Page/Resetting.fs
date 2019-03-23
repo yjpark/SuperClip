@@ -17,7 +17,7 @@ let render (runner : View) (model : Model) =
     v_box {
         children [
             label {
-                text "Theme has been changed"
+                text Locale.Text.Resetting.ThemeChanged
             }
             button {
                 classId Theme.Button_Big
@@ -27,4 +27,4 @@ let render (runner : View) (model : Model) =
                 )
             }
         ]
-    }|> contentPage "Resetting"
+    }|> contentPage Locale.Text.Resetting.Title

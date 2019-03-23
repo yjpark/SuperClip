@@ -16,12 +16,16 @@ open SuperClip.Fabulous.View.Types
 let render (runner : View) (model : Model) =
     v_box {
         children [
+            label {
+                text Locale.Text.About.Content
+            }
+
             button {
                 classId Theme.Button_Big
-                text "Ok"
+                text Locale.Text.Common.Ok
                 command (fun _ ->
                     runner.React <| DoSetPage NoPage
                 )
             }
         ]
-    }|> contentPage "About"
+    }|> contentPage Locale.Text.About.Title

@@ -1,0 +1,66 @@
+{
+    "common": {
+        "ok": "确定",
+        "this_device": "当前设备"
+    },
+    "home": {
+        "title": "Super Clip",
+        "cloud_link": "连接",
+        "pinned_items": "置顶",
+        "recent_items": "最近"
+    },
+    "link": {
+        "login": "登录",
+        "logout": "退出",
+        "connect": "连接",
+        "logging_in": "正在登录 ...",
+        "other_devices": "其他设备: {0}",
+        "details": "详情",
+        "sync_with_others": "与其他设备同步"
+    },
+    "item": {
+        "pin": "置顶",
+        "unpin": "取消置顶",
+        "remove": "删除"
+    },
+    "settings": {
+        "title": "设置",
+        "sync_section": "同步",
+        "display_section": "显示",
+        "cloud_mode": "云端模式",
+        "reset_auth": "重置",
+        "dark_theme": "暗色主题",
+        "language_section": "语言",
+        "switch": "切换"
+    },
+    "auth": {
+        "title": "认证",
+        "channel": "频道",
+        "device": "设备",
+        "password": "密码",
+        "login": "登录"
+    },
+    "about": {
+        "title": "关于",
+        "content": "\nSuper Clip is a clipboard manager\n\nYJ Park\n"
+    },
+    "devices": {
+        "title": "设备",
+        "offline": "离线",
+        "other_online_devices": "其他在线设备"
+    },
+    "resetting": {
+        "title": "重置",
+        "theme_changed": "主题修改完成"
+    },
+    "help": {
+        "title": "帮助",
+        "home": "主页",
+        "auth": "认证",
+        "settings": "设置",
+        "devices": "设备"
+    },
+    "error": {
+        "title": "错误"
+    }
+}

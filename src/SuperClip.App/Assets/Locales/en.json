@@ -1,0 +1,66 @@
+{
+    "common": {
+        "ok": "Ok",
+        "this_device": "This Device"
+    },
+    "home": {
+        "title": "Super Clip",
+        "cloud_link": "Cloud Link",
+        "pinned_items": "Pinned Items",
+        "recent_items": "Recent Items"
+    },
+    "link": {
+        "login": "Login",
+        "logout": "Logout",
+        "connect": "Connect",
+        "logging_in": "Logging In ...",
+        "other_devices": "Other Devices: {0}",
+        "details": "Details",
+        "sync_with_others": "Sync with Others"
+    },
+    "item": {
+        "pin": "Pin",
+        "unpin": "Unpin",
+        "remove": "Remove"
+    },
+    "settings": {
+        "title": "Settings",
+        "sync_section": "Sync",
+        "display_section": "Display",
+        "cloud_mode": "Cloud Mode",
+        "reset_auth": "Reset",
+        "dark_theme": "Dark Theme",
+        "language_section": "Language",
+        "switch": "Switch"
+    },
+    "auth": {
+        "title": "Auth",
+        "channel": "Channel",
+        "device": "Device",
+        "password": "Password",
+        "login": "Login"
+    },
+    "about": {
+        "title": "About",
+        "content": "\nSuperClip is a clipboard manager\n\nYJ Park\n"
+    },
+    "devices": {
+        "title": "Devices",
+        "offline": "Offline",
+        "other_online_devices": "Other Online Devices"
+    },
+    "resetting": {
+        "title": "Resetting",
+        "theme_changed": "Theme has been changed"
+    },
+    "help": {
+        "title": "Help",
+        "home": "Home",
+        "auth": "Auth",
+        "settings": "Settings",
+        "devices": "Devices"
+    },
+    "error": {
+        "title": "Error"
+    }
+}

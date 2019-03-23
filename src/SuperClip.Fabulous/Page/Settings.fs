@@ -7,6 +7,7 @@ open Fabulous.DynamicViews
 open Dap.Prelude
 open Dap.Platform
 open Dap.Remote
+open Dap.Gui
 open Dap.Fabulous.Builder
 
 open SuperClip.Core
@@ -21,9 +22,9 @@ let render (runner : View) (model : Model) =
     table_view {
         intent TableIntent.Settings
         items [
-            ("Sync", [
+            (Locale.Text.Settings.SyncSection, [
                 switch_cell {
-                    text "Cloud Mode"
+                    text Locale.Text.Settings.CloudMode
                     on (GuiPrefs.getCloudMode runner)
                     onChanged (fun args ->
                         runner |> GuiPrefs.setCloudMode args.Value
@@ -34,7 +35,7 @@ let render (runner : View) (model : Model) =
                 text_action_cell {
                     text (GuiPrefs.getAuthChannel runner)
                     detail (GuiPrefs.getAuthDevice runner)
-                    action "Reset"
+                    action Locale.Text.Settings.ResetAuth
                     onAction (fun _ ->
                         runner |> GuiPrefs.setAuthChannel ""
                         runner |> GuiPrefs.setAuthDevice ""
@@ -42,9 +43,9 @@ let render (runner : View) (model : Model) =
                     )
                 }
             ])
-            ("Display", [
+            (Locale.Text.Settings.DisplaySection, [
                 switch_cell {
-                    text "Dark Theme"
+                    text Locale.Text.Settings.DarkTheme
                     on (Theme.isDark ())
                     onChanged (fun args ->
                         let theme =
@@ -57,11 +58,41 @@ let render (runner : View) (model : Model) =
                     )
                 }
             ])
+            (Locale.Text.Settings.LanguageSection,
+                IGuiApp.Instance.Locales
+                |> Map.toList
+                |> List.filter (fun (key, locale) ->
+                    not (System.String.IsNullOrEmpty key)
+                )|> List.map (fun (key, locale) ->
+                    let text' = locale.Culture.DisplayName
+                    let detail' =
+                        if locale.Culture.EnglishName = locale.Culture.DisplayName then
+                            ""
+                        else
+                            locale.Culture.EnglishName
+                    if IGuiApp.Instance.Locale.Key = key then
+                        text_cell {
+                            text text'
+                            detail detail'
+                        }
+                    else
+                        text_action_cell {
+                            text text'
+                            detail detail'
+                            action Locale.Text.Settings.Switch
+                            onAction (fun _ ->
+                                runner |> GuiPrefs.setLocale key
+                                IGuiApp.Instance.SwitchLocale key
+                                runner.React DoRepaint
+                            )
+                        }
+                )
+            )
         ]
-    }|> contentPage "Settings"
+    }|> contentPage Locale.Text.Settings.Title
     |> (fun view ->
         view.ToolbarItems([
-            yield toolbarItem "Help" Icons.Help (fun () ->
+            yield toolbarItem Locale.Text.Help.Title Icons.Help (fun () ->
                 runner.React <| DoSetHelp ^<| Some HelpSettings
             )
         ])

@@ -53,3 +53,6 @@ type App with
             |> fun a -> a.WithScope scope
             |> fun a -> a.WithSetup (fun app -> app.SetupSecureStorage ())
         new App (loggingArgs, args)
+
+let getSuperClipAppAssembly () =
+    typeof<SuperClip.App.Session.Types.Model>.Assembly

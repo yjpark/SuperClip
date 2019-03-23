@@ -27,26 +27,26 @@ let render (runner : View) (model : Model) =
         items [
             if GuiPrefs.getCloudMode runner then
                 yield
-                    ("Cloud Link", Widget.Link.render runner session)
+                    (Locale.Text.Home.CloudLink, Widget.Link.render runner session)
             if history.PinnedItems.Length > 0 then
                 yield
-                    ("Pinned Items",
+                    (Locale.Text.Home.PinnedItems,
                         history.PinnedItems
                         |> List.map ^<| Widget.Item.render runner current true
                     )
             yield
-                ("Recent Items",
+                (Locale.Text.Home.RecentItems,
                     history.RecentItems
                     |> List.map ^<| Widget.Item.render runner current false
                 )
         ]
-    }|> scrollPage "Super Clip"
+    }|> scrollPage Locale.Text.Home.Title
     |> (fun view ->
         view.ToolbarItems ([
-            yield toolbarItem "Settings" Icons.Settings (fun () ->
+            yield toolbarItem Locale.Text.Settings.Title Icons.Settings (fun () ->
                 runner.React <| DoSetPage SettingsPage
             )
-            yield toolbarItem "Help" Icons.Help (fun () ->
+            yield toolbarItem Locale.Text.Help.Title Icons.Help (fun () ->
                 runner.React <| DoSetHelp ^<| Some HelpHome
             )
         ])

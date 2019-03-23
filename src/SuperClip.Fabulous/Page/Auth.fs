@@ -34,7 +34,7 @@ let render (runner : View) (model : Model) : Widget =
     v_box {
         children [
             label {
-                text "Channel"
+                text Locale.Text.Auth.Channel
             }
             entry {
                 text (GuiPrefs.getAuthChannel runner)
@@ -47,7 +47,7 @@ let render (runner : View) (model : Model) : Widget =
                 )
             }
             label {
-                text "Device"
+                text Locale.Text.Auth.Device
             }
             entry {
                 text (GuiPrefs.getAuthDevice runner)
@@ -60,7 +60,7 @@ let render (runner : View) (model : Model) : Widget =
                 )
             }
             label {
-                text "Password"
+                text Locale.Text.Auth.Password
             }
             entry {
                 text ""
@@ -77,7 +77,7 @@ let render (runner : View) (model : Model) : Widget =
             }
             button {
                 classId Theme.Button_Big
-                text "Login"
+                text Locale.Text.Auth.Login
                 canExecute (not model.LoggingIn)
                 command (fun () ->
                     if GuiPrefs.getAuthChannel runner = ""
@@ -91,10 +91,10 @@ let render (runner : View) (model : Model) : Widget =
                 )
             }
         ]
-    }|> scrollPage "Auth"
+    }|> scrollPage Locale.Text.Auth.Title
     |> (fun view ->
         view.ToolbarItems([
-            yield toolbarItem "Help" Icons.Help (fun () ->
+            yield toolbarItem Locale.Text.Help.Title Icons.Help (fun () ->
                 runner.React <| DoSetHelp ^<| Some HelpAuth
             )
         ])

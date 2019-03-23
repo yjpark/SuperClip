@@ -26,13 +26,13 @@ let DarkTheme = "Dark"
 let TextCell_Current = "TextCell_Current"
 
 [<Literal>]
-let TextActionCell_Linked = "TextActionCell_Linked"
+let TextCell_Linked = "TextCell_Linked"
 
 [<Literal>]
-let TextActionCell_Linking = "TextActionCell_Linking"
+let TextCell_Linking = "TextCell_Linking"
 
 [<Literal>]
-let TextActionCell_NoLink = "TextActionCell_NoLink"
+let TextCell_NoLink = "TextCell_NoLink"
 
 [<Literal>]
 let Button_Big = "Button_Big"
@@ -65,7 +65,6 @@ let lightParam : SuperClipThemeParam = {
 }
 
 let getDarkIcons () =
-    lightParam.Icons
     if IGuiApp.Instance.Runtime = Xamarin_Android then
         new Icons ("icons_white", SKColors.White)
     else
@@ -85,14 +84,14 @@ let private setup (theme : ITheme) (param : SuperClipThemeParam) =
     theme.AddDecorator TextCell_Current
         (new TextCell.Decorator
             (textColor = param.Current, ?detailColor = param.Fabulous.Label.Dimmed))
-    theme.AddDecorator TextActionCell_Linked
-        (new TextActionCell.Decorator
+    theme.AddDecorator TextCell_Linked
+        (new TextCell.Decorator
             (textColor = param.Linked))
-    theme.AddDecorator TextActionCell_Linking
-        (new TextActionCell.Decorator
+    theme.AddDecorator TextCell_Linking
+        (new TextCell.Decorator
             (textColor = param.Linking))
-    theme.AddDecorator TextActionCell_NoLink
-        (new TextActionCell.Decorator
+    theme.AddDecorator TextCell_NoLink
+        (new TextCell.Decorator
             (textColor = param.NoLink))
     theme.AddDecorator Button_Big
         (new Button.Decorator

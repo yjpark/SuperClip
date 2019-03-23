@@ -29,13 +29,13 @@ let render (runner : View) (model : Model) =
     table_view {
         intent TableIntent.Menu
         items [
-            yield ("This Device", [
+            yield (Locale.Text.Common.ThisDevice, [
                 match session.Auth with
                 | Some auth ->
                     yield renderDevice auth.Device
                 | None ->
                     yield text_cell {
-                        text "Offline"
+                        text Locale.Text.Devices.Offline
                     }
             ])
             let devices =
@@ -43,14 +43,14 @@ let render (runner : View) (model : Model) =
                 | Some channel ->
                     channel.Devices
                 | None -> []
-            yield ("Other Online Devices",
+            yield (Locale.Text.Devices.OtherOnlineDevices,
                 devices |> List.map renderDevice
             )
         ]
-    }|> contentPage "Devices"
+    }|> contentPage Locale.Text.Devices.Title
     |> (fun view ->
         view.ToolbarItems([
-            yield toolbarItem "Help" Icons.Help (fun () ->
+            yield toolbarItem Locale.Text.Help.Title Icons.Help (fun () ->
                 runner.React <| DoSetHelp ^<| Some HelpDevices
             )
         ])

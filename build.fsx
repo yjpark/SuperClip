@@ -17,6 +17,7 @@ open Dap.Build
 #load "src/SuperClip.Server/Dsl.fs"
 #load "src/SuperClip.App/Dsl.fs"
 #load "src/SuperClip.Gui/Dsl/Prefabs.fs"
+#load "src/SuperClip.Fabulous/Dsl/Text.fs"
 
 [<Literal>]
 let Dist = "Dist"
@@ -43,9 +44,30 @@ DotNet.createPrepares [
     ["SuperClip.Gui"], fun _ ->
         SuperClip.Gui.Dsl.Prefabs.compile ["src" ; "SuperClip.Gui"]
         |> List.iter traceSuccess
+    ["SuperClip.Fabulous"], fun _ ->
+        SuperClip.Fabulous.Dsl.Text.compile ["src" ; "SuperClip.Fabulous"]
+        |> List.iter traceSuccess
     ["SuperClip.Server"], fun _ ->
         SuperClip.Server.Dsl.compile ["src" ; "SuperClip.Server"]
         |> List.iter traceSuccess
 ]
+
+#load "src/SuperClip.Fabulous/_Gen/Text.fs"
+Target.create "Locale.Create" (fun _ ->
+    SuperClip.Fabulous.Text.All.Create ()
+    |> Dap.Context.Json.encodeJson 4
+    |> Dap.Local.TextFile.save "src/SuperClip.App/Assets/Locales/new.json"
+    traceSuccess "Locale Created: new.json"
+)
+
+Target.create "Locale.Update" (fun _ ->
+    Dap.Local.FileSystem.decodeMultiple "src/SuperClip.App/Assets/Locales" SuperClip.Fabulous.Text.All.JsonDecoder
+    |> Array.iter (fun (name, text) ->
+        text
+        |> Dap.Context.Json.encodeJson 4
+        |> Dap.Local.TextFile.save (sprintf "src/SuperClip.App/Assets/Locales/%s" name)
+        traceSuccess (sprintf "Locale Updated: %s" name)
+    )
+)
 
 Target.runOrDefault DotNet.Build

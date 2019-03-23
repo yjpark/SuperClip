@@ -26,24 +26,24 @@ let render (runner : View) (session : SessionTypes.Model) =
         if stubStatus = LinkStatus.Linked then
             match session.Auth, session.Channel with
             | None, _ ->
-                runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, "", Some ("Login", fun _ ->
+                runner.Pack.Stub.Status.ToString (), Theme.TextCell_NoLink, "", Some (Locale.Text.Link.Login, fun _ ->
                     runner.React <| DoSetPage AuthPage
                 )
             | Some auth, None ->
-                "Logging in ...", Theme.TextActionCell_Linking, auth.Device.Name, None
+                Locale.Text.Link.LoggingIn, Theme.TextCell_Linking, auth.Device.Name, None
             | Some auth, Some channel ->
-                channel.Channel.Name, Theme.TextActionCell_Linked, auth.Device.Name, Some ("Logout", fun _ ->
+                channel.Channel.Name, Theme.TextCell_Linked, auth.Device.Name, Some (Locale.Text.Link.Logout, fun _ ->
                     runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
                 )
         else
             let action =
                 if stubStatus = LinkStatus.NoLink then
-                    Some ("Connect", fun _ ->
+                    Some (Locale.Text.Link.Connect, fun _ ->
                         Dap.Remote.WebSocketProxy.Proxy.doReconnect runner.Pack.Stub
                     )
                 else
                     None
-            runner.Pack.Stub.Status.ToString (), Theme.TextActionCell_NoLink, runner.Pack.Stub.Actor.Args.Uri, action
+            runner.Pack.Stub.Status.ToString (), Theme.TextCell_NoLink, runner.Pack.Stub.Actor.Args.Uri, action
     [
         yield
             match action' with
@@ -68,18 +68,18 @@ let render (runner : View) (session : SessionTypes.Model) =
                     channel.Devices
                     |> List.map (fun d -> sprintf "'%s'" d.Name)
                     |> String.concat " "
-                let detail' = sprintf "Other Devices: %d" channel.Devices.Length
+                let detail' = System.String.Format (Locale.Text.Link.OtherDevices, channel.Devices.Length)
                 yield text_action_cell {
                     text text'
                     detail detail'
-                    action "Details"
+                    action Locale.Text.Link.Details
                     onAction (fun _ ->
                         runner.React <| DoSetPage DevicesPage
                     )
                 }
             let syncing = session.Syncing
             yield switch_cell {
-                text "Sync with others"
+                text Locale.Text.Link.SyncWithOthers
                 on syncing
                 onChanged (fun _ ->
                     runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)

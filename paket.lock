@@ -21,7 +21,7 @@ NUGET
       Fake.IO.Zip (>= 5.11)
       Fake.Net.Http (>= 5.11)
       Fake.Tools.Git (>= 5.11)
-    Dap.Context (0.6.2)
+    Dap.Context (0.6.3)
       Dap.Prelude (>= 0.6.1)
       Thoth.Json.Net (>= 2.5)
     Dap.Fabulous (0.6.8)

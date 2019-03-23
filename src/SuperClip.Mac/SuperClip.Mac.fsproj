@@ -64,6 +64,7 @@
   <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
+  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.reference" />
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
@@ -79,9 +80,6 @@
     <ImageAsset Include="Assets.xcassets\Contents.json" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
-  </ItemGroup>
-  <Import Project="..\SuperClip.Fabulous\SuperClip.Fabulous.reference" />
-  <ItemGroup>
     <Compile Include="Feature/LocalClipboard.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

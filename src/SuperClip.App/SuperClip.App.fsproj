@@ -4,6 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <!--
+    Put the locales here, since SuperClip.Fabulous might be included
+    into final app, instead of as DLL
+    -->
+    <EmbeddedResource Include="Assets\Locales\*.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Dsl.fs" />
     <Compile Include="_Gen\Types.fs" />
     <Compile Include="Extensions.fs" />

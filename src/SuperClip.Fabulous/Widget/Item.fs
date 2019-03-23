@@ -33,7 +33,7 @@ let private getText (item : Item) =
 let private getSource (item : Item) =
     match item.Source with
     | NoSource -> ""
-    | Local -> "This Device"
+    | Local -> Locale.Text.Common.ThisDevice
     | Cloud peer -> peer.Device.Name
 
 let private addMenuItem (item : Item) (text : string) (command : Item -> unit) (v : TextCell) =
@@ -57,15 +57,15 @@ let render (runner : View) (current : Item) (pinned : bool) (item : Item) =
         callback (fun cell ->
             if pinned then
                 cell
-                |> addMenuItem item "Unpin" (fun item' ->
+                |> addMenuItem item Locale.Text.Item.Unpin (fun item' ->
                     runner.Pack.History.Post <| HistoryTypes.DoUnpin (item', None)
                 )
             else
                 cell
-                |> addMenuItem item "Pin" (fun item' ->
+                |> addMenuItem item Locale.Text.Item.Pin (fun item' ->
                     runner.Pack.History.Post <| HistoryTypes.DoPin (item', None)
                 )
-                |> addMenuItem item "Remove" (fun item' ->
+                |> addMenuItem item Locale.Text.Item.Remove (fun item' ->
                     runner.Pack.History.Post <| HistoryTypes.DoRemove (item', None)
                 )
             |> ignore
