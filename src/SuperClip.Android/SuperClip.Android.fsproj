@@ -98,6 +98,5 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.Android\Dap.Fabulous.Android.reference" />
-  <Import Project="..\..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous\Dap.Fabulous.app.packages" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets" />
 </Project>
