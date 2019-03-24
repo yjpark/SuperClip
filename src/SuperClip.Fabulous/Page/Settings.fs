@@ -64,12 +64,7 @@ let render (runner : View) (model : Model) =
                 |> List.filter (fun (key, locale) ->
                     not (System.String.IsNullOrEmpty key)
                 )|> List.map (fun (key, locale) ->
-                    let text' = locale.Culture.DisplayName
-                    let detail' =
-                        if locale.Culture.EnglishName = locale.Culture.DisplayName then
-                            ""
-                        else
-                            locale.Culture.EnglishName
+                    let text', detail', action' = locale.TextForSwitch
                     if IGuiApp.Instance.Locale.Key = key then
                         text_cell {
                             text text'
@@ -79,7 +74,7 @@ let render (runner : View) (model : Model) =
                         text_action_cell {
                             text text'
                             detail detail'
-                            action Locale.Text.Settings.Switch
+                            action action'
                             onAction (fun _ ->
                                 runner |> GuiPrefs.setLocale key
                                 IGuiApp.Instance.SwitchLocale key

@@ -30,8 +30,7 @@
         "cloud_mode": "Cloud Mode",
         "reset_auth": "Reset",
         "dark_theme": "Dark Theme",
-        "language_section": "Language",
-        "switch": "Switch"
+        "language_section": "Language"
     },
     "auth": {
         "title": "Auth",

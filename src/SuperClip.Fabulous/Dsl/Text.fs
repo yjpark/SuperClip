@@ -56,7 +56,6 @@ let Settings =
         var (M.string ("reset_auth", "Reset"))
         var (M.string ("dark_theme", "Dark Theme"))
         var (M.string ("language_section", "Language"))
-        var (M.string ("switch", "Switch"))
     }
 
 let About =

@@ -30,8 +30,7 @@
         "cloud_mode": "云端模式",
         "reset_auth": "重置",
         "dark_theme": "暗色主题",
-        "language_section": "语言",
-        "switch": "切换"
+        "language_section": "语言"
     },
     "auth": {
         "title": "认证",

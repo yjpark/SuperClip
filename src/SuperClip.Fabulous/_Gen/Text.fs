@@ -296,7 +296,6 @@ type Settings = {
     ResetAuth : (* Settings *) string
     DarkTheme : (* Settings *) string
     LanguageSection : (* Settings *) string
-    Switch : (* Settings *) string
 } with
     static member Create
         (
@@ -306,8 +305,7 @@ type Settings = {
             ?cloudMode : (* Settings *) string,
             ?resetAuth : (* Settings *) string,
             ?darkTheme : (* Settings *) string,
-            ?languageSection : (* Settings *) string,
-            ?switch : (* Settings *) string
+            ?languageSection : (* Settings *) string
         ) : Settings =
         {
             Title = (* Settings *) title
@@ -324,8 +322,6 @@ type Settings = {
                 |> Option.defaultWith (fun () -> "Dark Theme")
             LanguageSection = (* Settings *) languageSection
                 |> Option.defaultWith (fun () -> "Language")
-            Switch = (* Settings *) switch
-                |> Option.defaultWith (fun () -> "Switch")
         }
     static member SetTitle ((* Settings *) title : string) (this : Settings) =
         {this with Title = title}
@@ -341,8 +337,6 @@ type Settings = {
         {this with DarkTheme = darkTheme}
     static member SetLanguageSection ((* Settings *) languageSection : string) (this : Settings) =
         {this with LanguageSection = languageSection}
-    static member SetSwitch ((* Settings *) switch : string) (this : Settings) =
-        {this with Switch = switch}
     static member JsonEncoder : JsonEncoder<Settings> =
         fun (this : Settings) ->
             E.object [
@@ -353,7 +347,6 @@ type Settings = {
                 "reset_auth", E.string (* Settings *) this.ResetAuth
                 "dark_theme", E.string (* Settings *) this.DarkTheme
                 "language_section", E.string (* Settings *) this.LanguageSection
-                "switch", E.string (* Settings *) this.Switch
             ]
     static member JsonDecoder : JsonDecoder<Settings> =
         D.object (fun get ->
@@ -372,8 +365,6 @@ type Settings = {
                     |> Option.defaultValue "Dark Theme"
                 LanguageSection = get.Optional.Field (* Settings *) "language_section" D.string
                     |> Option.defaultValue "Language"
-                Switch = get.Optional.Field (* Settings *) "switch" D.string
-                    |> Option.defaultValue "Switch"
             }
         )
     static member JsonSpec =
@@ -395,8 +386,6 @@ type Settings = {
         this |> Settings.SetDarkTheme darkTheme
     member this.WithLanguageSection ((* Settings *) languageSection : string) =
         this |> Settings.SetLanguageSection languageSection
-    member this.WithSwitch ((* Settings *) switch : string) =
-        this |> Settings.SetSwitch switch
 
 (*
  * Generated: <Record>
