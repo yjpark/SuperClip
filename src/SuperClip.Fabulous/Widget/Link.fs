@@ -77,12 +77,20 @@ let render (runner : View) (session : SessionTypes.Model) =
                         runner.React <| DoSetPage DevicesPage
                     )
                 }
-            let syncing = session.Syncing
+            let syncingUp = session.SyncingUp
             yield switch_cell {
-                text Locale.Text.Link.SyncWithOthers
-                on syncing
+                text Locale.Text.Link.SyncingUp
+                on syncingUp
                 onChanged (fun _ ->
-                    runner.Pack.Session.Post <| SessionTypes.DoSetSyncing (not syncing, None)
+                    runner.Pack.Session.Post <| SessionTypes.DoSetSyncingUp (not syncingUp, None)
+                )
+            }
+            let syncingDown = session.SyncingDown
+            yield switch_cell {
+                text Locale.Text.Link.SyncingDown
+                on syncingDown
+                onChanged (fun _ ->
+                    runner.Pack.Session.Post <| SessionTypes.DoSetSyncingDown (not syncingDown, None)
                 )
             }
     ]

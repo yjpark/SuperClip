@@ -26,7 +26,7 @@ let private doSetItemToCloud (item : Item) : ActorOperate =
     fun runner (model, cmd) ->
         let shouldNotSet =
             model.Auth.IsNone
-            || not model.Syncing
+            || not model.SyncingUp
             || item.IsEmpty || (
                 match model.LastCloudItem with
                 | None ->
@@ -64,7 +64,7 @@ let private onPrimaryEvt (evt : Clipboard.Evt) : ActorOperate =
 let private onStubEvt (evt : Cloud.Evt) : ActorOperate =
     fun runner (model, cmd) ->
         logWarn runner "Session" "CloudEvt" evt
-        if model.Auth.IsSome && model.Syncing then
+        if model.Auth.IsSome && model.SyncingDown then
             match evt with
             | Cloud.OnItemChanged item ->
                 let auth = model.Auth |> Option.get
@@ -131,13 +131,23 @@ let private doResetAuth req (callback : Callback<unit>) : ActorOperate =
         |-|> updateModel (fun m -> {m with Auth = None ; Channel = None})
         |=|> addSubCmd Evt ^<| OnAuthChanged None
 
-let private doSetSyncing req ((syncing, callback) : bool * Callback<unit>) : ActorOperate =
+let private doSetSyncingUp req ((syncing, callback) : bool * Callback<unit>) : ActorOperate =
     fun runner (model, cmd) ->
         reply runner callback <| ack req ()
-        if syncing <> model.Syncing then
+        if syncing <> model.SyncingUp then
             (runner, model, cmd)
-            |-|> updateModel (fun m -> {m with Syncing = syncing})
-            |=|> addSubCmd Evt ^<| OnSyncingChanged syncing
+            |-|> updateModel (fun m -> {m with SyncingUp = syncing})
+            |=|> addSubCmd Evt OnSyncingChanged
+        else
+            (model, cmd)
+
+let private doSetSyncingDown req ((syncing, callback) : bool * Callback<unit>) : ActorOperate =
+    fun runner (model, cmd) ->
+        reply runner callback <| ack req ()
+        if syncing <> model.SyncingDown then
+            (runner, model, cmd)
+            |-|> updateModel (fun m -> {m with SyncingDown = syncing})
+            |=|> addSubCmd Evt OnSyncingChanged
         else
             (model, cmd)
 
@@ -168,7 +178,8 @@ let private update : Update<Agent, Model, Msg> =
             match req with
             | DoSetAuth (a, b) -> doSetAuth req (a, b)
             | DoResetAuth (a) -> doResetAuth req (a)
-            | DoSetSyncing (a, b) -> doSetSyncing req (a, b)
+            | DoSetSyncingUp (a, b) -> doSetSyncingUp req (a, b)
+            | DoSetSyncingDown (a, b) -> doSetSyncingDown req (a, b)
         | Evt _evt -> noOperation
         | PrimaryEvt evt -> onPrimaryEvt evt
         | StubRes res -> onStubRes res

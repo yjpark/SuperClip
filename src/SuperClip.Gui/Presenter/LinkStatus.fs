@@ -29,15 +29,15 @@ type Presenter (prefab : Prefab, app : IApp) =
         | NoAuth ->
             setSessionText ""
             setActionTextDisabled "Login" false
-        | NoChannel auth ->
+        | NoChannel ->
             setSessionText "Logging ..."
             setActionTextDisabled "" true
-        | Syncing auth ->
-            setSessionText "Syncing"
-            setActionTextDisabled "Pause" false
-        | Pausing auth ->
-            setSessionText "Not Syncing"
-            setActionTextDisabled "Resume" false
+        | Joined (syncingUp, syncingDown) ->
+            setSessionText "Joined"
+            if syncingDown then
+                setActionTextDisabled "Pause" false
+            else
+                setActionTextDisabled "Resume" false
     do (
         setLinkText "TEST"
         app.CloudStub.OnStatus.AddWatcher prefab "OnStatus" (fun status ->

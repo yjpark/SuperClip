@@ -15,21 +15,24 @@ type Args = NoArgs
 and Model = {
     Auth : Credential option
     Channel : ChannelAgent option
-    Syncing : bool
+    SyncingUp : bool
+    SyncingDown : bool
     mutable LastCloudItem : Item option
 } with
     static member Empty =
         {
             Auth = None
             Channel = None
-            Syncing = true
+            SyncingUp = true
+            SyncingDown = true
             LastCloudItem = None
         }
 
 and Req =
     | DoSetAuth of Credential * Callback<unit>
     | DoResetAuth of Callback<unit>
-    | DoSetSyncing of bool * Callback<unit>
+    | DoSetSyncingUp of bool * Callback<unit>
+    | DoSetSyncingDown of bool * Callback<unit>
 with interface IReq
 
 and Evt =
@@ -38,7 +41,7 @@ and Evt =
     | OnAuthSucceed of Cloud.AuthRes
     | OnAuthFailed of Reason<Cloud.AuthErr>
     | OnAuthChanged of Credential option
-    | OnSyncingChanged of bool
+    | OnSyncingChanged
     | OnDevicesChanged of Device list
 with interface IEvt
 

@@ -37,7 +37,8 @@ let Link =
         var (M.string ("logging_in", "Logging In ..."))
         var (M.string ("other_devices", "Other Devices: {0}"))
         var (M.string ("details", "Details"))
-        var (M.string ("sync_with_others", "Sync with Others"))
+        var (M.string ("syncing_up", "Sync To Others"))
+        var (M.string ("syncing_down", "Sync From Others"))
     }
 
 let Item =

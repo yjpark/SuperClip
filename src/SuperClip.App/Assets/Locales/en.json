@@ -16,7 +16,8 @@
         "logging_in": "Logging In ...",
         "other_devices": "Other Devices: {0}",
         "details": "Details",
-        "sync_with_others": "Sync with Others"
+        "syncing_up": "Sync To Others",
+        "syncing_down": "Sync From Others"
     },
     "item": {
         "pin": "Pin",

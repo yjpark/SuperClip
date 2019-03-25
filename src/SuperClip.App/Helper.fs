@@ -15,9 +15,8 @@ let Scope = "SuperClip"
 type LinkSessionStatus =
     | NoLink
     | NoAuth
-    | NoChannel of Credential
-    | Syncing of Credential
-    | Pausing of Credential
+    | NoChannel
+    | Joined of bool * bool
 
 type IApp with
     member this.SetupSecureStorage () =
@@ -31,13 +30,9 @@ type IApp with
             | Some auth ->
                 match session.Actor.State.Channel with
                 | Some channel ->
-                    match session.Actor.State.Syncing with
-                    | true ->
-                        Syncing auth
-                    | false ->
-                        Pausing auth
+                    Joined (session.Actor.State.SyncingUp, session.Actor.State.SyncingDown)
                 | None ->
-                    NoChannel auth
+                    NoChannel
             | None ->
                 NoAuth
         else

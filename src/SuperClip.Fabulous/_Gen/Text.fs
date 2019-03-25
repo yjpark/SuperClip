@@ -133,7 +133,8 @@ type Link = {
     LoggingIn : (* Link *) string
     OtherDevices : (* Link *) string
     Details : (* Link *) string
-    SyncWithOthers : (* Link *) string
+    SyncingUp : (* Link *) string
+    SyncingDown : (* Link *) string
 } with
     static member Create
         (
@@ -143,7 +144,8 @@ type Link = {
             ?loggingIn : (* Link *) string,
             ?otherDevices : (* Link *) string,
             ?details : (* Link *) string,
-            ?syncWithOthers : (* Link *) string
+            ?syncingUp : (* Link *) string,
+            ?syncingDown : (* Link *) string
         ) : Link =
         {
             Login = (* Link *) login
@@ -158,8 +160,10 @@ type Link = {
                 |> Option.defaultWith (fun () -> "Other Devices: {0}")
             Details = (* Link *) details
                 |> Option.defaultWith (fun () -> "Details")
-            SyncWithOthers = (* Link *) syncWithOthers
-                |> Option.defaultWith (fun () -> "Sync with Others")
+            SyncingUp = (* Link *) syncingUp
+                |> Option.defaultWith (fun () -> "Sync To Others")
+            SyncingDown = (* Link *) syncingDown
+                |> Option.defaultWith (fun () -> "Sync From Others")
         }
     static member SetLogin ((* Link *) login : string) (this : Link) =
         {this with Login = login}
@@ -173,8 +177,10 @@ type Link = {
         {this with OtherDevices = otherDevices}
     static member SetDetails ((* Link *) details : string) (this : Link) =
         {this with Details = details}
-    static member SetSyncWithOthers ((* Link *) syncWithOthers : string) (this : Link) =
-        {this with SyncWithOthers = syncWithOthers}
+    static member SetSyncingUp ((* Link *) syncingUp : string) (this : Link) =
+        {this with SyncingUp = syncingUp}
+    static member SetSyncingDown ((* Link *) syncingDown : string) (this : Link) =
+        {this with SyncingDown = syncingDown}
     static member JsonEncoder : JsonEncoder<Link> =
         fun (this : Link) ->
             E.object [
@@ -184,7 +190,8 @@ type Link = {
                 "logging_in", E.string (* Link *) this.LoggingIn
                 "other_devices", E.string (* Link *) this.OtherDevices
                 "details", E.string (* Link *) this.Details
-                "sync_with_others", E.string (* Link *) this.SyncWithOthers
+                "syncing_up", E.string (* Link *) this.SyncingUp
+                "syncing_down", E.string (* Link *) this.SyncingDown
             ]
     static member JsonDecoder : JsonDecoder<Link> =
         D.object (fun get ->
@@ -201,8 +208,10 @@ type Link = {
                     |> Option.defaultValue "Other Devices: {0}"
                 Details = get.Optional.Field (* Link *) "details" D.string
                     |> Option.defaultValue "Details"
-                SyncWithOthers = get.Optional.Field (* Link *) "sync_with_others" D.string
-                    |> Option.defaultValue "Sync with Others"
+                SyncingUp = get.Optional.Field (* Link *) "syncing_up" D.string
+                    |> Option.defaultValue "Sync To Others"
+                SyncingDown = get.Optional.Field (* Link *) "syncing_down" D.string
+                    |> Option.defaultValue "Sync From Others"
             }
         )
     static member JsonSpec =
@@ -222,8 +231,10 @@ type Link = {
         this |> Link.SetOtherDevices otherDevices
     member this.WithDetails ((* Link *) details : string) =
         this |> Link.SetDetails details
-    member this.WithSyncWithOthers ((* Link *) syncWithOthers : string) =
-        this |> Link.SetSyncWithOthers syncWithOthers
+    member this.WithSyncingUp ((* Link *) syncingUp : string) =
+        this |> Link.SetSyncingUp syncingUp
+    member this.WithSyncingDown ((* Link *) syncingDown : string) =
+        this |> Link.SetSyncingDown syncingDown
 
 (*
  * Generated: <Record>
