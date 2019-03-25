@@ -9,6 +9,7 @@
     <Compile Include="..\SuperClip.Fabulous\Feature/AppGui.fs" />
     <Compile Include="..\SuperClip.Fabulous\View\Types.fs" />
     <Compile Include="..\SuperClip.Fabulous\GuiPrefs.fs" />
+    <Compile Include="..\SuperClip.Fabulous\Loading.fs" />
     <Compile Include="..\SuperClip.Fabulous\Util.fs" />
     <Compile Include="..\SuperClip.Fabulous\Widget/Item.fs" />
     <Compile Include="..\SuperClip.Fabulous\Widget/Link.fs" />

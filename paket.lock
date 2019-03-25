@@ -24,7 +24,7 @@ NUGET
     Dap.Context (0.6.3)
       Dap.Prelude (>= 0.6.1)
       Thoth.Json.Net (>= 2.5)
-    Dap.Fabulous (0.6.8)
+    Dap.Fabulous (0.6.9)
       Dap.Fabulous.Controls (>= 0.6.3)
       Dap.Gui (>= 0.6.9)
       Fabulous.Core (>= 0.33.1)
