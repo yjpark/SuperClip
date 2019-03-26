@@ -32,8 +32,12 @@ type MainActivity () as self =
     )
     static member Instance = instance.Value
     override this.UseFabulous () = useFabulous
+    override this.OnCreate (bundle: Bundle) =
+        let view = this.Window.DecorView
+        view.SetBackgroundColor (Android.Graphics.Color.Black)
+        base.OnCreate (bundle)
     override this.DoSetup (bundle : Bundle) =
-        let param = AndroidParam.Create ("SuperClip.Android", this, backgroundColor = Android.Graphics.Color.Black)
+        let param = AndroidParam.Create ("SuperClip.Android", this)
         if useFabulous then
             setFabulousAndroidParam param
             App.RunFabulous ("super-clip-.log")

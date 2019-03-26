@@ -1,3 +1,4 @@
+[<RequireQualifiedAccess>]
 module SuperClip.Fabulous.Loading
 
 open Dap.Prelude
@@ -7,8 +8,12 @@ open Dap.Skia
 open Dap.Gui
 open Dap.Fabulous
 
-let private getBackgroundColor () =
+let getTheme () =
     let theme = Xamarin.Essentials.Preferences.Get (GuiPrefs.Luid_Theme, "")
+    if theme = Theme.DarkTheme then Theme.DarkTheme else Theme.LightTheme
+
+let getBackgroundColor () =
+    let theme = getTheme ()
     let param = if theme = Theme.DarkTheme then Theme.darkParam else Theme.lightParam
     param.Fabulous.Background
 

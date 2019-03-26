@@ -4,13 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <!--
-    Put the locales here, since SuperClip.Fabulous might be included
-    into final app, instead of as DLL
-    -->
     <EmbeddedResource Include="Assets\Locales\*.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Dsl.fs" />
     <Compile Include="_Gen\Types.fs" />
     <Compile Include="Extensions.fs" />
@@ -22,8 +16,6 @@
     <Compile Include="_Gen1\App.fs" />
     <Compile Include="UserPref.fs" />
     <Compile Include="Helper.fs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SuperClip.Core\SuperClip.Core.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
