@@ -10,8 +10,11 @@ open Dap.Fabulous
 open Dap.Fabulous.Palette
 
 let getTheme () =
-    let theme = Xamarin.Essentials.Preferences.Get (GuiPrefs.Luid_Theme, "")
-    if theme = Theme.DarkTheme then Theme.DarkTheme else Theme.LightTheme
+    if hasEssentials () then
+        let theme = Xamarin.Essentials.Preferences.Get (GuiPrefs.Luid_Theme, "")
+        if theme = Theme.DarkTheme then Theme.DarkTheme else Theme.LightTheme
+    else
+        Theme.LightTheme
 
 let getBackgroundColor () =
     let theme = getTheme ()
