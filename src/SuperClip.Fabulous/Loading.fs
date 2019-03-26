@@ -7,6 +7,7 @@ open Dap.Platform
 open Dap.Skia
 open Dap.Gui
 open Dap.Fabulous
+open Dap.Fabulous.Palette
 
 let getTheme () =
     let theme = Xamarin.Essentials.Preferences.Get (GuiPrefs.Luid_Theme, "")
@@ -14,8 +15,8 @@ let getTheme () =
 
 let getBackgroundColor () =
     let theme = getTheme ()
-    let param = if theme = Theme.DarkTheme then Theme.darkParam else Theme.lightParam
-    param.Fabulous.Background
+    let scheme = if theme = Theme.DarkTheme then Material.DarkScheme else Material.LightScheme
+    scheme.Background
 
 type SuperClipLoadingForm (logging : ILogging) =
     inherit LoadingForm (logging, getBackgroundColor ())
