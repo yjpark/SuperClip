@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup>
+      <EnableDefaultItems>false</EnableDefaultItems>
+  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\Locales\*.json" />
     <Compile Include="Dsl.fs" />
