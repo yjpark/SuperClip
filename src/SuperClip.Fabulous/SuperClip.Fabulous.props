@@ -21,7 +21,7 @@
     <Compile Include="..\SuperClip.Fabulous\Page/Help.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/Info.fs" />
     <Compile Include="..\SuperClip.Fabulous\Page/Resetting.fs" />
-    <Compile Include="..\SuperClip.Fabulous\View\Logic.fs" />
+    <Compile Include="..\SuperClip.Fabulous\View1\Logic.fs" />
     <Compile Include="..\SuperClip.Fabulous\Helper.fs" />
   </ItemGroup>
 </Project>
