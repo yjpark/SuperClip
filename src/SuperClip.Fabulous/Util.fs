@@ -12,6 +12,7 @@ open Dap.Fabulous.Builder
 
 open SuperClip.App
 open SuperClip.Fabulous.View.Types
+module SessionTypes = SuperClip.App.Session.Types
 
 let contentPage (title' : string) (content' : ViewElement) =
     content_page {
@@ -54,3 +55,16 @@ let setupCloudMode (runner : View) =
         |> Option.iter (fun socket ->
             socket.Actor.Handle <| Dap.WebSocket.Client.Types.DoDisconnect None
         )
+
+let setupSeparateSyncing (runner : View) =
+    if not (GuiPrefs.getSeparateSyncing runner) then
+        let session = runner.Pack.Session.Actor.State
+        let syncingUp = session.SyncingUp
+        let syncingDown = session.SyncingDown
+        if syncingUp <> syncingDown then
+            if syncingUp then
+                runner.Pack.Session.Post <| SessionTypes.DoSetSyncingUp (false, None)
+            if syncingDown then
+                runner.Pack.Session.Post <| SessionTypes.DoSetSyncingDown (false, None)
+
+

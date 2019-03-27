@@ -16,6 +16,7 @@
         "logging_in": "Logging In ...",
         "other_devices": "Other Devices: {0}",
         "details": "Details",
+        "syncing_both": "Sync With Others",
         "syncing_up": "Sync To Others",
         "syncing_down": "Sync From Others"
     },
@@ -27,9 +28,11 @@
     "settings": {
         "title": "Settings",
         "sync_section": "Sync",
+        "auth_section": "Auth",
         "display_section": "Display",
         "cloud_mode": "Cloud Mode",
         "reset_auth": "Reset",
+        "separate_syncing": "Allow Syncing In One Direction",
         "dark_theme": "Dark Theme",
         "language_section": "Language"
     },

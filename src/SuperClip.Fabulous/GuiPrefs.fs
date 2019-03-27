@@ -14,6 +14,9 @@ open SuperClip.Fabulous.View.Types
 let Luid_CloudMode = "cloud_mode"
 
 [<Literal>]
+let Luid_SeparateSyncing = "separate_syncing"
+
+[<Literal>]
 let Luid_Theme = "theme"
 
 [<Literal>]
@@ -32,6 +35,16 @@ let getCloudMode (runner : View) =
 let setCloudMode (cloudMode : bool) (runner : View) =
     let v = if cloudMode then "true" else "false"
     SetTextReq.Create (path = Luid_CloudMode, text = v)
+    |> runner.Pack.Preferences.Context.Set.Handle
+
+let getSeparateSyncing (runner : View) =
+    runner.Pack.Preferences.Context.Get.Handle (Luid_SeparateSyncing)
+    |> Option.map (fun m -> m = "true")
+    |> Option.defaultValue false
+
+let setSeparateSyncing (v : bool) (runner : View) =
+    let v = if v then "true" else "false"
+    SetTextReq.Create (path = Luid_SeparateSyncing, text = v)
     |> runner.Pack.Preferences.Context.Set.Handle
 
 let getTheme (runner : View) =

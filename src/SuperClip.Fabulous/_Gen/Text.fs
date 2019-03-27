@@ -133,6 +133,7 @@ type Link = {
     LoggingIn : (* Link *) string
     OtherDevices : (* Link *) string
     Details : (* Link *) string
+    SyncingBoth : (* Link *) string
     SyncingUp : (* Link *) string
     SyncingDown : (* Link *) string
 } with
@@ -144,6 +145,7 @@ type Link = {
             ?loggingIn : (* Link *) string,
             ?otherDevices : (* Link *) string,
             ?details : (* Link *) string,
+            ?syncingBoth : (* Link *) string,
             ?syncingUp : (* Link *) string,
             ?syncingDown : (* Link *) string
         ) : Link =
@@ -160,6 +162,8 @@ type Link = {
                 |> Option.defaultWith (fun () -> "Other Devices: {0}")
             Details = (* Link *) details
                 |> Option.defaultWith (fun () -> "Details")
+            SyncingBoth = (* Link *) syncingBoth
+                |> Option.defaultWith (fun () -> "Sync With Others")
             SyncingUp = (* Link *) syncingUp
                 |> Option.defaultWith (fun () -> "Sync To Others")
             SyncingDown = (* Link *) syncingDown
@@ -177,6 +181,8 @@ type Link = {
         {this with OtherDevices = otherDevices}
     static member SetDetails ((* Link *) details : string) (this : Link) =
         {this with Details = details}
+    static member SetSyncingBoth ((* Link *) syncingBoth : string) (this : Link) =
+        {this with SyncingBoth = syncingBoth}
     static member SetSyncingUp ((* Link *) syncingUp : string) (this : Link) =
         {this with SyncingUp = syncingUp}
     static member SetSyncingDown ((* Link *) syncingDown : string) (this : Link) =
@@ -190,6 +196,7 @@ type Link = {
                 "logging_in", E.string (* Link *) this.LoggingIn
                 "other_devices", E.string (* Link *) this.OtherDevices
                 "details", E.string (* Link *) this.Details
+                "syncing_both", E.string (* Link *) this.SyncingBoth
                 "syncing_up", E.string (* Link *) this.SyncingUp
                 "syncing_down", E.string (* Link *) this.SyncingDown
             ]
@@ -208,6 +215,8 @@ type Link = {
                     |> Option.defaultValue "Other Devices: {0}"
                 Details = get.Optional.Field (* Link *) "details" D.string
                     |> Option.defaultValue "Details"
+                SyncingBoth = get.Optional.Field (* Link *) "syncing_both" D.string
+                    |> Option.defaultValue "Sync With Others"
                 SyncingUp = get.Optional.Field (* Link *) "syncing_up" D.string
                     |> Option.defaultValue "Sync To Others"
                 SyncingDown = get.Optional.Field (* Link *) "syncing_down" D.string
@@ -231,6 +240,8 @@ type Link = {
         this |> Link.SetOtherDevices otherDevices
     member this.WithDetails ((* Link *) details : string) =
         this |> Link.SetDetails details
+    member this.WithSyncingBoth ((* Link *) syncingBoth : string) =
+        this |> Link.SetSyncingBoth syncingBoth
     member this.WithSyncingUp ((* Link *) syncingUp : string) =
         this |> Link.SetSyncingUp syncingUp
     member this.WithSyncingDown ((* Link *) syncingDown : string) =
@@ -302,9 +313,11 @@ type Item = {
 type Settings = {
     Title : (* Settings *) string
     SyncSection : (* Settings *) string
+    AuthSection : (* Settings *) string
     DisplaySection : (* Settings *) string
     CloudMode : (* Settings *) string
     ResetAuth : (* Settings *) string
+    SeparateSyncing : (* Settings *) string
     DarkTheme : (* Settings *) string
     LanguageSection : (* Settings *) string
 } with
@@ -312,9 +325,11 @@ type Settings = {
         (
             ?title : (* Settings *) string,
             ?syncSection : (* Settings *) string,
+            ?authSection : (* Settings *) string,
             ?displaySection : (* Settings *) string,
             ?cloudMode : (* Settings *) string,
             ?resetAuth : (* Settings *) string,
+            ?separateSyncing : (* Settings *) string,
             ?darkTheme : (* Settings *) string,
             ?languageSection : (* Settings *) string
         ) : Settings =
@@ -323,12 +338,16 @@ type Settings = {
                 |> Option.defaultWith (fun () -> "Settings")
             SyncSection = (* Settings *) syncSection
                 |> Option.defaultWith (fun () -> "Sync")
+            AuthSection = (* Settings *) authSection
+                |> Option.defaultWith (fun () -> "Auth")
             DisplaySection = (* Settings *) displaySection
                 |> Option.defaultWith (fun () -> "Display")
             CloudMode = (* Settings *) cloudMode
                 |> Option.defaultWith (fun () -> "Cloud Mode")
             ResetAuth = (* Settings *) resetAuth
                 |> Option.defaultWith (fun () -> "Reset")
+            SeparateSyncing = (* Settings *) separateSyncing
+                |> Option.defaultWith (fun () -> "Allow Syncing In One Direction")
             DarkTheme = (* Settings *) darkTheme
                 |> Option.defaultWith (fun () -> "Dark Theme")
             LanguageSection = (* Settings *) languageSection
@@ -338,12 +357,16 @@ type Settings = {
         {this with Title = title}
     static member SetSyncSection ((* Settings *) syncSection : string) (this : Settings) =
         {this with SyncSection = syncSection}
+    static member SetAuthSection ((* Settings *) authSection : string) (this : Settings) =
+        {this with AuthSection = authSection}
     static member SetDisplaySection ((* Settings *) displaySection : string) (this : Settings) =
         {this with DisplaySection = displaySection}
     static member SetCloudMode ((* Settings *) cloudMode : string) (this : Settings) =
         {this with CloudMode = cloudMode}
     static member SetResetAuth ((* Settings *) resetAuth : string) (this : Settings) =
         {this with ResetAuth = resetAuth}
+    static member SetSeparateSyncing ((* Settings *) separateSyncing : string) (this : Settings) =
+        {this with SeparateSyncing = separateSyncing}
     static member SetDarkTheme ((* Settings *) darkTheme : string) (this : Settings) =
         {this with DarkTheme = darkTheme}
     static member SetLanguageSection ((* Settings *) languageSection : string) (this : Settings) =
@@ -353,9 +376,11 @@ type Settings = {
             E.object [
                 "title", E.string (* Settings *) this.Title
                 "sync_section", E.string (* Settings *) this.SyncSection
+                "auth_section", E.string (* Settings *) this.AuthSection
                 "display_section", E.string (* Settings *) this.DisplaySection
                 "cloud_mode", E.string (* Settings *) this.CloudMode
                 "reset_auth", E.string (* Settings *) this.ResetAuth
+                "separate_syncing", E.string (* Settings *) this.SeparateSyncing
                 "dark_theme", E.string (* Settings *) this.DarkTheme
                 "language_section", E.string (* Settings *) this.LanguageSection
             ]
@@ -366,12 +391,16 @@ type Settings = {
                     |> Option.defaultValue "Settings"
                 SyncSection = get.Optional.Field (* Settings *) "sync_section" D.string
                     |> Option.defaultValue "Sync"
+                AuthSection = get.Optional.Field (* Settings *) "auth_section" D.string
+                    |> Option.defaultValue "Auth"
                 DisplaySection = get.Optional.Field (* Settings *) "display_section" D.string
                     |> Option.defaultValue "Display"
                 CloudMode = get.Optional.Field (* Settings *) "cloud_mode" D.string
                     |> Option.defaultValue "Cloud Mode"
                 ResetAuth = get.Optional.Field (* Settings *) "reset_auth" D.string
                     |> Option.defaultValue "Reset"
+                SeparateSyncing = get.Optional.Field (* Settings *) "separate_syncing" D.string
+                    |> Option.defaultValue "Allow Syncing In One Direction"
                 DarkTheme = get.Optional.Field (* Settings *) "dark_theme" D.string
                     |> Option.defaultValue "Dark Theme"
                 LanguageSection = get.Optional.Field (* Settings *) "language_section" D.string
@@ -387,12 +416,16 @@ type Settings = {
         this |> Settings.SetTitle title
     member this.WithSyncSection ((* Settings *) syncSection : string) =
         this |> Settings.SetSyncSection syncSection
+    member this.WithAuthSection ((* Settings *) authSection : string) =
+        this |> Settings.SetAuthSection authSection
     member this.WithDisplaySection ((* Settings *) displaySection : string) =
         this |> Settings.SetDisplaySection displaySection
     member this.WithCloudMode ((* Settings *) cloudMode : string) =
         this |> Settings.SetCloudMode cloudMode
     member this.WithResetAuth ((* Settings *) resetAuth : string) =
         this |> Settings.SetResetAuth resetAuth
+    member this.WithSeparateSyncing ((* Settings *) separateSyncing : string) =
+        this |> Settings.SetSeparateSyncing separateSyncing
     member this.WithDarkTheme ((* Settings *) darkTheme : string) =
         this |> Settings.SetDarkTheme darkTheme
     member this.WithLanguageSection ((* Settings *) languageSection : string) =

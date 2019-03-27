@@ -78,19 +78,30 @@ let render (runner : View) (session : SessionTypes.Model) =
                     )
                 }
             let syncingUp = session.SyncingUp
-            yield switch_cell {
-                text Locale.Text.Link.SyncingUp
-                on syncingUp
-                onChanged (fun _ ->
-                    runner.Pack.Session.Post <| SessionTypes.DoSetSyncingUp (not syncingUp, None)
-                )
-            }
             let syncingDown = session.SyncingDown
-            yield switch_cell {
-                text Locale.Text.Link.SyncingDown
-                on syncingDown
-                onChanged (fun _ ->
-                    runner.Pack.Session.Post <| SessionTypes.DoSetSyncingDown (not syncingDown, None)
-                )
-            }
+            if GuiPrefs.getSeparateSyncing runner then
+                yield switch_cell {
+                    text Locale.Text.Link.SyncingUp
+                    on syncingUp
+                    onChanged (fun _ ->
+                        runner.Pack.Session.Post <| SessionTypes.DoSetSyncingUp (not syncingUp, None)
+                    )
+                }
+                yield switch_cell {
+                    text Locale.Text.Link.SyncingDown
+                    on syncingDown
+                    onChanged (fun _ ->
+                        runner.Pack.Session.Post <| SessionTypes.DoSetSyncingDown (not syncingDown, None)
+                    )
+                }
+            else
+                let syncingBoth = syncingUp && syncingDown
+                yield switch_cell {
+                    text Locale.Text.Link.SyncingBoth
+                    on syncingBoth
+                    onChanged (fun _ ->
+                        runner.Pack.Session.Post <| SessionTypes.DoSetSyncingUp (not syncingBoth, None)
+                        runner.Pack.Session.Post <| SessionTypes.DoSetSyncingDown (not syncingBoth, None)
+                    )
+                }
     ]

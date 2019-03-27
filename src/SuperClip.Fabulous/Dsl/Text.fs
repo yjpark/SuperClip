@@ -37,6 +37,7 @@ let Link =
         var (M.string ("logging_in", "Logging In ..."))
         var (M.string ("other_devices", "Other Devices: {0}"))
         var (M.string ("details", "Details"))
+        var (M.string ("syncing_both", "Sync With Others"))
         var (M.string ("syncing_up", "Sync To Others"))
         var (M.string ("syncing_down", "Sync From Others"))
     }
@@ -52,9 +53,11 @@ let Settings =
     combo {
         var (M.string ("title", "Settings"))
         var (M.string ("sync_section", "Sync"))
+        var (M.string ("auth_section", "Auth"))
         var (M.string ("display_section", "Display"))
         var (M.string ("cloud_mode", "Cloud Mode"))
         var (M.string ("reset_auth", "Reset"))
+        var (M.string ("separate_syncing", "Allow Syncing In One Direction"))
         var (M.string ("dark_theme", "Dark Theme"))
         var (M.string ("language_section", "Language"))
     }

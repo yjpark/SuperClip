@@ -16,6 +16,7 @@
         "logging_in": "正在登录 ...",
         "other_devices": "其他设备: {0}",
         "details": "详情",
+        "syncing_both": "与其它设备同步",
         "syncing_up": "上传到其它设备",
         "syncing_down": "从其它设备下载"
     },
@@ -27,9 +28,11 @@
     "settings": {
         "title": "设置",
         "sync_section": "同步",
+        "auth_section": "认证",
         "display_section": "显示",
         "cloud_mode": "云端模式",
         "reset_auth": "重置",
+        "separate_syncing": "允许单向同步",
         "dark_theme": "暗色主题",
         "language_section": "语言"
     },

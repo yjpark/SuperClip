@@ -32,6 +32,20 @@ let render (runner : View) (model : Model) =
                         runner.React <| DoSetPage NoPage
                     )
                 }
+                switch_cell {
+                    text Locale.Text.Settings.SeparateSyncing
+                    on (GuiPrefs.getSeparateSyncing runner)
+                    onChanged (fun args ->
+                        runner |> GuiPrefs.setSeparateSyncing args.Value
+                        setupSeparateSyncing runner
+                        runner.Pack.Session.Actor.State.Channel
+                        |> Option.iter (fun _ ->
+                            runner.React <| DoSetPage NoPage
+                        )
+                    )
+                }
+            ])
+            (Locale.Text.Settings.AuthSection, [
                 text_action_cell {
                     text (GuiPrefs.getAuthChannel runner)
                     detail (GuiPrefs.getAuthDevice runner)
@@ -40,6 +54,11 @@ let render (runner : View) (model : Model) =
                         runner |> GuiPrefs.setAuthChannel ""
                         runner |> GuiPrefs.setAuthDevice ""
                         runner.React DoRepaint
+                        runner.Pack.Session.Actor.State.Auth
+                        |> Option.iter (fun _ ->
+                            runner.Pack.Session.Post <| SessionTypes.DoResetAuth None
+                            runner.React <| DoSetPage NoPage
+                        )
                     )
                 }
             ])
