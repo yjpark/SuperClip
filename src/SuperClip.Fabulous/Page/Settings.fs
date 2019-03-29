@@ -25,18 +25,18 @@ let render (runner : View) (model : Model) =
             (Locale.Text.Settings.SyncSection, [
                 switch_cell {
                     text Locale.Text.Settings.CloudMode
-                    on (GuiPrefs.getCloudMode runner)
+                    on (GuiPrefs.getCloudMode ())
                     onChanged (fun args ->
-                        runner |> GuiPrefs.setCloudMode args.Value
+                        GuiPrefs.setCloudMode args.Value
                         setupCloudMode runner
                         runner.React <| DoSetPage NoPage
                     )
                 }
                 switch_cell {
                     text Locale.Text.Settings.SeparateSyncing
-                    on (GuiPrefs.getSeparateSyncing runner)
+                    on (GuiPrefs.getSeparateSyncing ())
                     onChanged (fun args ->
-                        runner |> GuiPrefs.setSeparateSyncing args.Value
+                        GuiPrefs.setSeparateSyncing args.Value
                         setupSeparateSyncing runner
                         runner.Pack.Session.Actor.State.Channel
                         |> Option.iter (fun _ ->
@@ -45,14 +45,56 @@ let render (runner : View) (model : Model) =
                     )
                 }
             ])
+            (Locale.Text.Settings.ServerSection, [
+                match model.EditingServerUri with
+                | Some serverUri ->
+                    yield text_action_cell {
+                        text (GuiPrefs.getCloudServerUri ())
+                        action Locale.Text.Settings.Cancel
+                        onAction (fun _ ->
+                            model.EditingServerUri <- None
+                            runner.React DoRepaint
+                        )
+                    }
+                    yield entry_cell {
+                        text serverUri
+                        textChanged (fun args ->
+                            model.EditingServerUri <- Some args.NewTextValue
+                        )
+                    }
+                    yield text_action_cell {
+                        action Locale.Text.Settings.Done
+                        onAction (fun _ ->
+                            GuiPrefs.setCloudServerUri model.EditingServerUri.Value
+                            model.EditingServerUri <- None
+                            setupCloudServerUri true runner
+                            runner.React <| DoSetPage NoPage
+                        )
+                    }
+                | None ->
+                    let isDefaultUri = GuiPrefs.isDefaultCloudServerUri ()
+                    yield text_action_cell {
+                        text (GuiPrefs.getCloudServerUri ())
+                        action (if isDefaultUri then Locale.Text.Settings.ChangeServerUri else Locale.Text.Settings.Reset)
+                        onAction (fun _ ->
+                            if isDefaultUri then
+                                model.EditingServerUri <- Some ""
+                                runner.React DoRepaint
+                            else
+                                GuiPrefs.setCloudServerUri ""
+                                setupCloudServerUri true runner
+                                runner.React <| DoSetPage NoPage
+                        )
+                    }
+            ])
             (Locale.Text.Settings.AuthSection, [
                 text_action_cell {
-                    text (GuiPrefs.getAuthChannel runner)
-                    detail (GuiPrefs.getAuthDevice runner)
-                    action Locale.Text.Settings.ResetAuth
+                    text (GuiPrefs.getAuthChannel ())
+                    detail (GuiPrefs.getAuthDevice ())
+                    action Locale.Text.Settings.Reset
                     onAction (fun _ ->
-                        runner |> GuiPrefs.setAuthChannel ""
-                        runner |> GuiPrefs.setAuthDevice ""
+                        GuiPrefs.setAuthChannel ""
+                        GuiPrefs.setAuthDevice ""
                         runner.React DoRepaint
                         runner.Pack.Session.Actor.State.Auth
                         |> Option.iter (fun _ ->
@@ -71,7 +113,7 @@ let render (runner : View) (model : Model) =
                             if args.Value
                                 then Theme.DarkTheme
                                 else Theme.LightTheme
-                        runner |> GuiPrefs.setTheme theme
+                        GuiPrefs.setTheme theme
                         Theme.setDark args.Value
                         runner.React <| DoSetResetting true
                     )
@@ -95,7 +137,7 @@ let render (runner : View) (model : Model) =
                             detail detail'
                             action action'
                             onAction (fun _ ->
-                                runner |> GuiPrefs.setLocale key
+                                GuiPrefs.setLocale key
                                 IGuiApp.Instance.SwitchLocale key
                                 runner.React DoRepaint
                             )

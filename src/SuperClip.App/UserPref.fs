@@ -21,7 +21,7 @@ let LocalHistoryLuid = "local_history"
 let HistoryChangedSaveThreshold = 20
 
 let setup (app : IApp) (runner : Context.Agent<IUserPref>) =
-    let storage = app.SecureStorage.Context
+    let storage = IEnvironment.Instance.SecureStorage
     let historyChangedCount = runner.Context.Properties.HistoryChangedCount
     app.LocalHistory.Actor.OnEvent.AddWatcher runner "History_OnEvent" (fun evt ->
         match evt with

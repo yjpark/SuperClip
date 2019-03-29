@@ -161,22 +161,18 @@ type ICloudStubPack =
 type IClientPackArgs =
     inherit ICorePackArgs
     inherit ICloudStubPackArgs
-    inherit IAppPackArgs
     abstract UserPref : Context.Args<IUserPref> with get
     abstract AsCorePackArgs : ICorePackArgs with get
     abstract AsCloudStubPackArgs : ICloudStubPackArgs with get
-    abstract AsAppPackArgs : IAppPackArgs with get
 
 type IClientPack =
     inherit IPack
     inherit ICorePack
     inherit ICloudStubPack
-    inherit IAppPack
     abstract Args : IClientPackArgs with get
     abstract UserPref : Context.Agent<IUserPref> with get
     abstract AsCorePack : ICorePack with get
     abstract AsCloudStubPack : ICloudStubPack with get
-    abstract AsAppPack : IAppPack with get
 
 (*
  * Generated: <Context>

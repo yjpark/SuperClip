@@ -21,8 +21,8 @@ let doAuth (runner : View) (model : Model) : unit =
     let password = model.Password
     let auth : Credential =
         {
-            Device = Device.New (GuiPrefs.getAuthDevice runner)
-            Channel = Channel.CreateWithName (GuiPrefs.getAuthChannel runner)
+            Device = Device.New (GuiPrefs.getAuthDevice ())
+            Channel = Channel.CreateWithName (GuiPrefs.getAuthChannel ())
             PassHash = calcPassHash password
             CryptoKey = calcCryptoKey password
             Token = ""
@@ -37,26 +37,26 @@ let render (runner : View) (model : Model) : Widget =
                 text Locale.Text.Auth.Channel
             }
             entry {
-                text (GuiPrefs.getAuthChannel runner)
+                text (GuiPrefs.getAuthChannel ())
                 keyboard Keyboard.Email
                 textChanged (fun args ->
-                    GuiPrefs.setAuthChannel args.NewTextValue runner
+                    GuiPrefs.setAuthChannel args.NewTextValue
                 )
                 completed (fun text ->
-                    GuiPrefs.setAuthChannel text runner
+                    GuiPrefs.setAuthChannel text
                 )
             }
             label {
                 text Locale.Text.Auth.Device
             }
             entry {
-                text (GuiPrefs.getAuthDevice runner)
+                text (GuiPrefs.getAuthDevice ())
                 textChanged (fun args ->
                     //Can NOT send msg here, which will mess with on screen keyboard
-                    GuiPrefs.setAuthDevice args.NewTextValue runner
+                    GuiPrefs.setAuthDevice args.NewTextValue
                 )
                 completed (fun text ->
-                    GuiPrefs.setAuthDevice text runner
+                    GuiPrefs.setAuthDevice text
                 )
             }
             label {
@@ -80,8 +80,8 @@ let render (runner : View) (model : Model) : Widget =
                 text Locale.Text.Auth.Login
                 canExecute (not model.LoggingIn)
                 command (fun () ->
-                    if GuiPrefs.getAuthChannel runner = ""
-                        || GuiPrefs.getAuthDevice runner = ""
+                    if GuiPrefs.getAuthChannel () = ""
+                        || GuiPrefs.getAuthDevice () = ""
                         || model.Password = "" then
                         ("Error", "Please Fill in All Fields", None)
                         |> setInfoDialog runner "Auth Failed"

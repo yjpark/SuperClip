@@ -31,7 +31,11 @@
         "auth_section": "认证",
         "display_section": "显示",
         "cloud_mode": "云端模式",
-        "reset_auth": "重置",
+        "server_section": "服务器",
+        "change_server_uri": "更改",
+        "reset": "重置",
+        "cancel": "取消",
+        "done": "完成",
         "separate_syncing": "允许单向同步",
         "dark_theme": "暗色主题",
         "language_section": "语言"

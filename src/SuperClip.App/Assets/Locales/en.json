@@ -31,7 +31,11 @@
         "auth_section": "Auth",
         "display_section": "Display",
         "cloud_mode": "Cloud Mode",
-        "reset_auth": "Reset",
+        "server_section": "Server Address",
+        "change_server_uri": "Change",
+        "reset": "Reset",
+        "cancel": "Cancel",
+        "done": "Done",
         "separate_syncing": "Allow Syncing In One Direction",
         "dark_theme": "Dark Theme",
         "language_section": "Language"

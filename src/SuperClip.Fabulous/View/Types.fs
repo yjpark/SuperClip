@@ -47,6 +47,7 @@ and Model = {
     Ver : int
     LoggingIn : bool
     mutable Password : string
+    mutable EditingServerUri : string option
 }
 
 and Msg =

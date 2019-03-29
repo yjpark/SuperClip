@@ -316,7 +316,11 @@ type Settings = {
     AuthSection : (* Settings *) string
     DisplaySection : (* Settings *) string
     CloudMode : (* Settings *) string
-    ResetAuth : (* Settings *) string
+    ServerSection : (* Settings *) string
+    ChangeServerUri : (* Settings *) string
+    Reset : (* Settings *) string
+    Cancel : (* Settings *) string
+    Done : (* Settings *) string
     SeparateSyncing : (* Settings *) string
     DarkTheme : (* Settings *) string
     LanguageSection : (* Settings *) string
@@ -328,7 +332,11 @@ type Settings = {
             ?authSection : (* Settings *) string,
             ?displaySection : (* Settings *) string,
             ?cloudMode : (* Settings *) string,
-            ?resetAuth : (* Settings *) string,
+            ?serverSection : (* Settings *) string,
+            ?changeServerUri : (* Settings *) string,
+            ?reset : (* Settings *) string,
+            ?cancel : (* Settings *) string,
+            ?done' : (* Settings *) string,
             ?separateSyncing : (* Settings *) string,
             ?darkTheme : (* Settings *) string,
             ?languageSection : (* Settings *) string
@@ -344,8 +352,16 @@ type Settings = {
                 |> Option.defaultWith (fun () -> "Display")
             CloudMode = (* Settings *) cloudMode
                 |> Option.defaultWith (fun () -> "Cloud Mode")
-            ResetAuth = (* Settings *) resetAuth
+            ServerSection = (* Settings *) serverSection
+                |> Option.defaultWith (fun () -> "Server Address")
+            ChangeServerUri = (* Settings *) changeServerUri
+                |> Option.defaultWith (fun () -> "Change")
+            Reset = (* Settings *) reset
                 |> Option.defaultWith (fun () -> "Reset")
+            Cancel = (* Settings *) cancel
+                |> Option.defaultWith (fun () -> "Cancel")
+            Done = (* Settings *) done'
+                |> Option.defaultWith (fun () -> "Done")
             SeparateSyncing = (* Settings *) separateSyncing
                 |> Option.defaultWith (fun () -> "Allow Syncing In One Direction")
             DarkTheme = (* Settings *) darkTheme
@@ -363,8 +379,16 @@ type Settings = {
         {this with DisplaySection = displaySection}
     static member SetCloudMode ((* Settings *) cloudMode : string) (this : Settings) =
         {this with CloudMode = cloudMode}
-    static member SetResetAuth ((* Settings *) resetAuth : string) (this : Settings) =
-        {this with ResetAuth = resetAuth}
+    static member SetServerSection ((* Settings *) serverSection : string) (this : Settings) =
+        {this with ServerSection = serverSection}
+    static member SetChangeServerUri ((* Settings *) changeServerUri : string) (this : Settings) =
+        {this with ChangeServerUri = changeServerUri}
+    static member SetReset ((* Settings *) reset : string) (this : Settings) =
+        {this with Reset = reset}
+    static member SetCancel ((* Settings *) cancel : string) (this : Settings) =
+        {this with Cancel = cancel}
+    static member SetDone ((* Settings *) done' : string) (this : Settings) =
+        {this with Done = done'}
     static member SetSeparateSyncing ((* Settings *) separateSyncing : string) (this : Settings) =
         {this with SeparateSyncing = separateSyncing}
     static member SetDarkTheme ((* Settings *) darkTheme : string) (this : Settings) =
@@ -379,7 +403,11 @@ type Settings = {
                 "auth_section", E.string (* Settings *) this.AuthSection
                 "display_section", E.string (* Settings *) this.DisplaySection
                 "cloud_mode", E.string (* Settings *) this.CloudMode
-                "reset_auth", E.string (* Settings *) this.ResetAuth
+                "server_section", E.string (* Settings *) this.ServerSection
+                "change_server_uri", E.string (* Settings *) this.ChangeServerUri
+                "reset", E.string (* Settings *) this.Reset
+                "cancel", E.string (* Settings *) this.Cancel
+                "done", E.string (* Settings *) this.Done
                 "separate_syncing", E.string (* Settings *) this.SeparateSyncing
                 "dark_theme", E.string (* Settings *) this.DarkTheme
                 "language_section", E.string (* Settings *) this.LanguageSection
@@ -397,8 +425,16 @@ type Settings = {
                     |> Option.defaultValue "Display"
                 CloudMode = get.Optional.Field (* Settings *) "cloud_mode" D.string
                     |> Option.defaultValue "Cloud Mode"
-                ResetAuth = get.Optional.Field (* Settings *) "reset_auth" D.string
+                ServerSection = get.Optional.Field (* Settings *) "server_section" D.string
+                    |> Option.defaultValue "Server Address"
+                ChangeServerUri = get.Optional.Field (* Settings *) "change_server_uri" D.string
+                    |> Option.defaultValue "Change"
+                Reset = get.Optional.Field (* Settings *) "reset" D.string
                     |> Option.defaultValue "Reset"
+                Cancel = get.Optional.Field (* Settings *) "cancel" D.string
+                    |> Option.defaultValue "Cancel"
+                Done = get.Optional.Field (* Settings *) "done" D.string
+                    |> Option.defaultValue "Done"
                 SeparateSyncing = get.Optional.Field (* Settings *) "separate_syncing" D.string
                     |> Option.defaultValue "Allow Syncing In One Direction"
                 DarkTheme = get.Optional.Field (* Settings *) "dark_theme" D.string
@@ -422,8 +458,16 @@ type Settings = {
         this |> Settings.SetDisplaySection displaySection
     member this.WithCloudMode ((* Settings *) cloudMode : string) =
         this |> Settings.SetCloudMode cloudMode
-    member this.WithResetAuth ((* Settings *) resetAuth : string) =
-        this |> Settings.SetResetAuth resetAuth
+    member this.WithServerSection ((* Settings *) serverSection : string) =
+        this |> Settings.SetServerSection serverSection
+    member this.WithChangeServerUri ((* Settings *) changeServerUri : string) =
+        this |> Settings.SetChangeServerUri changeServerUri
+    member this.WithReset ((* Settings *) reset : string) =
+        this |> Settings.SetReset reset
+    member this.WithCancel ((* Settings *) cancel : string) =
+        this |> Settings.SetCancel cancel
+    member this.WithDone ((* Settings *) done' : string) =
+        this |> Settings.SetDone done'
     member this.WithSeparateSyncing ((* Settings *) separateSyncing : string) =
         this |> Settings.SetSeparateSyncing separateSyncing
     member this.WithDarkTheme ((* Settings *) darkTheme : string) =

@@ -10,7 +10,6 @@ open Dap.Platform.Meta.Net
 open Dap.Platform.Generator
 open Dap.Platform.Dsl.Packs
 open Dap.WebSocket.Meta
-open Dap.Local.Dsl
 open Dap.Remote.Meta
 open Dap.Remote.Meta.Net
 
@@ -44,7 +43,7 @@ let ICloudStubPack =
                 aliases = [("Cloud", "SuperClip.Core.Cloud")],
                 reqResEvt = "Cloud.Req, Cloud.ClientRes, Cloud.Evt",
                 stubSpec = "Cloud.StubSpec",
-                url = "(getCloudServerUri ())",
+                url = "(getDefaultCloudServerUri ())",
                 autoConnect = false,
                 retryDelay = 5.0<second>,
                 logTraffic = true,
@@ -53,7 +52,7 @@ let ICloudStubPack =
     }
 
 let IClientPack =
-    pack [ <@ ICorePack @> ; <@ ICloudStubPack @> ; <@ IAppPack @>] {
+    pack [ <@ ICorePack @> ; <@ ICloudStubPack @> ] {
         add (M.context (<@ UserPref @>))
     }
 

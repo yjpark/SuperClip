@@ -79,7 +79,7 @@ let render (runner : View) (session : SessionTypes.Model) =
                 }
             let syncingUp = session.SyncingUp
             let syncingDown = session.SyncingDown
-            if GuiPrefs.getSeparateSyncing runner then
+            if GuiPrefs.getSeparateSyncing () then
                 yield switch_cell {
                     text Locale.Text.Link.SyncingUp
                     on syncingUp

@@ -24,8 +24,9 @@ let private init : Init<Initer, unit, Model, Msg> =
     fun initer () ->
         Theme.ensureIcons ()
         let runner = initer :?> View
-        IGuiApp.Instance.SwitchTheme <| GuiPrefs.getTheme runner
-        IGuiApp.Instance.SwitchLocale <| GuiPrefs.getLocale runner
+        IGuiApp.Instance.SwitchTheme <| GuiPrefs.getTheme ()
+        IGuiApp.Instance.SwitchLocale <| GuiPrefs.getLocale ()
+        setupCloudServerUri false runner
         setupCloudMode runner
         ({
             Resetting = false
@@ -35,6 +36,7 @@ let private init : Init<Initer, unit, Model, Msg> =
             Ver = 1
             LoggingIn = false
             Password = ""
+            EditingServerUri = None
         }, noCmd)
 
 let private update : Update<View, Model, Msg> =
@@ -95,8 +97,8 @@ let private subscribe : Subscribe<View, Model, Msg> =
             | None ->
                 ()
             | Some c ->
-                runner |> GuiPrefs.setAuthDevice c.Device.Name
-                runner |> GuiPrefs.setAuthChannel c.Channel.Name
+                GuiPrefs.setAuthDevice c.Device.Name
+                GuiPrefs.setAuthChannel c.Channel.Name
         )
         runner.Pack.CloudStub.OnStatus.AddWatcher runner "DoRepaint" (fun status ->
             if status = LinkStatus.Closed then

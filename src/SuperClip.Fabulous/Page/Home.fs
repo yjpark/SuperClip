@@ -25,7 +25,7 @@ let render (runner : View) (model : Model) =
     table_view {
         intent TableIntent.Menu
         items [
-            if GuiPrefs.getCloudMode runner then
+            if GuiPrefs.getCloudMode () then
                 yield
                     (Locale.Text.Home.CloudLink, Widget.Link.render runner session)
             if history.PinnedItems.Length > 0 then

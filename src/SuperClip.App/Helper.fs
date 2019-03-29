@@ -21,7 +21,7 @@ type LinkSessionStatus =
 type IApp with
     member this.SetupSecureStorage () =
         Des.encrypt "teiChe0xuo4maepezaihee8geigooTha" "mohtohJahmeechoch3sei3pheejaeGhu"
-        |> this.SecureStorageProps.Secret.SetValue
+        |> IEnvironment.Instance.SecureStorageProps.Secret.SetValue
         UserPref.setup this this.UserPref
     member this.LinkSessionStatus : LinkSessionStatus =
         let session = this.Session

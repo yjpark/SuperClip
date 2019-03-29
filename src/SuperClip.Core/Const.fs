@@ -11,11 +11,15 @@ let PassHashSalt = "ahDaefam2DecaR0ooyak6ohghah0coh6"
 let CryptoKeySalt = "shoo4ree3daiH9go4Yeir8rah4ua7fei"
 
 [<Literal>]
-//let CloudServerUri = "ws://localhost:5700/ws_user"
-//let CloudServerUri = "ws://10.0.2.13:5700/ws_user"
-let CloudServerUri = "ws://yjpark.org:5700/ws_user"
+//let DefaultCloudServerUri = "ws://localhost:5700/ws_user"
+//let DefaultCloudServerUri = "ws://10.0.2.13:5700/ws_user"
+let DefaultCloudServerUri = "ws://yjpark.org:5700/ws_user"
 
-let getCloudServerUri () = CloudServerUri
+let getDefaultCloudServerUri () = DefaultCloudServerUri
+
+let verifyCloudServerUri (uri : string) =
+    //Do verification
+    uri
 
 let calcPassHash (password : string) =
     calcSha256SumWithSalt PassHashSalt password

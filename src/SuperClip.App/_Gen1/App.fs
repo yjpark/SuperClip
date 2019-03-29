@@ -33,9 +33,6 @@ type App (param : EnvParam, args : AppArgs) =
     let mutable (* ICorePack *) primaryClipboard : PrimaryTypes.Agent option = None
     let mutable (* ICorePack *) localHistory : HistoryTypes.Agent option = None
     let mutable (* ICloudStubPack *) cloudStub : Proxy.Proxy<Cloud.Req, Cloud.ClientRes, Cloud.Evt> option = None
-    let mutable (* IAppPack *) environment : Context.Agent<IEnvironment> option = None
-    let mutable (* IAppPack *) preferences : Context.Agent<IPreferences> option = None
-    let mutable (* IAppPack *) secureStorage : Context.Agent<ISecureStorage> option = None
     let mutable (* IClientPack *) userPref : Context.Agent<IUserPref> option = None
     let mutable (* ISessionPack *) session : SessionTypes.Agent option = None
     let mutable (* IGuiPack *) appGui : Context.Agent<IAppGui> option = None
@@ -65,12 +62,6 @@ type App (param : EnvParam, args : AppArgs) =
             let! (* ICloudStubPack *) cloudStub' = env |> Env.addServiceAsync (Dap.Remote.Proxy.Logic.Logic.spec args.CloudStub) AppKinds.CloudStub AppKeys.CloudStub
             cloudStub <- Some cloudStub'
             do! env |> Env.registerAsync (Dap.WebSocket.Internal.Logic.spec (* ICloudStubPack *) this.AsTickingPack args.PacketClient) AppKinds.PacketClient
-            let! (* IAppPack *) environment' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.Environment) AppKinds.Environment AppKeys.Environment
-            environment <- Some environment'
-            let! (* IAppPack *) preferences' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.Preferences) AppKinds.Preferences AppKeys.Preferences
-            preferences <- Some preferences'
-            let! (* IAppPack *) secureStorage' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.SecureStorage) AppKinds.SecureStorage AppKeys.SecureStorage
-            secureStorage <- Some secureStorage'
             let! (* IClientPack *) userPref' = env |> Env.addServiceAsync (Dap.Platform.Context.spec args.UserPref) AppKinds.UserPref AppKeys.UserPref
             userPref <- Some userPref'
             let! (* ISessionPack *) session' = env |> Env.addServiceAsync (SuperClip.App.Session.Logic.spec this.AsClientPack args.Session) AppKinds.Session AppKeys.Session
@@ -156,18 +147,11 @@ type App (param : EnvParam, args : AppArgs) =
         }
         member this.AsTickingPack = this.AsTickingPack
     member this.AsCloudStubPack = this :> ICloudStubPack
-    interface IAppPack with
-        member this.Args = this.Args.AsAppPackArgs
-        member __.Environment (* IAppPack *) : Context.Agent<IEnvironment> = environment |> Option.get
-        member __.Preferences (* IAppPack *) : Context.Agent<IPreferences> = preferences |> Option.get
-        member __.SecureStorage (* IAppPack *) : Context.Agent<ISecureStorage> = secureStorage |> Option.get
-    member this.AsAppPack = this :> IAppPack
     interface IClientPack with
         member this.Args = this.Args.AsClientPackArgs
         member __.UserPref (* IClientPack *) : Context.Agent<IUserPref> = userPref |> Option.get
         member this.AsCorePack = this.AsCorePack
         member this.AsCloudStubPack = this.AsCloudStubPack
-        member this.AsAppPack = this.AsAppPack
     member this.AsClientPack = this :> IClientPack
     interface ISessionPack with
         member this.Args = this.Args.AsSessionPackArgs

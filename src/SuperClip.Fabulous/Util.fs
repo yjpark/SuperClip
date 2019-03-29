@@ -10,6 +10,7 @@ open Dap.Gui
 open Dap.Fabulous
 open Dap.Fabulous.Builder
 
+open SuperClip.Core
 open SuperClip.App
 open SuperClip.Fabulous.View.Types
 module SessionTypes = SuperClip.App.Session.Types
@@ -45,8 +46,19 @@ let setInfoDialog (runner : View) title (kind, content, devInfo) =
     let info = InfoDialog.Create title content devInfo
     runner.React <| DoSetInfo ^<| Some info
 
+let setupCloudServerUri (tryReconnect : bool) (runner : View) =
+    let uri = GuiPrefs.getCloudServerUri ()
+    let uri = verifyCloudServerUri uri
+    runner.Pack.Stub.Actor.Args.Uri <- uri
+    if tryReconnect && (GuiPrefs.getCloudMode ()) then
+        runner.Pack.Stub.Actor.State.Extra.Socket
+        |> Option.iter (fun socket ->
+            socket.Actor.Handle <| Dap.WebSocket.Client.Types.DoDisconnect None
+        )
+        Dap.Remote.WebSocketProxy.Proxy.doReconnect runner.Pack.Stub
+
 let setupCloudMode (runner : View) =
-    if GuiPrefs.getCloudMode runner then
+    if GuiPrefs.getCloudMode () then
         runner.Pack.Stub.Actor.Args.RetryDelay <- Some 5.0<second>
         Dap.Remote.WebSocketProxy.Proxy.doReconnect runner.Pack.Stub
     else
@@ -57,7 +69,7 @@ let setupCloudMode (runner : View) =
         )
 
 let setupSeparateSyncing (runner : View) =
-    if not (GuiPrefs.getSeparateSyncing runner) then
+    if not (GuiPrefs.getSeparateSyncing ()) then
         let session = runner.Pack.Session.Actor.State
         let syncingUp = session.SyncingUp
         let syncingDown = session.SyncingDown
@@ -66,5 +78,3 @@ let setupSeparateSyncing (runner : View) =
                 runner.Pack.Session.Post <| SessionTypes.DoSetSyncingUp (false, None)
             if syncingDown then
                 runner.Pack.Session.Post <| SessionTypes.DoSetSyncingDown (false, None)
-
-
