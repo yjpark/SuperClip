@@ -24,7 +24,7 @@ let router (app : IApp) =
             ]
     ]
 
-let host (port : int) (app : IApp) =
+let newWebHost (port : int) (app : IApp) =
     app.Env.RunTask0 ignoreOnFailed (fun _ -> task{
         do! Task.Delay 5.0<second>
         app.Env.TakeSnapshot ()
@@ -42,9 +42,11 @@ let host (port : int) (app : IApp) =
 
 type App with
     static member RunWeb (port, logFile, ?scope : string, ?consoleMinLevel : LogLevel) : int =
-        App.Create (logFile, ?scope = scope, ?consoleMinLevel = consoleMinLevel)
-        :> IApp
-        |> runWebApp<IApp> (host port)
+        let app = App.Create (logFile, ?scope = scope, ?consoleMinLevel = consoleMinLevel)
+        app.Start ()
+        app.AsApp |> runWebApp<IApp> (newWebHost port) (fun () ->
+            ()
+        )
 
 [<EntryPoint>]
 let main _ =
