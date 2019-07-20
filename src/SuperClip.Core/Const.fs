@@ -22,7 +22,7 @@ let verifyCloudServerUri (uri : string) =
     uri
 
 let calcPassHash (password : string) =
-    calcSha256SumWithSalt PassHashSalt password
+    Sha256.ofText2 PassHashSalt password
 
 let calcCryptoKey (password : string) =
-    calcSha256SumWithSalt CryptoKeySalt password
+    Sha256.ofText2 CryptoKeySalt password

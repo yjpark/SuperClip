@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+docker stack deploy -c docker-stack.yml superclip

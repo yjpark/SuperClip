@@ -12,29 +12,29 @@ nuget Argu
 nuget Dap.Build
 
 # Libs
-nuget Dap.Prelude 0.6.1
-nuget Dap.Context 0.6.3
-nuget Dap.Platform.Cli 0.6.0
-nuget Dap.Platform 0.6.10
-nuget Dap.WebSocket 0.6.1
-nuget Dap.Remote 0.6.3
-nuget Dap.Local 0.6.8
+nuget Dap.Prelude
+nuget Dap.Context
+nuget Dap.Platform.Cli
+nuget Dap.Platform
+nuget Dap.WebSocket
+nuget Dap.Remote
+nuget Dap.Local
 
 # Server
 nuget Dap.Local.Farango
 nuget Dap.Remote.Server
 nuget Dap.Remote.Dashboard
 
-nuget Dap.Remote.Web 0.6.2
+nuget Dap.Remote.Web
 
 # Client
 nuget Dap.Remote.FSharpData
 
-nuget Dap.Skia 0.6.4
-nuget Dap.Gui 0.6.14
-nuget Dap.Fabulous.Controls 0.6.3
-nuget Dap.Fabulous 0.6.9
-nuget Dap.Fabulous.Ooui 0.6.1
+nuget Dap.Skia
+nuget Dap.Gui
+nuget Dap.Fabulous.Controls
+nuget Dap.Fabulous
+nuget Dap.Fabulous.Ooui
 
 # TODO
 # nuget Dap.Fabulous.Mac

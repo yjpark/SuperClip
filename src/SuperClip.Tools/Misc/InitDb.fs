@@ -27,6 +27,8 @@ with
 
 let execute (app : IServerApp) (args : ParseResults<Args>) =
     let force = args.Contains Force
-    app.Db |> InitDb.createCollectionsAsync' force Collections
-    |> Async.RunSynchronously
+    app.Db |> InitDb.createCollectionsAsync force Collections
+    |> syncTask
     |> ignore
+
+

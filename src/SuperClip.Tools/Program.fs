@@ -41,10 +41,12 @@ let execute (args : ParseResults<Args>) =
 
     if args.Contains Watch_Primary then
         let app = ClientApp.Create ("super-clip-tools-.log", consoleMinLevel = consoleLogLevel)
+        app.StartAsync () |> syncTask
         WatchPrimary.executeAsync app <| args.GetResult Watch_Primary
         |> Util.executeAndWaitForExit app
     elif args.Contains Init_Db then
         let app = ServerApp.Create ("super-clip-tools-.log", consoleMinLevel = consoleLogLevel)
+        app.StartAsync () |> syncTask
         InitDb.execute app <| args.GetResult Init_Db
     else
         raise <| ParseException "no command specified"

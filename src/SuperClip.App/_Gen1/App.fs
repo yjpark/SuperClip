@@ -87,7 +87,7 @@ type App (param : EnvParam, args : AppArgs) =
     member __.Env : IEnv = env
     member __.SetupResult : Result<bool, exn> option = setupResult
     member __.OnSetup : IBus<Result<bool, exn>> = onSetup.Publish
-    interface IApp<IApp>
+    interface IBaseApp
     interface INeedSetupAsync with
         member this.SetupResult = this.SetupResult
         member this.SetupAsync () = this.SetupAsync ()

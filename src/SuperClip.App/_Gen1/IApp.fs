@@ -49,7 +49,8 @@ type AppKeys () =
     static member AppGui (* IGuiPack *) = ""
 
 type IApp =
-    inherit IApp<IApp>
+    inherit IBaseApp
+    inherit IRunner<IApp>
     inherit ISessionPack
     inherit IGuiPack
     abstract Args : AppArgs with get

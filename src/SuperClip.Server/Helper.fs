@@ -11,7 +11,7 @@ open Dap.Local.Farango
 [<Literal>]
 let Scope = "SuperClipServer"
 
-let DbUri = "http://superclip_dev:Ex2Kuth1ZeiN0Ishie9pahng9xea5xu5@localhost:8529/superclip_dev"
+let DbUri = "http://superclip_dev:VauCha0jeeph2jie2eeriesh@localhost:11001/superclip_dev"
 
 type App with
     static member Create (logFile, ?scope : string, ?consoleMinLevel : LogLevel) =

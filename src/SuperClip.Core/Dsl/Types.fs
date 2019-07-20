@@ -1,5 +1,6 @@
 module SuperClip.Core.Dsl.Types
 
+open Dap.Context
 open Dap.Context.Meta
 open Dap.Context.Meta.Net
 open Dap.Context.Generator

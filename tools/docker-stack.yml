@@ -1,0 +1,27 @@
+version: '3.1'
+
+networks:
+  back-tier:
+  # front-tier:
+
+services:
+  # Create superclip_dev user with tools/create-arango_dev.db-user
+  # Currently need manually setup at
+  # http://localhost:10001
+  # Add db `superclip_dev` owner as superclip_dev
+  # Then can use NewsFeeds.Tools `init-db` to create collections
+  arangodb:
+    image: arangodb:3.3.21
+    volumes:
+      - arangodb-data:/var/lib/arangodb3
+    environment:
+      ARANGO_ROOT_PASSWORD: 'uXah4Ti1cheiSe8Iif8foor9'
+    ports:
+      - 11001:8529
+      - 11002:8530
+    networks:
+      - back-tier
+    #restart: always
+
+volumes:
+  arangodb-data:

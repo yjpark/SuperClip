@@ -6,6 +6,7 @@ open Dap.Platform
 open Dap.Platform.Meta
 open Dap.Platform.Generator
 open Dap.Remote.Meta
+open Dap.Remote.Meta.Net
 open Dap.Remote.Generator
 
 open SuperClip.Core.Dsl.Types

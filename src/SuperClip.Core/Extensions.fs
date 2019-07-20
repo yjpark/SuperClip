@@ -24,8 +24,8 @@ type Content with
         else
             match this with
             | NoContent -> ""
-            | Text text -> calcSha256Sum text
-            | Asset url -> calcSha256Sum url
+            | Text text -> Sha256.ofText text
+            | Asset url -> Sha256.ofText url
     member this.Encrypt (cryptoKey : string) =
         match this with
         | NoContent -> NoContent
@@ -63,7 +63,7 @@ type Channel with
     static member CalcGuid (name : string) =
         name
         |> fun n -> n.Trim ()
-        |> calcSha256Sum2WithSalt "chiepuyiawaeR9aij6fiech7osh8kesh"
+        |> Sha256.ofText2 "chiepuyiawaeR9aij6fiech7osh8kesh"
     static member CreateWithName (name : string) =
         let name = name.Trim ()
         {
