@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SuperClip.Mac", "SuperClip.Mac\SuperClip.Mac.fsproj", "{D056F368-E045-4738-BB64-E957B193E594}"
 EndProject
@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperClip.UWP", "SuperClip.
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\..\dap.gui.fsharp\src\Dap.Fabulous.UWP\Dap.Fabulous.UWP.projitems*{97f120c8-f064-4450-9ce3-6e3ee8262bd8}*SharedItemsImports = 4
+		..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.UWP\Dap.Fabulous.UWP.projitems*{97f120c8-f064-4450-9ce3-6e3ee8262bd8}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
