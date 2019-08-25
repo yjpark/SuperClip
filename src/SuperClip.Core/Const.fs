@@ -12,8 +12,7 @@ let CryptoKeySalt = "shoo4ree3daiH9go4Yeir8rah4ua7fei"
 
 [<Literal>]
 //let DefaultCloudServerUri = "ws://localhost:5700/ws_user"
-//let DefaultCloudServerUri = "ws://10.0.2.13:5700/ws_user"
-let DefaultCloudServerUri = "ws://yjpark.org:5700/ws_user"
+let DefaultCloudServerUri = "wss://superclip.yjpark.org/ws_user"
 
 let getDefaultCloudServerUri () = DefaultCloudServerUri
 
