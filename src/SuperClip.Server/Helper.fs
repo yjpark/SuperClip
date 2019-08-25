@@ -11,7 +11,9 @@ open Dap.Local.Farango
 [<Literal>]
 let Scope = "SuperClipServer"
 
-let DbUri = "http://superclip_dev:VauCha0jeeph2jie2eeriesh@localhost:11001/superclip_dev"
+let DbUri =
+    IEnvironment.Instance.TryGetVariable "SUPERCLIP_DB_URL"
+    |> Option.defaultValue "http://superclip_dev:VauCha0jeeph2jie2eeriesh@localhost:11001/superclip_dev"
 
 type App with
     static member Create (logFile, ?scope : string, ?consoleMinLevel : LogLevel) =

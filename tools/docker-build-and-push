@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+cd ..
+
+fake build -t SuperClip.Tools:Publish
+fake build -t SuperClip.Web:Publish
+
+docker build . -t yjpark/superclip.web:latest
+
+docker push yjpark/superclip.web:latest
