@@ -157,10 +157,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dap.iOS">
-      <Version>0.8.0</Version>
+      <Version>0.8.1</Version>
     </PackageReference>
     <PackageReference Include="Dap.Fabulous.iOS">
-      <Version>0.8.0</Version>
+      <Version>0.8.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
