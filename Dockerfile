@@ -12,5 +12,6 @@ RUN ls -l /SuperClip.Web
 WORKDIR /SuperClip.Web/
 EXPOSE 5700
 
-ENV DB_URL=change_this_value
+#ENV SUPERCLIP_DB_URL=http://superclip:PASSWORD@arango/superclip
+ENV SUPERCLIP_DB_URL=change_this_value
 ENTRYPOINT ["dotnet", "SuperClip.Web.dll"]
