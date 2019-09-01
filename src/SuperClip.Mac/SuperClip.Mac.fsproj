@@ -87,7 +87,7 @@
       <Version>0.8.1</Version>
     </PackageReference>
     <PackageReference Include="Dap.Fabulous.Mac">
-      <Version>0.8.1</Version>
+      <Version>0.8.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

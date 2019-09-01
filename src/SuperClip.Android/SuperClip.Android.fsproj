@@ -72,11 +72,14 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
     <Compile Include="Program.fs" />
+    <PackageReference Include="Dap.Gui">
+      <Version>0.8.1</Version>
+    </PackageReference>
     <PackageReference Include="Dap.Android">
       <Version>0.8.1</Version>
     </PackageReference>
     <PackageReference Include="Dap.Fabulous.Android">
-      <Version>0.8.1</Version>
+      <Version>0.8.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

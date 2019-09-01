@@ -5,6 +5,7 @@ cd `dirname $0`
 
 cd $PROJ
 
+msbuild /t:clean && \
 msbuild /t:restore && \
 msbuild /t:SignAndroidPackage && \
     ../../tools/android-install

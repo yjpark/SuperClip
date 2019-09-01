@@ -33,6 +33,7 @@ type MainActivity () as self =
     static member Instance = instance.Value
     override this.UseFabulous () = useFabulous
     override this.DoSetup (bundle : Bundle) =
+        logWip (getLogger "TEST") "AAAAAAAAAAAAAAAAAAAAAAAA" bundle
         let param = AndroidParam.Create ("SuperClip.Android", this)
         if useFabulous then
             setFabulousAndroidParam param
