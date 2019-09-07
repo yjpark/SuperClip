@@ -3,7 +3,6 @@ module SuperClip.Server.Service.ChannelAuth
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks.V2
-open Farango.Documents
 
 open Dap.Prelude
 open Dap.Context
@@ -13,6 +12,8 @@ open Dap.Local.Farango
 open Dap.Remote.Server.Auth
 
 open SuperClip.Core
+
+module Document = Dap.Local.Farango.Util.Document
 
 [<Literal>]
 let Collection = "channel_auth"
@@ -49,20 +50,11 @@ type Record = {
     member this.WithTokens tokens = {this with Tokens = tokens}
 
 let getByChannelKeyAsync (key : string) (db : IDbPack) : Task<Result<Record, string>> = task {
-    let! doc =
-        getDocument db.Conn Collection key
-        |> Async.StartAsTask
-    return
-        doc
-        |> Result.bind (D.fromString Record.JsonDecoder)
+    return! db.Db |> Document.getAsync Collection key Record.JsonDecoder
 }
 
 let createAsync (record : Record) (db : IDbPack) = task {
-    let! doc =
-        createDocument db.Conn Collection <| encodeJson 0 record
-    return
-        doc
-        |> Result.map (fun _ -> record)
+    return! db.Db |> Document.createAsync Collection record.Channel.Key (encodeJson 4 record)
 }
 
 let addTokenAsync token (record : Record) app = Tokens.addTokenAsync Collection token record app
