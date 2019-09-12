@@ -4,12 +4,16 @@ module SuperClip.Server.Helper
 open FSharp.Control.Tasks.V2
 
 open Dap.Prelude
+open Dap.Context
 open Dap.Platform
 open Dap.Local
 open Dap.Local.Farango
 
 [<Literal>]
 let Scope = "SuperClipServer"
+
+[<Literal>]
+let DbConfigLuid = "db_config.json"
 
 let DbUri =
     IEnvironment.Instance.TryGetVariable "SUPERCLIP_DB_URL"
@@ -22,6 +26,11 @@ type App with
         let args =
             AppArgs.Create ()
             |> fun a -> a.WithScope scope
-            |> fun a -> a.WithFarangoDb (DbArgs.Create DbUri)
+            |> (
+                IEnvironment.Instance.Preferences.Get.Handle DbConfigLuid
+                |> Option.get
+                |> decodeJson DbArgs.JsonDecoder
+                |> AppArgs.SetFarangoDb
+            )
         new App (loggingArgs, args)
 
