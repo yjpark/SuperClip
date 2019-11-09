@@ -1,4 +1,4 @@
-version 5.196.2
+version 5.216.0
 
 source https://www.nuget.org/api/v2
 storage: none
@@ -7,9 +7,6 @@ framework: auto-detect
 nuget FSharp.Core
 
 nuget Argu
-
-# Build
-nuget Dap.Build
 
 # Libs
 nuget Dap.Prelude
@@ -38,3 +35,20 @@ nuget Dap.Fabulous.Ooui
 
 # TODO
 # nuget Dap.Fabulous.Mac
+
+group Build
+    source https://www.nuget.org/api/v2
+    framework: netstandard2.0
+    storage:none
+
+    nuget Dap.Build
+
+    nuget Dap.Prelude
+    nuget Dap.Context
+    nuget Dap.Platform
+    nuget Dap.WebSocket
+    nuget Dap.Remote
+    nuget Dap.Remote.Dashboard
+    nuget Dap.Local.Farango
+    nuget Dap.Gui
+
