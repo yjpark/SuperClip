@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <Compile Include="Const.fs" />
+    <Compile Include="_Gen\Types.fs" />
+    <Compile Include="_Gen\Builder.fs" />
+    <Compile Include="Extensions.fs" />
+    <Compile Include="Clipboard.fs" />
+    <Compile Include="Primary\Types.fs" />
+    <Compile Include="Primary\Tasks.fs" />
+    <Compile Include="Primary\Logic.fs" />
+    <Compile Include="Channel\Types.fs" />
+    <Compile Include="Channel\Logic.fs" />
+    <Compile Include="History\Types.fs" />
+    <Compile Include="History\Logic.fs" />
+    <Compile Include="_Gen1\Cloud.fs" />
+    <Compile Include="_Gen1\Packs.fs" />
+    <Compile Include="Feature\LocalClipboard.fs" />
+    <Compile Include="Helper.fs" />
+  </ItemGroup>
+</Project>
