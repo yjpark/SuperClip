@@ -33,8 +33,8 @@ type JoinReq = {
     static member JsonEncoder : JsonEncoder<JoinReq> =
         fun (this : JoinReq) ->
             E.object [
-                "peer", Peer.JsonEncoder (* JoinReq *) this.Peer
-                "pass_hash", E.string (* JoinReq *) this.PassHash
+                yield "peer", Peer.JsonEncoder (* JoinReq *) this.Peer
+                yield "pass_hash", E.string (* JoinReq *) this.PassHash
             ]
     static member JsonDecoder : JsonDecoder<JoinReq> =
         D.object (fun get ->

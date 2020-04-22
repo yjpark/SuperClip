@@ -30,8 +30,8 @@ type Common = {
     static member JsonEncoder : JsonEncoder<Common> =
         fun (this : Common) ->
             E.object [
-                "ok", E.string (* Common *) this.Ok
-                "this_device", E.string (* Common *) this.ThisDevice
+                yield "ok", E.string (* Common *) this.Ok
+                yield "this_device", E.string (* Common *) this.ThisDevice
             ]
     static member JsonDecoder : JsonDecoder<Common> =
         D.object (fun get ->
@@ -90,10 +90,10 @@ type Home = {
     static member JsonEncoder : JsonEncoder<Home> =
         fun (this : Home) ->
             E.object [
-                "title", E.string (* Home *) this.Title
-                "cloud_link", E.string (* Home *) this.CloudLink
-                "pinned_items", E.string (* Home *) this.PinnedItems
-                "recent_items", E.string (* Home *) this.RecentItems
+                yield "title", E.string (* Home *) this.Title
+                yield "cloud_link", E.string (* Home *) this.CloudLink
+                yield "pinned_items", E.string (* Home *) this.PinnedItems
+                yield "recent_items", E.string (* Home *) this.RecentItems
             ]
     static member JsonDecoder : JsonDecoder<Home> =
         D.object (fun get ->
@@ -190,15 +190,15 @@ type Link = {
     static member JsonEncoder : JsonEncoder<Link> =
         fun (this : Link) ->
             E.object [
-                "login", E.string (* Link *) this.Login
-                "logout", E.string (* Link *) this.Logout
-                "connect", E.string (* Link *) this.Connect
-                "logging_in", E.string (* Link *) this.LoggingIn
-                "other_devices", E.string (* Link *) this.OtherDevices
-                "details", E.string (* Link *) this.Details
-                "syncing_both", E.string (* Link *) this.SyncingBoth
-                "syncing_up", E.string (* Link *) this.SyncingUp
-                "syncing_down", E.string (* Link *) this.SyncingDown
+                yield "login", E.string (* Link *) this.Login
+                yield "logout", E.string (* Link *) this.Logout
+                yield "connect", E.string (* Link *) this.Connect
+                yield "logging_in", E.string (* Link *) this.LoggingIn
+                yield "other_devices", E.string (* Link *) this.OtherDevices
+                yield "details", E.string (* Link *) this.Details
+                yield "syncing_both", E.string (* Link *) this.SyncingBoth
+                yield "syncing_up", E.string (* Link *) this.SyncingUp
+                yield "syncing_down", E.string (* Link *) this.SyncingDown
             ]
     static member JsonDecoder : JsonDecoder<Link> =
         D.object (fun get ->
@@ -279,9 +279,9 @@ type Item = {
     static member JsonEncoder : JsonEncoder<Item> =
         fun (this : Item) ->
             E.object [
-                "pin", E.string (* Item *) this.Pin
-                "unpin", E.string (* Item *) this.Unpin
-                "remove", E.string (* Item *) this.Remove
+                yield "pin", E.string (* Item *) this.Pin
+                yield "unpin", E.string (* Item *) this.Unpin
+                yield "remove", E.string (* Item *) this.Remove
             ]
     static member JsonDecoder : JsonDecoder<Item> =
         D.object (fun get ->
@@ -398,19 +398,19 @@ type Settings = {
     static member JsonEncoder : JsonEncoder<Settings> =
         fun (this : Settings) ->
             E.object [
-                "title", E.string (* Settings *) this.Title
-                "sync_section", E.string (* Settings *) this.SyncSection
-                "auth_section", E.string (* Settings *) this.AuthSection
-                "display_section", E.string (* Settings *) this.DisplaySection
-                "cloud_mode", E.string (* Settings *) this.CloudMode
-                "server_section", E.string (* Settings *) this.ServerSection
-                "change_server_uri", E.string (* Settings *) this.ChangeServerUri
-                "reset", E.string (* Settings *) this.Reset
-                "cancel", E.string (* Settings *) this.Cancel
-                "done", E.string (* Settings *) this.Done
-                "separate_syncing", E.string (* Settings *) this.SeparateSyncing
-                "dark_theme", E.string (* Settings *) this.DarkTheme
-                "language_section", E.string (* Settings *) this.LanguageSection
+                yield "title", E.string (* Settings *) this.Title
+                yield "sync_section", E.string (* Settings *) this.SyncSection
+                yield "auth_section", E.string (* Settings *) this.AuthSection
+                yield "display_section", E.string (* Settings *) this.DisplaySection
+                yield "cloud_mode", E.string (* Settings *) this.CloudMode
+                yield "server_section", E.string (* Settings *) this.ServerSection
+                yield "change_server_uri", E.string (* Settings *) this.ChangeServerUri
+                yield "reset", E.string (* Settings *) this.Reset
+                yield "cancel", E.string (* Settings *) this.Cancel
+                yield "done", E.string (* Settings *) this.Done
+                yield "separate_syncing", E.string (* Settings *) this.SeparateSyncing
+                yield "dark_theme", E.string (* Settings *) this.DarkTheme
+                yield "language_section", E.string (* Settings *) this.LanguageSection
             ]
     static member JsonDecoder : JsonDecoder<Settings> =
         D.object (fun get ->
@@ -519,11 +519,11 @@ type Auth = {
     static member JsonEncoder : JsonEncoder<Auth> =
         fun (this : Auth) ->
             E.object [
-                "title", E.string (* Auth *) this.Title
-                "channel", E.string (* Auth *) this.Channel
-                "device", E.string (* Auth *) this.Device
-                "password", E.string (* Auth *) this.Password
-                "login", E.string (* Auth *) this.Login
+                yield "title", E.string (* Auth *) this.Title
+                yield "channel", E.string (* Auth *) this.Channel
+                yield "device", E.string (* Auth *) this.Device
+                yield "password", E.string (* Auth *) this.Password
+                yield "login", E.string (* Auth *) this.Login
             ]
     static member JsonDecoder : JsonDecoder<Auth> =
         D.object (fun get ->
@@ -586,8 +586,8 @@ YJ Park
     static member JsonEncoder : JsonEncoder<About> =
         fun (this : About) ->
             E.object [
-                "title", E.string (* About *) this.Title
-                "content", E.string (* About *) this.Content
+                yield "title", E.string (* About *) this.Title
+                yield "content", E.string (* About *) this.Content
             ]
     static member JsonDecoder : JsonDecoder<About> =
         D.object (fun get ->
@@ -644,9 +644,9 @@ type Devices = {
     static member JsonEncoder : JsonEncoder<Devices> =
         fun (this : Devices) ->
             E.object [
-                "title", E.string (* Devices *) this.Title
-                "offline", E.string (* Devices *) this.Offline
-                "other_online_devices", E.string (* Devices *) this.OtherOnlineDevices
+                yield "title", E.string (* Devices *) this.Title
+                yield "offline", E.string (* Devices *) this.Offline
+                yield "other_online_devices", E.string (* Devices *) this.OtherOnlineDevices
             ]
     static member JsonDecoder : JsonDecoder<Devices> =
         D.object (fun get ->
@@ -697,8 +697,8 @@ type Resetting = {
     static member JsonEncoder : JsonEncoder<Resetting> =
         fun (this : Resetting) ->
             E.object [
-                "title", E.string (* Resetting *) this.Title
-                "theme_changed", E.string (* Resetting *) this.ThemeChanged
+                yield "title", E.string (* Resetting *) this.Title
+                yield "theme_changed", E.string (* Resetting *) this.ThemeChanged
             ]
     static member JsonDecoder : JsonDecoder<Resetting> =
         D.object (fun get ->
@@ -763,11 +763,11 @@ type Help = {
     static member JsonEncoder : JsonEncoder<Help> =
         fun (this : Help) ->
             E.object [
-                "title", E.string (* Help *) this.Title
-                "home", E.string (* Help *) this.Home
-                "auth", E.string (* Help *) this.Auth
-                "settings", E.string (* Help *) this.Settings
-                "devices", E.string (* Help *) this.Devices
+                yield "title", E.string (* Help *) this.Title
+                yield "home", E.string (* Help *) this.Home
+                yield "auth", E.string (* Help *) this.Auth
+                yield "settings", E.string (* Help *) this.Settings
+                yield "devices", E.string (* Help *) this.Devices
             ]
     static member JsonDecoder : JsonDecoder<Help> =
         D.object (fun get ->
@@ -820,7 +820,7 @@ type Error = {
     static member JsonEncoder : JsonEncoder<Error> =
         fun (this : Error) ->
             E.object [
-                "title", E.string (* Error *) this.Title
+                yield "title", E.string (* Error *) this.Title
             ]
     static member JsonDecoder : JsonDecoder<Error> =
         D.object (fun get ->
@@ -917,17 +917,17 @@ type All = {
     static member JsonEncoder : JsonEncoder<All> =
         fun (this : All) ->
             E.object [
-                "common", Common.JsonEncoder (* All *) this.Common
-                "home", Home.JsonEncoder (* All *) this.Home
-                "link", Link.JsonEncoder (* All *) this.Link
-                "item", Item.JsonEncoder (* All *) this.Item
-                "settings", Settings.JsonEncoder (* All *) this.Settings
-                "auth", Auth.JsonEncoder (* All *) this.Auth
-                "about", About.JsonEncoder (* All *) this.About
-                "devices", Devices.JsonEncoder (* All *) this.Devices
-                "resetting", Resetting.JsonEncoder (* All *) this.Resetting
-                "help", Help.JsonEncoder (* All *) this.Help
-                "error", Error.JsonEncoder (* All *) this.Error
+                yield "common", Common.JsonEncoder (* All *) this.Common
+                yield "home", Home.JsonEncoder (* All *) this.Home
+                yield "link", Link.JsonEncoder (* All *) this.Link
+                yield "item", Item.JsonEncoder (* All *) this.Item
+                yield "settings", Settings.JsonEncoder (* All *) this.Settings
+                yield "auth", Auth.JsonEncoder (* All *) this.Auth
+                yield "about", About.JsonEncoder (* All *) this.About
+                yield "devices", Devices.JsonEncoder (* All *) this.Devices
+                yield "resetting", Resetting.JsonEncoder (* All *) this.Resetting
+                yield "help", Help.JsonEncoder (* All *) this.Help
+                yield "error", Error.JsonEncoder (* All *) this.Error
             ]
     static member JsonDecoder : JsonDecoder<All> =
         D.object (fun get ->

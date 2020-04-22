@@ -149,12 +149,12 @@ and AppArgs = {
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
-                "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
-                "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
-                "primary_clipboard", PrimaryTypes.Args.JsonEncoder (* ICorePack *) this.PrimaryClipboard
-                "local_history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.LocalHistory
-                "history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.History
-                "channel", ChannelTypes.Args.JsonEncoder (* ICorePack *) this.Channel
+                yield "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
+                yield "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
+                yield "primary_clipboard", PrimaryTypes.Args.JsonEncoder (* ICorePack *) this.PrimaryClipboard
+                yield "local_history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.LocalHistory
+                yield "history", HistoryTypes.Args.JsonEncoder (* ICorePack *) this.History
+                yield "channel", ChannelTypes.Args.JsonEncoder (* ICorePack *) this.Channel
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
         D.object (fun get ->

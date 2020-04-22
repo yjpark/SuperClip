@@ -125,11 +125,11 @@ and AppArgs = {
     static member JsonEncoder : JsonEncoder<AppArgs> =
         fun (this : AppArgs) ->
             E.object [
-                "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
-                "farango_db", FarangoDb.Args.JsonEncoder (* IDbPack *) this.FarangoDb
-                "channel", ChannelTypes.Args.JsonEncoder (* IServerPack *) this.Channel
-                "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
-                "operator_hub", OperatorHubTypes.Args.JsonEncoder (* IDashboardPack *) this.OperatorHub
+                yield "scope", Scope.JsonEncoder (* AppArgs *) this.Scope
+                yield "farango_db", FarangoDb.Args.JsonEncoder (* IDbPack *) this.FarangoDb
+                yield "channel", ChannelTypes.Args.JsonEncoder (* IServerPack *) this.Channel
+                yield "ticker", TickerTypes.Args.JsonEncoder (* ITickingPack *) this.Ticker
+                yield "operator_hub", OperatorHubTypes.Args.JsonEncoder (* IDashboardPack *) this.OperatorHub
             ]
     static member JsonDecoder : JsonDecoder<AppArgs> =
         D.object (fun get ->

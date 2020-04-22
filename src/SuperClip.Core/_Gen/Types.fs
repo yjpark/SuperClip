@@ -69,8 +69,8 @@ type Device = {
     static member JsonEncoder : JsonEncoder<Device> =
         fun (this : Device) ->
             E.object [
-                "guid", E.string (* Device *) this.Guid
-                "name", E.string (* Device *) this.Name
+                yield "guid", E.string (* Device *) this.Guid
+                yield "name", E.string (* Device *) this.Name
             ]
     static member JsonDecoder : JsonDecoder<Device> =
         D.object (fun get ->
@@ -115,8 +115,8 @@ type Channel = {
     static member JsonEncoder : JsonEncoder<Channel> =
         fun (this : Channel) ->
             E.object [
-                "guid", E.string (* Channel *) this.Guid
-                "name", E.string (* Channel *) this.Name
+                yield "guid", E.string (* Channel *) this.Guid
+                yield "name", E.string (* Channel *) this.Name
             ]
     static member JsonDecoder : JsonDecoder<Channel> =
         D.object (fun get ->
@@ -161,8 +161,8 @@ type Peer = {
     static member JsonEncoder : JsonEncoder<Peer> =
         fun (this : Peer) ->
             E.object [
-                "channel", Channel.JsonEncoder (* Peer *) this.Channel
-                "device", Device.JsonEncoder (* Peer *) this.Device
+                yield "channel", Channel.JsonEncoder (* Peer *) this.Channel
+                yield "device", Device.JsonEncoder (* Peer *) this.Device
             ]
     static member JsonDecoder : JsonDecoder<Peer> =
         D.object (fun get ->
@@ -207,8 +207,8 @@ type Peers = {
     static member JsonEncoder : JsonEncoder<Peers> =
         fun (this : Peers) ->
             E.object [
-                "channel", Channel.JsonEncoder (* Peers *) this.Channel
-                "devices", (E.list Device.JsonEncoder) (* Peers *) this.Devices
+                yield "channel", Channel.JsonEncoder (* Peers *) this.Channel
+                yield "devices", (E.list Device.JsonEncoder) (* Peers *) this.Devices
             ]
     static member JsonDecoder : JsonDecoder<Peers> =
         D.object (fun get ->
@@ -289,9 +289,9 @@ type Item = {
     static member JsonEncoder : JsonEncoder<Item> =
         fun (this : Item) ->
             E.object [
-                "time", E.instant (* Item *) this.Time
-                "source", Source.JsonEncoder (* Item *) this.Source
-                "content", Content.JsonEncoder (* Item *) this.Content
+                yield "time", E.instant (* Item *) this.Time
+                yield "source", Source.JsonEncoder (* Item *) this.Source
+                yield "content", Content.JsonEncoder (* Item *) this.Content
             ]
     static member JsonDecoder : JsonDecoder<Item> =
         D.object (fun get ->
@@ -339,8 +339,8 @@ type PrimaryClipboardArgs = {
     static member JsonEncoder : JsonEncoder<PrimaryClipboardArgs> =
         fun (this : PrimaryClipboardArgs) ->
             E.object [
-                "check_interval", DurationFormat.Second.JsonEncoder (* PrimaryClipboardArgs *) this.CheckInterval
-                "timeout_duration", DurationFormat.Second.JsonEncoder (* PrimaryClipboardArgs *) this.TimeoutDuration
+                yield "check_interval", DurationFormat.Second.JsonEncoder (* PrimaryClipboardArgs *) this.CheckInterval
+                yield "timeout_duration", DurationFormat.Second.JsonEncoder (* PrimaryClipboardArgs *) this.TimeoutDuration
             ]
     static member JsonDecoder : JsonDecoder<PrimaryClipboardArgs> =
         D.object (fun get ->
@@ -385,8 +385,8 @@ type HistoryArgs = {
     static member JsonEncoder : JsonEncoder<HistoryArgs> =
         fun (this : HistoryArgs) ->
             E.object [
-                "pinned_size", E.int (* HistoryArgs *) this.PinnedSize
-                "recent_size", E.int (* HistoryArgs *) this.RecentSize
+                yield "pinned_size", E.int (* HistoryArgs *) this.PinnedSize
+                yield "recent_size", E.int (* HistoryArgs *) this.RecentSize
             ]
     static member JsonDecoder : JsonDecoder<HistoryArgs> =
         D.object (fun get ->

@@ -60,11 +60,11 @@ type Credential = {
     static member JsonEncoder : JsonEncoder<Credential> =
         fun (this : Credential) ->
             E.object [
-                "device", Device.JsonEncoder (* Credential *) this.Device
-                "channel", Channel.JsonEncoder (* Credential *) this.Channel
-                "pass_hash", E.string (* Credential *) this.PassHash
-                "crypto_key", E.string (* Credential *) this.CryptoKey
-                "token", E.string (* Credential *) this.Token
+                yield "device", Device.JsonEncoder (* Credential *) this.Device
+                yield "channel", Channel.JsonEncoder (* Credential *) this.Channel
+                yield "pass_hash", E.string (* Credential *) this.PassHash
+                yield "crypto_key", E.string (* Credential *) this.CryptoKey
+                yield "token", E.string (* Credential *) this.Token
             ]
     static member JsonDecoder : JsonDecoder<Credential> =
         D.object (fun get ->
