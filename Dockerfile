@@ -1,11 +1,11 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 
 RUN apt-get update
 
-COPY src/SuperClip.Tools/bin/Debug/netcoreapp3.0/publish /SuperClip.Tools
+COPY src/SuperClip.Tools/bin/Debug/netcoreapp3.1/publish /SuperClip.Tools
 RUN ls -l /SuperClip.Tools
 
-COPY src/SuperClip.Web/bin/Debug/netcoreapp3.0/publish /SuperClip.Web
+COPY src/SuperClip.Web/bin/Debug/netcoreapp3.1/publish /SuperClip.Web
 COPY src/SuperClip.Web/wwwroot /SuperClip.Web/wwwroot
 RUN ls -l /SuperClip.Web
 
