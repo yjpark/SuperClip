@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperClip.UWP", "SuperClip.
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\..\..\yjpark\dap.gui.fsharp\src\Dap.Fabulous.UWP\Dap.Fabulous.UWP.projitems*{97f120c8-f064-4450-9ce3-6e3ee8262bd8}*SharedItemsImports = 4
+		..\..\dap.fabulous.fsharp\src\Dap.Fabulous.UWP\Dap.Fabulous.UWP.projitems*{97f120c8-f064-4450-9ce3-6e3ee8262bd8}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
